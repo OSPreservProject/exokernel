@@ -1,0 +1,254 @@
+differences between OpenBSD files and ExOS/xok files
+
+libraries
+---------
+libc - differences, see below - up to date as of Aug 29, 1998
+libcurses - no difference - up to date as of Aug 29, 1998
+libedit - some Makefile differences - up to date as of Aug 29, 1998
+libg - not part of openbsd /usr/src/lib
+libl - no difference - files from /usr/src/usr.bin/lex - up to date as
+       of Aug 29, 1998
+libm - no difference - up to date as of Aug 29, 1998
+libpcap - differences
+libtelnet - up to date as of Aug 29, 1998 - missing files with
+	   encryption stuff - export reasons?
+libterm - no difference - up to date as of Aug 29, 1998
+libtermlib - no difference - up to date as of Aug 29, 1998
+libutil - no difference - up to date as of Aug 29, 1998
+libz - no difference - up to date as of Aug 29, 1998
+
+libc/arch - not in ExOS
+
+libc/include - not in ExOS
+
+libc/sys - not in ExOS
+
+libc/compat-43 - no difference
+
+libc/crypt - no difference
+
+libc/db - no difference
+
+libc/hash - no difference
+
+libc/locale - no difference
+
+libc/md - no difference
+
+libc/nls - no difference
+
+libc/quad - no difference
+
+libc/regex - no difference
+
+libc/rpc - no difference
+
+libc/stdio - no difference
+
+libc/string - no difference (some files in kernel)/some from arch dir
+
+libc/termios - no difference
+
+libc/time - no difference
+
+libc/yp - no difference
+
+libc/net - no difference
+
+libc/gen - some files in kernel/some from arch dir
+	sysconf.c - different - needs getrlimit and extensive sysctl
+	ttyname.c - different - /dev implemented differently on ExOS
+	setproctitle.c - has extra code to also set UAREA.name
+	getcwd.c - fixed to work with exos's ability to mount the same
+		device multiple times
+
+libc/gmon
+	gmon.c - exokernel must bzero's brk pages
+
+libc/stdlib - some files in kernel
+
+
+header files
+------------
+
+include
+-------
+ansidecl.h - not in ExOS
+assert.h - rather different - in xok_include
+bfd.h - not in ExOS
+bfdlink.h - not in ExOS
+com_err.h - not in ExOS
+cpio.h - not in ExOS
+ctype.h - in xok_include - include <xok/... instead of <sys/..., small diffs
+des.h - not in ExOS
+disktab.h - not in ExOS
+dlfcn.h - not in ExOS
+errno.h  - in xok_include (lib/libc/fd/npty/ntty.c - ttysleep - ERESTART) [see below]
+eti.h - not in ExOS
+f2c.h - not in ExOS
+form.h - not in ExOS
+frame.h - not in ExOS
+gmp.h - not in ExOS
+ieeefp.h - not in ExOS
+inttypes.h - not in ExOS
+iso646.h - not in ExOS
+kvm.h - not in ExOS
+malloc.h (obsoleted message causes warning...)
+menu.h - not in ExOS
+obstack.h - not in ExOS
+ocurses.h - not in ExOS
+panel.h - not in ExOS
+pcap-namedb.h - not in ExOS
+pcap.h - not in ExOS
+poll.h - not in ExOS
+re_comp.h - not in ExOS
+regexp.h - not in ExOS
+scsi.h - not in ExOS
+soundcard.h - not in ExOS
+stdarg.h - in xok_include
+string.h - in xok_include - include <xok/... instead of <sys/...
+struct.h - not in ExOS
+tar.h - not in ExOS
+tcpd.h - not in ExOS
+
+include/arpa
+------------
+	no differences
+
+include/ddb
+-----------
+	not in ExOS
+
+include/dev
+-----------
+	not in ExOS
+
+include/g++
+-----------
+	not in ExOS
+
+include/isofs
+-------------
+	not in ExOS
+
+include/kerberosIV
+------------------
+	not in ExOS
+
+include/machine
+---------------
+*asm.h - rather different - also, remove dependences in other files on sys/asm.h
+*cdefs.h - C_LABEL - update!
+*endian.h -
+	include <xok/... instead of <sys/...
+	"if kernel" removed
+	"if optimize" removed
+*param.h - different KERNBASE
+profile.h - small hack so it will work with old gcc required for xok
+*types.h - include <xok/... instead of <sys/...
+vmparam.h - blah
+
+include/net
+-----------
+	most files not in ExOS
+
+include/netatalk
+----------------
+	not in ExOS
+
+include/netccitt
+----------------
+	not in ExOS
+
+include/netinet
+---------------
+	most files not in ExOS
+
+include/netipx
+--------------
+	most files not in ExOS
+
+include/netiso
+--------------
+	most files not in ExOS
+
+include/netns
+-------------
+	most files not in ExOS
+
+include/nfs
+-----------
+	not in ExOS
+
+include/protocols
+-----------------
+	no differences
+
+include/readline
+----------------
+	not in ExOS
+
+include/rpc
+-----------
+	no differences
+
+include/rpcsvc
+--------------
+	most files not in ExOS
+
+include/scsi
+------------
+	not in ExOS
+
+include/ss
+----------
+	not in ExOS
+
+include/sys
+-----------
+asm.h - doesn't belong here, remove it
+i386-exec.h - doesn't belong here, remove it
+
+Not in Exos:
+acct.h audioio.h buf.h callout.h cdio.h chio.h clist.h conf.h costa.h
+disk.h dmap.h exec_ecoff.h exec_script.h extent.h filedesc.h kcore.h
+kernel.h ktrace.h lkm.h lock.h lockf.h malloc.h map.h mbuf.h md5k.h
+msg.h msgbuf.h namei.h pipe.h protosw.h reboot.h resourcevar.h scanio.h
+sem.h signalvar.h socketvar.h syscall.h syscallargs.h tablet.h timeb.h
+timex.h tprintf.h trace.h unpcb.h user.h vadvise.h vcmd.h vlimit.h
+vmmeter.h vnode.h vnode_if.h vsio.h
+
+In sys/xok:
+cdefs.h queue.h types.h
+
+errno.h (lib/libc/fd/npty/ntty.c - ttysleep - ERESTART) [see above]
+ioctl.h (hector - make varargs)
+mount.h (our mount/unmount calls don't take flags)
+proc.h
+queue.h - different
+resource.h
+select.h
+sysctl.h - very small changes so that vm and ucred header files not required
+syslimits.h (PIPE_BUF 512 vs 4096)
+syslog.h
+systm.h
+termios.h
+times.h
+tty.h
+ttydefaults.h (ttydefchars needs to be static)
+types.h -
+	dev_t is short on xok
+	nlink_t switched to signed int for POSIXness
+	FD_SETSIZE (us: 4096, them: 256)
+	use <xok/...> instead of <sys/...>
+uio.h
+unistd.h
+
+include/ufs
+-----------
+	most files not in ExOS
+
+include/vm
+----------
+vm.h - just includes vm_param.h
+other files the same or not in ExOS

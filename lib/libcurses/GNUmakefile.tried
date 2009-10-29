@@ -1,0 +1,26 @@
+curses:	hardscroll.c lib_acs.c lib_delch.c lib_insstr.c lib_options.c \
+	lib_set_term.c lib_addch.c lib_delwin.c lib_instr.c lib_overlay.c \
+	lib_slk.c lib_addstr.c lib_doupdate.c lib_isendwin.c lib_pad.c \
+	lib_touch.c lib_beep.c lib_endwin.c lib_kernel.c lib_printw.c \
+	lib_tstp.c lib_bkgd.c lib_erase.c lib_longname.c lib_raw.c \
+	lib_twait.c lib_box.c lib_getch.c lib_mouse.c lib_refresh.c \
+	lib_unctrl.c lib_clear.c lib_getstr.c lib_move.c lib_resize.c \
+	lib_vidattr.c lib_clrbot.c lib_inchstr.c lib_mvcur.c lib_scanw.c \
+	lib_window.c lib_clreol.c lib_initscr.c lib_mvwin.c lib_screen.c \
+	lib_color.c lib_insch.c lib_newterm.c lib_scroll.c lib_data.c \
+	lib_insdel.c lib_keyname.c lib_newwin.c lib_scrreg.c \
+	keys.tries dummy1
+	echo
+
+clean:
+	gmake -f ../GNUmakefile.curses clean
+
+
+keys.tries:
+	make keys.tries
+
+lib_keyname.c:
+	make lib_keyname.c
+
+dummy1: 
+	gmake -f GNUmakefile.curses

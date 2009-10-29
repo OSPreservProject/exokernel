@@ -1,0 +1,4 @@
+* init doesn't wait on zombies sometimes
+* sh gets stuck going wait's when there aren't any children
+* rename/move across directories doesn't work under cffs
+* see sys/STATUS for kernel level bugs

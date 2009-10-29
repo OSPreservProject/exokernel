@@ -1,0 +1,10 @@
+HOW TO BUILD XOK AND FRIENDS UNDER LINUX
+
+0) ls -l /lib/libc.so.* to decide whether you are a libc5 or libc6 system
+1) untar as root exopc/tools/linux-cross/cross-tools.tgz under /usr/local
+or exopc/tools/linux-cross/cross-tools-libc6.tgz if you are using libc6.
+   Note Redhat 5.0 and later use libc6
+2) edit exopc/ARCH to set LINUX = 1
+2.5) set LNPROGINSTALL and LNLIBINSTALL since install/strip don't work under linux
+3) make clean; make
+

@@ -1,0 +1,35 @@
+
+# Make HTML files that will point to the right GIF files.
+# Usage: bghtml file file file....
+#
+# Hacked into existence by Larry McVoy (lm@sun.com now lm@sgi.com).
+# Copyright (c) 1995 Larry McVoy.  GPLed software.
+eval "exec perl -Ss $0 $*"
+	if 0;
+
+$which = pop(@ARGV);
+if ($which eq "pbm") {
+	&pbm;
+} elsif ($which eq "gifmono") {
+	&gifmono;
+} else {
+	die "Don't know how to do $which\n";
+}
+exit 0;
+
+sub pbm 
+{
+	@ctx = <HTML/ctx*.pbm>; pop(@ctx);
+	@mem = <HTML/mem*.pbm>; pop(@mem);
+	@bar = <HTML/bar*.pbm>; pop(@bar);
+
+	foreach $i (@ctx, @mem, @bar) {
+		($out = $i) =~ s/.pbm//;
+		#system "pnmcrop < $i | ppmtogif -transparent 1,1,1 > $out";
+		system "pnmcrop -pad < $i | ppmtogif > $out";
+	}
+}
+
+sub gifmono
+{
+}

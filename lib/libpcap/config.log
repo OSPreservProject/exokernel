@@ -1,0 +1,30 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:578: checking host system type
+configure:599: checking target system type
+configure:617: checking build system type
+configure:711: checking for gcc
+configure:788: checking whether the C compiler (gcc  ) works
+configure:802: gcc -o conftest    conftest.c  1>&5
+configure:822: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:827: checking whether we are using GNU C
+configure:851: checking whether gcc accepts -g
+configure:884: checking gcc version
+configure:1025: checking how to run the C preprocessor
+configure:1089: checking for malloc.h
+configure:1089: checking for sys/ioccom.h
+configure:1089: checking for sys/sockio.h
+configure:1128: checking for ANSI ioctl definitions
+configure:1175: checking for ether_hostton
+configure:1175: checking for strerror
+configure:1235: checking packet capture type
+configure:1338: checking for net/if_arp.h
+configure:1375: checking Linux kernel version
+configure:1416: checking for flex
+configure:1449: checking for flex 2.4 or higher
+configure:1475: checking for bison
+configure:1599: checking for ranlib
+configure:1669: checking if sockaddr struct has sa_len member
+configure:1704: checking if unaligned accesses fail
+configure:1800: checking for a BSD compatible install

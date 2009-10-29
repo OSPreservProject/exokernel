@@ -1,0 +1,5 @@
+#!/bin/sh
+install -d /mnt/benchmarks/dawson
+pax -r -w -luv dawson3 lcc-3.6.tar.gz run /mnt/benchmarks/dawson
+cd /mnt/benchmarks/dawson
+chroot /mnt /bin/sh -c 'cd /benchmarks/dawson ; perl dawson3 2'

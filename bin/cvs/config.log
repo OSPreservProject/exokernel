@@ -1,0 +1,81 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:608: gcc -E conftest.c
+configure:667: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:736: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:732: minix/config.h: No such file or directory
+configure:847: gcc -o conftest -g -O   conftest.c  1>&5
+configure:916: gcc -c -g -O  conftest.c 1>&5
+configure:1205: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1270: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1300: io.h: No such file or directory
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1300: direct.h: No such file or directory
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1300: sys/bsdtypes.h: No such file or directory
+configure:1304: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1350: gcc -c -g -O  conftest.c 1>&5
+configure:1439: gcc -c -g -O  conftest.c 1>&5
+configure:1476: gcc -c -g -O  conftest.c 1>&5
+configure:1519: gcc -o conftest -g -O   conftest.c -ldir   1>&5
+ld: -ldir: no match
+configure:1601: gcc -c -g -O  conftest.c 1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1769: Undefined symbol `_vasprintf' referenced from text segment
+configure:1775: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1820: Undefined symbol `_ftime' referenced from text segment
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1826: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1984: gcc -o conftest -g -O   conftest.c  1>&5
+configure:1978: Undefined symbol `_re_exec' referenced from text segment
+configure:2023: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2099: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2143: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2177: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2204: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2197: krb.h: No such file or directory
+configure:2242: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2235: krb.h: No such file or directory
+configure:2404: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2398: Undefined symbol `_krb_get_err_text' referenced from text segment
+configure:2481: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2770: gcc -o conftest -g -O   conftest.c  1>&5
+configure:2830: gcc -o conftest -g -O   conftest.c  1>&5

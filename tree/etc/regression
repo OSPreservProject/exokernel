@@ -1,0 +1,51 @@
+#!/bin/sh
+# This is driver script around the exopc test suite.
+# Its exit status is the sum over each component test.
+
+# Minor security hack to keep TCP sprays from instigating anything.
+read super_secret_string
+if ! [ "$super_secret_string" = "run_tests" ]; then exit 1; fi
+
+S=0
+run() {
+	echo "[1m${1}[0m"	# vt100 bold text just for kicks...
+	$1 || S=`expr $S + $?`
+}
+
+cd /tmp # Root NFS should be exported as 'root' to TEST_HOST.  Running tests
+        # in /tmp alleviates some difficulties in case it isn'T.
+
+T=/test
+
+# Basic tests
+
+run $T/float-test	# this is pretty basic.
+run $T/tsleep-test	#
+#run $T/alarm-test	# works from a console but not a script?
+run $T/env-perf		#
+run $T/memory		#
+run $T/nullkerncall	#
+run $T/ppstates		#
+run $T/ptytest		#
+
+# Filesystem tests; TODO: loop over various FS types on various partitions
+
+run $T/creat-test	# need write permissions on pwd
+run $T/getdirentries	#
+run $T/lseek		#
+run $T/read		#
+run $T/stat		#
+run $T/truncate		#
+run $T/unlink		#
+#run $T/vm-perf		# TODO: crashes
+run $T/wk-test		#
+
+# Networking tests
+
+#run $T/ether		# TODO: provide parameters?
+#run $T/udpconnect	# TODO: provide parameters?
+#run $T/sumcompare	# TODO: provide parameters?
+# run $T/xio-demo	# TODO: hangs toward end
+
+echo cumulative exit status = $S
+exit $S

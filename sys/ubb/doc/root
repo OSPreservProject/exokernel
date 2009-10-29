@@ -1,0 +1,12 @@
+have two data structs:
+	type catalogue
+	root catalogue
+
+how do users find?  just load them into memory.  how to load in
+a type?  have to bind in?  they follow the file system convention?
+
+root catalogue is pretty easy.  what about for the others?
+create a worklist, then compact.
+
+load type: shouldn't have to be special, right?  They just
+load root:

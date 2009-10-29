@@ -1,0 +1,5 @@
+#!/bin/csh
+install -d /mnt/benchmarks/andrew
+pax -r -w -luv run mab.tar.gz proclog.pl /mnt/benchmarks/andrew
+cd /mnt/benchmarks/andrew
+chroot /mnt /bin/sh -c "cd /benchmarks/andrew ; run $argv"

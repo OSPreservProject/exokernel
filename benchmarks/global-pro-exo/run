@@ -1,0 +1,31 @@
+#!/bin/csh
+
+if ($#argv != 3 || ($2 < 1) || ($2 > 20)) then
+	echo "Usage: run <seed> <depth(1-20)> <total>"
+	exit 1
+endif
+
+if (! -e test0.new.tar) then
+	echo Unzipping test directory
+	gzip -d test0.new.tar.gz
+endif
+
+if (! -e test0) then
+	echo Untarring test directory
+	tar -xf test0.new.tar
+endif
+
+set A = $2
+@ A--
+while ($A > 0)
+	set B = test$A
+	if (! -e $B) then
+		echo Copying from test0 to $B
+		cp -r test0 $B
+	endif
+	@ A--
+end
+
+echo Running global-pro-exo $1 $2 $3
+
+global-pro-exo $1 $2 $3

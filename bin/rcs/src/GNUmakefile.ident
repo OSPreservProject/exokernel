@@ -1,0 +1,13 @@
+TOP = ../../..
+PROG = ident
+o = .c
+
+SRCFILES = ident$o rcsmap$o version$o
+DEFS=-Dlint
+DEFS +=  -Dhas_conf_h 
+UNINITOK = $(SRCFILES)
+UNUSEDOK = $(SRCFILES)
+
+EXTRAINC = -I$(TOP)/lib/libc -I. -I..
+EXTRAOBJ = 
+include $(TOP)/GNUmakefile.global

@@ -1,0 +1,59 @@
+This file contains our startup sequence upto main.  With important and
+interesting intermediate calls.
+
+start
+   init_env
+   ProcessStartup
+   __main
+   main
+   exit
+program done.
+
+
+init_env [xrt0.c]
+   does some DEF_SYM for a couple of pointers.
+   sets the epilogues, prologues, fault handler, and
+   ipc1 = ipc2 = 0.
+   maps and zeroes region between edata and __brkpt.
+   bzeroes contiguous mapped region between edata and UTOP.
+
+ProcessStartup [process.c]
+   SystemStartup if first process (envids == 1) 
+      InitializeSysVShmSys [shared.c]
+      FDFreshProcInit [procaux.c]
+         maps in current pointer.
+         initializes current.
+         initializes fd pointers to 0 and clears cloexec flag.
+
+   ExecInit [process.c]
+      SysVShmExecInit [shared.c]
+         OnExec (MapSegmentInfo);
+         OnFork (IncShmRefCounts);
+      ProcInfoInit [process.c]
+      FDExecInit [procaux.c]
+         OnExec(ExecProcInit);
+         OnExec(ShareAshRegion);
+         OnExec(UpdateRefCountE);
+         OnFork(UpdateRefCount);
+         ftable_init(); [ftable.c]
+            maps in global_ftable
+            clears file function vectors.
+            if first time:
+               dumb_terminal_init
+               fd_setup_dumb (sets fd 0,1,2 to console)
+               mount_init (initializes mount table)
+            else
+               dumb_terminal_init
+            runs init functions in start_modules function array.
+         CloseOnExecFD(); [procaux.c]
+
+__main does nothing.  it is here so user programs can override it. [__main.c]
+done.
+
+NOTE0: init functions register the file function vector with the fd layer
+so the FD layer knows what read to call for a given module.
+NOTE1: it is nfs_init which mounts the root file system when is run
+under the first process.
+
+as of 2/12/96
+Hector

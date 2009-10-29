@@ -1,0 +1,13 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:739: gcc -E conftest.c
+configure:797: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:858: termio.h: No such file or directory
+configure:904: gcc -o conftest -g -O   conftest.c -lcrypt   1>&5
+ld: -lcrypt: no match
+configure:948: gcc -o conftest -g -O   conftest.c -ltermlib   1>&5
+configure:1084: gcc -o conftest -g -O   conftest.c -lnsl  -ltermlib  1>&5
+ld: -lnsl: no match
+configure:1128: gcc -o conftest -g -O   conftest.c -lsocket  -ltermlib  1>&5
+ld: -lsocket: no match

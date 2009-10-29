@@ -1,0 +1,59 @@
+1.  Memory
+
+There are lots of problems with how memory is handled.
+
+We access the guest's page table by treating the entries as linear
+addresses -- they're physical!  This works on Linux since the PT is
+identity mapped, at least while booting, but this will break later or
+with other OSs.  Need a physical to virtual mapping, without using the
+guest PT, but that'll be dog slow.  Or I need to make a new mapping so
+I can access the guest's PT.  I don't like either "solution".
+
+Sometimes libexos runs out of reserved pages, and then dies a horrible
+death the next time certain calls (fgets in debugger.c, for one) are
+made.  Don't know why.
+
+FreeBSD assumes we have 16 megs even if we just virtualize 8.  Why?
+
+Linux vmalloc in buffer_init is returning invalid stuff.  0x1000000
+which isn't in the page table.  Which then causes #14,2 on stos 0xab
+
+Memory is getting trashed.  Reordering the functions in pagetable.c
+can cause/avoid a segfault after "Now booting the kernel" message.
+
+Adding a second-level page table by tweaking a pointer in the top page
+table directory doesn't write protect all other mappings of it.  oops.
+Probably fix in pagetable.c:handle_new_pte()
+
+2.  Linux kernel hacks
+
+Not doing the IO to reprogram the interrupts in
+linux/arch/i386/boot/setup.S.  The OUTs aren't all trapping for some
+strange reason (CPL 1, no IO bitmap, all IO should trap).  So those
+are cut out and manually emulated when we switch to protected mode
+(handler.c:init_pe().)  Need to figure out why this IO doesn't trap.
+Hell, I can do that IO from a normal user application, and crash xok,
+so it's xok weirdness, not monitor weirdness.
+
+#undef USE_PENTIUM_MM   in linux/arch/i386/mm/init.c since I haven't
+some 4 meg pages.
+
+3.  Other stuff
+
+how/why do we get "too many traps" from within guest?  get interrupted
+in the monitor, but it thinks it came from the guest.  it's trying to
+be reentrant ;)
+
+do "int $1" from CPL 1 in linux, and watch the explosion.  Because
+it's DPL 3, but does it need to be?
+
+There is a bizarre bug, perhaps in the NFS code, that causes the 9
+sector read which linux does to load setup.S to be incorrect under
+certain circumstances.  If the monitor binary has been modified or
+merely touched, this 4.5k read will return some parts as garbage.  A
+second read and all subsequent will be correct.  Go figure.  Look in
+disks.c.  Or maybe I'm somehow trashing the NFS code.
+
+having debugging on causes weird invalid instructions on vmlinuz
+  setup.S  ->  compressed/head.S -> misc.c:decompress_kernel 2f4c -> lib/inflate.c:gunzip
+Wonder if this is related to the NFS problem.

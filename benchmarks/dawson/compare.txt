@@ -1,0 +1,14 @@
+From 3rd run in a row, binaries over NFS
+
+Copy small file: <cp lcc-3.6.tar.gz lcc.tar.gz> took 0.18  CPU seconds
+Uncompress of large file: <gzip -d lcc.tar.gz> took 0.81  CPU seconds
+Large copy: <cp lcc.tar lcc-copy.tar> took 0.57  CPU seconds
+Untar large tree: <tar -x -f lcc-copy.tar> took 1.48  CPU seconds
+Copy large tree : <cp -R lcc-3.6 lcc-copy> took 1.88  CPU seconds
+Diffing large tree: <diff -r lcc-3.6 lcc-copy> took 0.32  CPU seconds
+Compiling: <gcc -pipe -c lcc-copy/src/*.c> took 18.28  CPU seconds
+Deleting many small files: <rm -f *.o> took 0.26  CPU seconds
+Tar large tree: <tar -c -f lcc.tar lcc-3.6> took 0.64  CPU seconds
+Compress large file: <gzip lcc.tar> took 3.41  CPU seconds
+Delete large tree : <rm -rf lcc.tar.gz lcc-copy.tar lcc-3.6 lcc-copy> took 5.07  CPU seconds
+Total Time: 32.90 seconds

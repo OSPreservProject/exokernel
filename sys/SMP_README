@@ -1,0 +1,4 @@
+
+To compile SMP mode, you need to set EXO_SMP env var to 1 or do 
+gmake EXO_SMP=1
+

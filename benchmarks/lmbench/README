@@ -1,0 +1,14 @@
+lmbench will run with a bit of prodding:
+1. must enable the DEVTTY option in the libc GNUmakefile until that day
+	where we have tty support
+2. The results will be placed in lmbench/Results/bsd, but to view them you
+	should copy the resulting file into the same directory but on
+	an OpenBSD machine and run make in the Result directory there for
+	two reasons:
+	1. we don't have perl5 compiling and running properly at the moment
+	2. the loader doesn't assume /bin/sh script for unrecognized
+		executables
+
+Also, it really does take a while to run, so unless it gives an error
+message just assume it's working.
+

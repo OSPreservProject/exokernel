@@ -1,0 +1,10 @@
+# Don't run fixproto
+STMP_FIXPROTO =
+
+# We don't need GCC's own include files.
+USER_H =
+INSTALL_ASSERT_H =
+
+CC	= gcc -MD -pipe -g -O6 -nostdinc -I$(XOKDIR)/include -I$(XOKDIR)/sys -I$(XOKDIR)/lib/libc -DEXOPC -DPOSIX
+CLIB	= $(XOKDIR)/lib/libc/obj/libc.a -lgcc
+LDFLAGS	= -g -O6 -static -N -T 400000 -nostdlib -e start $(XOKDIR)/lib/csu/crt0.o

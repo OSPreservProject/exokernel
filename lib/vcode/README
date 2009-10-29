@@ -1,0 +1,32 @@
+This is the x86 port of VCODE. It is based on the interface as
+described in the April 28th doc/tutorial.ps that comes with Dawson's
+0.06 VCODE release. This version has passed the regression tests
+associated with the 0.06 release, with the exceptions listed in the
+bugs section below.
+
+Programs should include vcode.h and compile and link vcode.c.
+
+An x86 disassembler is now provided, which can either be used
+standalone or via v_dump.
+
+Do a make test to run the regresion tests.
+
+The source assumes that it is installed in a directory called vcode. 
+If this is not the case create a link from the source's parent to it
+and name the link vcode.
+
+TODO:
+ -- fix known bugs
+ -- get around gcc'isms to improve code generation time
+ -- improve generated code quality (especially what to do with argument regs)
+
+BUGS:
+ -- fairly bad namespace pollution
+ -- v_jalp doesn't take a link register, but instead always uses the 
+    vcode pseudo register v_ra
+ -- floats and doubles are not supported
+ -- I'm not sure if v_zero is a real VCODE pseudo register or not. Currently,
+    it can only be used as the base register of loads and stores
+ -- the total size of incoming args + locals + virtual registers cannot
+    exceed 120 bytes. This is pretty stupid.
+ -- v_save and v_restore are missing

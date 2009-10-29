@@ -1,0 +1,5 @@
+
+-- restore fsck (handling new on-disk organization)
+-- build a utility to reclaim dead inode blocks from the external directory
+   (to be run whenever...)
+

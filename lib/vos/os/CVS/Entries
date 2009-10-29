@@ -1,0 +1,23 @@
+/GNUmakefile/1.22/Wed Sep 22 19:29:30 1999/-ko/
+/cipc.c/1.29/Sat Sep 11 02:17:03 1999/-ko/
+/compat.c/1.4/Mon Aug  2 03:32:00 1999/-ko/
+/entry.S/1.9/Mon Aug 23 18:55:56 1999/-ko/
+/fault.c/1.19/Thu Aug 26 02:01:12 1999/-ko/
+/fd.c/1.24/Fri Jan  7 00:56:56 2000/-ko/
+/fork.c/1.20/Sun Nov 14 13:19:55 1999/-ko/
+/fpu.c/1.7/Sun Nov 14 08:12:53 1999/-ko/
+/gettimeofday.c/1.2/Thu Jul 15 04:11:41 1999/-ko/
+/ipc.S/1.15/Thu Aug 26 02:01:12 1999/-ko/
+/ipcport.c/1.8/Thu Aug 26 00:55:32 1999/-ko/
+/kprintf.c/1.5/Thu Jul 15 04:11:41 1999/-ko/
+/malloc.c/1.5/Thu Jul 15 04:11:41 1999/-ko/
+/perf.S/1.5/Mon Aug 16 20:16:01 1999/-ko/
+/proc.c/1.19/Thu Aug 26 00:55:32 1999/-ko/
+/sbuf.c/1.8/Sun Nov 14 17:48:55 1999/-ko/
+/signals.c/1.6/Wed Aug 11 22:22:04 1999/-ko/
+/uidt.c/1.4/Thu Aug 26 00:55:32 1999/-ko/
+/uinfo.c/1.4/Wed Jul 14 20:36:10 1999/-ko/
+/vm.c/1.6/Mon Aug  2 03:32:00 1999/-ko/
+/wk.c/1.12/Tue Aug 17 16:57:56 1999/-ko/
+/xrt0.c/1.15/Thu Aug 26 02:01:12 1999/-ko/
+D

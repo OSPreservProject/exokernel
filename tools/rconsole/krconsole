@@ -1,0 +1,10 @@
+#!/bin/csh
+
+set progs=`ps aux | grep rconsole | grep -v grep | awk '{print $2}'`
+if ( $#progs ) then
+	echo killing $progs
+	kill $progs
+	exit
+endif
+echo no rconsole lingering
+exit

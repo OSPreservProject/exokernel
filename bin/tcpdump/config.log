@@ -1,0 +1,138 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:572: checking host system type
+configure:593: checking target system type
+configure:611: checking build system type
+configure:705: checking for gcc
+configure:782: checking whether the C compiler (gcc  ) works
+configure:796: gcc -o conftest    conftest.c  1>&5
+configure:816: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:821: checking whether we are using GNU C
+configure:830: gcc -E conftest.c
+configure:845: checking whether gcc accepts -g
+configure:878: checking gcc version
+configure:1019: checking how to run the C preprocessor
+configure:1040: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1083: checking for fcntl.h
+configure:1093: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1083: checking for malloc.h
+configure:1093: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1083: checking for memory.h
+configure:1093: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1083: checking for rpc/rpcent.h
+configure:1093: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1089: rpc/rpcent.h: No such file or directory
+configure: failed program was:
+#line 1088 "configure"
+#include "confdefs.h"
+#include <rpc/rpcent.h>
+configure:1120: checking whether time.h and sys/time.h may both be included
+configure:1134: gcc -c -g -O2  conftest.c 1>&5
+configure:1159: checking Linux kernel version
+configure:1224: checking for vfprintf
+configure:1252: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1224: checking for strcasecmp
+configure:1252: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1281: checking for ether_ntoa
+configure:1309: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1281: checking for setlinebuf
+configure:1309: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1335: checking whether byte ordering is bigendian
+configure:1353: gcc -c -g -O2  conftest.c 1>&5
+configure:1368: gcc -c -g -O2  conftest.c 1>&5
+configure: In function `main':
+configure:1363: `not' undeclared (first use this function)
+configure:1363: (Each undeclared identifier is reported only once
+configure:1363: for each function it appears in.)
+configure:1363: parse error before `big'
+configure: failed program was:
+#line 1357 "configure"
+#include "confdefs.h"
+#include <sys/types.h>
+#include <sys/param.h>
+int main() {
+
+#if BYTE_ORDER != BIG_ENDIAN
+ not big endian
+#endif
+; return 0; }
+configure:1426: checking for main in -ldnet
+configure:1441: gcc -o conftest -g -O2   conftest.c -ldnet   1>&5
+ld: cannot open -ldnet: No such file or directory
+configure: failed program was:
+#line 1434 "configure"
+#include "confdefs.h"
+
+int main() {
+main()
+; return 0; }
+configure:1469: checking for main in -lrpc
+configure:1484: gcc -o conftest -g -O2   conftest.c -lrpc   1>&5
+ld: cannot open -lrpc: No such file or directory
+configure: failed program was:
+#line 1477 "configure"
+#include "confdefs.h"
+
+int main() {
+main()
+; return 0; }
+configure:1514: checking return type of signal handlers
+configure:1536: gcc -c -g -O2  conftest.c 1>&5
+configure:1578: checking for sigset
+configure:1606: gcc -o conftest -g -O2   conftest.c  1>&5
+/tmp/cca270061.o: In function `main':
+configure: failed program was:
+#line 1583 "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char sigset(); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char sigset();
+
+int main() {
+
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_sigset) || defined (__stub___sigset)
+choke me
+#else
+sigset();
+#endif
+
+; return 0; }
+configure:1634: checking for sigaction
+configure:1662: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1694: checking for gethostbyname
+configure:1722: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1928: checking for socket
+configure:1956: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:2064: checking for putmsg in -lstr
+configure:2083: gcc -o conftest -g -O2   conftest.c -lstr   1>&5
+ld: cannot open -lstr: No such file or directory
+configure: failed program was:
+#line 2072 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char putmsg();
+
+int main() {
+putmsg()
+; return 0; }
+configure:2176: checking for local pcap library
+configure:2195: checking for main in -lpcap
+configure:2210: gcc -o conftest -g -O2   conftest.c -lpcap   1>&5
+ld: cannot open -lpcap: No such file or directory
+configure: failed program was:
+#line 2203 "configure"
+#include "confdefs.h"
+
+int main() {
+main()
+; return 0; }

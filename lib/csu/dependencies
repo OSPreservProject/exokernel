@@ -1,0 +1,49 @@
+crt0.o contains prologue, epilogue, fault handler, and ash code.  "start" is the
+default entry code, which exists outside this file (in libc/os/xrt0.c).
+
+There are no external dependencies for Ashes since they are self contained.
+The external dependencies for the prologue, epilogue and fault handler code are:
+
+* ___u_pending_sigs
+* _DeliverPendingSignal
+function to deliver pending unix signals
+
+* ___CheckAlarm
+checks the timers and queues a SIGALRM for delivery.
+
+* ___stkbot
+bottom of the stack (os/xrt0.c)
+
+* ___u_fpu
+flag if fpu is enabled
+
+* ___u_in_critical
+* ___u_interrupted
+flag if code is in a critical region, if so return to the code.
+
+* ___u_ppc
+contains pc value of last instruction where process lost
+time slice, used in epilogue
+
+* ___u_xesp
+pointer to exception stack.
+
+* _do_cow_fault
+function for copy on write fault handler.
+
+* _exit
+exit in case we fail to allocate a new page.
+
+* _kprintf
+prints to the console (stdio/kprintf.c)
+
+* _signal_vec
+used to reference the unix signal handler for a seg fault.
+
+* _vpd
+* _vpt
+virtual page directory and page table.
+
+* start
+Where the program starts executing found in (libc/os/xrt0.c)
+

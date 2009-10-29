@@ -1,0 +1,4 @@
+#!/bin/sh
+./graph.py &
+./graph2.py &
+

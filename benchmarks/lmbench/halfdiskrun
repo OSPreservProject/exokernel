@@ -1,0 +1,5 @@
+#!/bin/csh
+install -d /mnt/benchmarks/lmbench
+pax -r -w -luv run lmbench /mnt/benchmarks/lmbench
+cd /mnt/benchmarks/lmbench
+run $argv

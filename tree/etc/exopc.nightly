@@ -1,0 +1,209 @@
+#!/bin/ksh
+LOG=/tmp/exolog.`date +%Y.%m.%d`
+exec < /dev/null > $LOG 2>&1
+set -ax
+#################### BEGIN CONFIGURATION SECTION #############################
+#
+# Default environmental configuration to LCS site.  These variables can all be
+# overriden by the invoking environment.
+
+: ${BUILD_DIR:=/disk/ny4/nightly}	# where we have space to extract+build
+: ${EXOPC_CLEAN_CHECKOUT:=yes}			# from-scratch checkout
+
+# Variables required to get networking configured prior to having a root FS
+# NOTE: Building a simple DHCP client into the kernel would be better.  Also,
+# probing the build system could lead to pretty reliable guesses for: netmask,
+# netaddr, domain, gateway, and timehost.  For now sites can just have a
+# wrapper script export these variables and then exec this script.
+: ${NET_INTERFACE:=ed0}				# ethernet iface name
+: ${NET_NETMASK:="255,255,255,0"}		# IP subnet netmask
+: ${NET_NETADDR:="18,26,4"}			# IP subnet address
+: ${DNS_DOMAIN:=lcs.mit.edu}			# DNS name domain
+: ${NET_GATEWAY:="18,26,4,1"}			# IP of router
+: ${NET_TIMEHOST:=zwolle.lcs.mit.edu}		# name of timed host
+
+# Variables required for root filesystem over NFS 
+
+: ${NFS_ROOT_HOST:=new-york}			# server we get root FS from
+: ${NFS_ROOT_PATH:=/disk/ny3/not_xok_root}	# where root lives on server
+: ${NFS_ROOT_LPATH:=/home/ny3/not_xok_root}	# path used by build host
+
+# Variables whose use is isolated to this script.
+
+: ${TEST_HOST:=not.lcs.mit.edu}			# which host we test on
+: ${EXOMAINT=cblake@lcs.mit.edu}		# who we mail reports to
+# TODO: create a mail alias for people who want nightly build reports.
+: ${make:=/usr/local/bin/gmake}			# where our GNU make is
+
+##################### END CONFIGURATION SECTION ##############################
+
+# NOTE: With default OpenBSD rlimits, a cvs checkout through the remote
+# repository interface fails on the big linux-cross compiling tar.gz file.
+
+ulimit -d 131072
+ulimit -a
+CVSROOT=/home/zw0/cvs
+# CVS_RSH=/home/ny2/cblake/bin/ssh_cb
+
+# Useful helper shell function for the MAIL_REPORT system.
+
+STAMP() { echo; echo -n PHASE:$1 START_STAMP:; date +%s; echo; }
+
+# Mail a report of the build to maintainer(s). The second grep filter allows
+# simpler usage of awk by removing any initial times that exceed 10^5 seconds
+# (about 1 day).  Finer awkery could probably eliminating the first spurious
+# seconds since epoch listing without the assumption that builds take less than
+# a day.
+
+MAIL_REPORT() {
+	STAMP 'done'		# put in a final timestamp to make differencing work
+	echo 'phase\t\ttime' > /tmp/mail.$$ 
+	grep '^PHASE' < $LOG  |
+	    sed 's/:/ /g' |
+	    awk '{print phase "\t" $4 - last " seconds"; phase=$2; last=$4}' |
+	    grep -v '[0-9][0-9][0-9][0-9][0-9]' \
+	  >> /tmp/mail.$$ 
+	mail -s "exopc nightly build $1" $EXOMAINT < /tmp/mail.$$
+	echo 'BUILD REPORT:'	# Nice to have it in the log file as well...
+	cat /tmp/mail.$$
+	rm -f /tmp/mail.$$
+	exit $2
+}
+
+cd $BUILD_DIR
+if [ -d exopc -a "$EXOPC_CLEAN_CHECKOUT" = "yes" ]; then
+	# The recursive remove is much faster than the CVS checkout, so we
+	# can do it in the background, confident in the knowledge that the
+	# disk space will be liberated by the time we need it.
+	su cblake -c 'yes yes | cvs release exopc'
+	mv -f exopc  exopc.being_deleted
+	(rm -rf exopc.being_deleted &)
+fi
+
+sleep 1	# so asynchronous shell tracing output doesn't mess up STAMP grepping
+STAMP 'checkout'
+if ! [ -d exopc ]; then
+	mkdir exopc
+	chown cblake exopc
+	chmod 775 exopc
+fi
+su cblake -c 'cvs update exopc' || MAIL_REPORT checkout_failed 1
+
+cd exopc
+
+# Hack up host table stuff for root FS on $NFS_ROOT_HOST:$NFS_ROOT_PATH
+# Requires GNU diff for unidiff format.
+patch include/exos/site-conf.h << EOF
+--- site-conf.h	1998/07/02 23:46:29	1.3
++++ site-conf.h	1998/07/02 23:50:48
+@@ -40,28 +40,28 @@
+ 
+ 
+ /* default interface to use */
+-#define MY_INTERFACE "ed0"
++#define MY_INTERFACE "${NET_INTERFACE}"
+ 
+ /* netmask */
+-#define MY_NETMASK {255,255,255,0} 
++#define MY_NETMASK {${NET_NETMASK}}
+ 
+ /* network number */
+-#define MY_NET_NUMBER {18,26,4}
++#define MY_NET_NUMBER {${NET_NETADDR}}
+ 
+ /* domain name */
+-#define MY_DOMAIN "lcs.mit.edu"
++#define MY_DOMAIN "${DNS_DOMAIN}"
+ 
+ /* default route/gateway for this machine */
+-#define MY_GATEWAY {18,26,4,1}
++#define MY_GATEWAY {${NET_GATEWAY}}
+ 
+ /* NFS server to mount root from */
+-#define MY_NFS_ROOT_HOST "must-set-me-in-include/exos/site-conf.h"
++#define MY_NFS_ROOT_HOST "${NFS_ROOT_HOST}"
+ 
+ /* path on NFS server to mount as root */
+-#define MY_NFS_ROOT_PATH "must-set-me-in-include/exos/site-conf.h"
++#define MY_NFS_ROOT_PATH "${NFS_ROOT_PATH}"
+ 
+ /* who we get the time from */
+-#define MY_TIME_HOST "zwolle.lcs.mit.edu"
++#define MY_TIME_HOST "${NET_TIMEHOST}"
+ 
+ /* map from etheraddr -> (hostname,ip) used on boot up to figure out
+    who we are and where to find the nfs server listed above. After 
+
+EOF
+
+STAMP 'full_build'
+
+$make -k || MAIL_REPORT build_failed 2
+
+STAMP 'full_install'
+
+mv $NFS_ROOT_LPATH $NFS_ROOT_LPATH.being_deleted
+rm -rf $NFS_ROOT_LPATH.being_deleted
+
+$make install 'LN=cp' "EXODEST=$NFS_ROOT_LPATH" || MAIL_REPORT install_failed 3
+
+# At this point the build and install succeeded.  Now we need to reboot another
+# machine on the network as a testbed.  The BSD boot loader on $TEST_HOST
+# should have a default target of xok.
+#
+# We could perhaps tolerate a larger class of xok faults if we used physical
+# clock synchronization and time-driven kick-offs of the reboot and tests.
+# Some tests would operate to some degree even if networking on the new kernel
+# was broken.  This seems unwarranted at least until a non-NFS root filesystem
+# becomes viable.
+#
+# Also the current mechanism for instigating a reboot and for kicking off the
+# test script is very insecure in terms of denial of service attacks on that
+# one exokernel test machine with these things enabled.  So add these items to
+# /etc/services and /etc/inetd.conf in the xok root filesystem in this script
+# rather than in the CVS tree.  A simple insecure string check is used to at
+# least make this system stable against TCP port spray probes.
+#
+# Capturing 'nc' output nicely integrates the build log with the test log.
+# It also divorces correct xok local and remote filesystem behavior from
+# capturing regression test output.  All that needs to work to get our
+# regression log is TCP.  Duplication to an xok-local file may be added if
+# it appears necessary.
+#
+# Hack /etc/services, /etc/inetd.conf to allow auto-boot, auto-build.  This
+# also needs to be done on the OpenBSD machine that is up when Xok is down.
+# A root cronjob on $TEST_HOST which simply enables and disables these lines
+# around the time needed by the nightly build is probably sufficient.
+# Consequently, there is a separate script called 'xok_testcfg' that is the
+# same as the below cat's.  This script is for the OpenBSD partition of the
+# test machine.
+#
+cat >> $NFS_ROOT_LPATH/etc/services <<- EOF
+	exopc_boot	3330/tcp    # exopc auto_boot
+	exopc_test	3331/tcp    # exopc auto_test
+EOF
+cat >> $NFS_ROOT_LPATH/etc/inetd.conf <<- EOF
+	exopc_boot	stream	tcp	nowait	root	/etc/xok_update
+	exopc_test	stream	tcp	nowait	root	/etc/regression
+EOF
+
+STAMP 'reboot_xok'	# reboot test machine.
+
+# Note: requires 'nc' (netcat) program.
+
+if echo copy_and_boot | nc $TEST_HOST 3330; then
+	echo autoboot_failure
+else
+	echo autoboot_success
+fi
+# NOTE: this script will copy $NFS_ROOT/boot/xok and then reboot.
+
+# Give machine 5 minutes to reboot (maybe more when fsck's might happen...)
+sleep 300
+
+STAMP 'run_tests'	# run regression tests, collecting output here
+
+echo run_tests | nc $TEST_HOST 3331 || MAIL_REPORT autotest_failed 4
+
+MAIL_REPORT success 0
+

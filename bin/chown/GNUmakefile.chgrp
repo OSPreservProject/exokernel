@@ -1,0 +1,14 @@
+TOP = ../..
+PROG = chgrp
+SRCFILES = chown.c
+DEFS=-Dlint -DSUPPORT_DOT
+BADFORMATOK = chown.c
+
+UNINITOK = $(SRCFILES)
+UNUSEDOK = $(SRCFILES)
+
+export DOINSTALL=yes
+export INSTALLPREFIX=/usr/sbin
+
+EXTRAINC = -I../../lib/libc
+include $(TOP)/GNUmakefile.global

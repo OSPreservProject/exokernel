@@ -1,0 +1,19 @@
+#
+# Using += for easy commenting out.
+#
+TOP = ..
+SUBDIRS = libc ash csu ffs alfs
+ifndef STATIC
+SUBDIRS += $(TOP)/bin/shlib
+endif   # not STATIC
+SUBDIRS += libcurses libterm libtermlib libl libedit
+SUBDIRS += libtelnet 
+SUBDIRS += libutil
+SUBDIRS += libm
+SUBDIRS += libz
+SUBDIRS += libg
+
+export DOINSTALL=yes
+export INSTALLPREFIX=usr/lib
+
+include $(TOP)/GNUmakefile.global

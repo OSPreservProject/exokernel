@@ -1,0 +1,172 @@
+
+                    L M B E N C H  1 . 0   S U M M A R Y
+                    ------------------------------------
+
+            Processor, Processes - times in microseconds
+            --------------------------------------------
+Host                 OS  Mhz    Null    Null  Simple /bin/sh Mmap 2-proc 8-proc
+                             Syscall Process Process Process  lat  ctxsw  ctxsw
+--------- ------------- ---- ------- ------- ------- ------- ---- ------ ------
+6000-990        AIX 3.x   71      16      1K      8K     16K   82     13     18
+powerpc.2       AIX 4.x  134      12      3K      8K     50K   82     16     26
+snake     HP-UX A.09.03   99      14      4K     10K     18K  116     25     29
+k200      HP-UX B.10.01   99      19      4K     67K    118K  136     13     15
+IP22+     IRIX 5.3-ALPH  250      10      3K      8K     22K  183     38     42
+IP19+          IRIX 5.3  250      16      6K     19K     46K  205    141     96
+i586.1    FreeBSD 2.1-S  133       9      3K     12K     20K  105     24     28
+i586.120   Linux 1.3.28  120       2      1K      5K     16K   69     10     13
+pc64       Linux 1.3.38  275       2      1K      3K     12K   15     11     13
+nobozo        OSF1 V3.2  196       9      3K     10K     27K  180     43     45
+8400-32.p     OSF1 V3.2  303       9      2K      6K     16K  199     14     22
+ss20.61       SunOS 5.4   61       7      8K     46K     87K  104     37     52
+ultraspar     SunOS 5.5  167       5      4K     20K     37K  212     14     20
+sc1000        SunOS 5.5   50       9     14K     69K    281K  156    107    104
+
+            *Local* Communication latencies in microseconds
+            -----------------------------------------------
+Host                 OS  Pipe       UDP    RPC/     TCP    RPC/
+                                            UDP             TCP
+--------- ------------- ------- ------- ------- ------- -------
+6000-990        AIX 3.x      91     254     531     332     649
+powerpc.2       AIX 4.x      65     206     536     299     698
+snake     HP-UX A.09.03     193     244     832     262     812
+k200      HP-UX B.10.01     113     413     655     393     668
+IP22+     IRIX 5.3-ALPH     118     261     562     279     580
+IP19+          IRIX 5.3     333     796     903     766     913
+i586.1    FreeBSD 2.1-S     104     213     387     264     450
+i586.120   Linux 1.3.28      33     187     366     467     713
+pc64       Linux 1.3.38      34     180     317     429     602
+nobozo        OSF1 V3.2     141     379     717     412     673
+8400-32.p     OSF1 V3.2      71     259     358     267     371
+ss20.61       SunOS 5.4     150     414     622     335     784
+ultraspar     SunOS 5.5      62     197     267     162     346
+sc1000        SunOS 5.5     278     739    1101     855    1386
+
+            *Local* Communication bandwidths in megabytes/second
+            ----------------------------------------------------
+Host                 OS Pipe  TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+                                  reread reread (libc) (hand) read write
+--------- ------------- ---- ---- ------ ------ ------ ------ ---- -----
+6000-990        AIX 3.x   84   10    187    106    171    242  205   364
+powerpc.2       AIX 4.x   30   17     40     51     21     21   63    26
+snake     HP-UX A.09.03   38   35     45     32     25     31   49    52
+k200      HP-UX B.10.01   37   28     64     41     48     55   97    89
+IP22+     IRIX 5.3-ALPH   32    7     37     48     33     32   68    72
+IP19+          IRIX 5.3   14   16     39     43     34     33   67    73
+i586.1    FreeBSD 2.1-S   21    0     30     54     42     39   73    83
+i586.120   Linux 1.3.28   34    7     23      9     42     38   74    75
+pc64       Linux 1.3.38   73    9     24     18     39     39   73    71
+nobozo        OSF1 V3.2   54   11     49     25     46     46   88    90
+8400-32.p     OSF1 V3.2   46   11     67     78      0      0  120   123
+ss20.61       SunOS 5.4   24   19     31     31     23     24   59    40
+ultraspar     SunOS 5.5   61   51     85    101    167     85  129   152
+sc1000        SunOS 5.5    9   11     20     28     15     17   38    31
+
+	    Memory latencies in nanoseconds
+            (WARNING - may not be correct, check graphs)
+            --------------------------------------------
+Host                 OS   Mhz  L1 $   L2 $    Main mem    Guesses
+--------- -------------   ---  ----   ----    --------    -------
+6000-990        AIX 3.x    70    13     13         141    No L1 cache?
+powerpc.2       AIX 4.x   133     6    164         394
+snake     HP-UX A.09.03    98    10     10         393    No L1 cache?
+k200      HP-UX B.10.01    99    10     10         430    No L1 cache?
+IP22+     IRIX 5.3-ALPH   250     8     64        1170
+IP19+          IRIX 5.3   250     8     64        1189
+i586.1    FreeBSD 2.1-S   133     7    111         181
+i586.120   Linux 1.3.28   120     8    107         150
+pc64       Linux 1.3.38   275     3     83         354
+nobozo        OSF1 V3.2   196     9     51         288
+8400-32.p     OSF1 V3.2   302     3     42         396
+ss20.61       SunOS 5.4    60    16    115         816
+ultraspar     SunOS 5.5   166     6     42         270
+sc1000        SunOS 5.5    50    20    140        1236
+
+                L M B E N C H  1 . 0   S U M M A R Y
+                ------------------------------------
+
+                  Comparison to best of the breed
+                  -------------------------------
+
+		(Best numbers are starred, i.e., *123)
+
+
+        Processor, Processes - factor slower than the best
+        --------------------------------------------------
+Host                 OS  Mhz    Null    Null  Simple /bin/sh Mmap 2-proc 8-proc
+                             Syscall Process Process Process  lat  ctxsw  ctxsw
+--------- ------------- ---- ------- ------- ------- ------- ---- ------ ------
+6000-990        AIX 3.x   71     8.0     1.7     2.7     1.3  5.5    1.3    1.4
+powerpc.2       AIX 4.x  134     6.0     3.9     3.0     4.0  5.5    1.6    2.0
+snake     HP-UX A.09.03   99     7.0     4.8     3.6     1.5  7.7    2.5    2.2
+k200      HP-UX B.10.01   99     9.5     5.7      24     9.5  9.1    1.3    1.2
+IP22+     IRIX 5.3-ALPH  250     5.0     4.0     2.9     1.8   12    3.8    3.2
+IP19+          IRIX 5.3  250     8.0     8.4     6.6     3.7   14     14    7.4
+i586.1    FreeBSD 2.1-S  133     4.5     3.7     4.2     1.6  7.0    2.4    2.2
+i586.120   Linux 1.3.28  120      *2     1.2     1.7     1.3  4.6    *10    *13
+pc64       Linux 1.3.38  275      *2   *0.7K   *2.8K  *12.2K  *15    1.1    *13
+nobozo        OSF1 V3.2  196     4.5     4.2     3.6     2.1   11    4.3    3.5
+8400-32.p     OSF1 V3.2  303     4.5     2.7     2.0     1.3   13    1.4    1.7
+ss20.61       SunOS 5.4   61     3.5      11      16     7.0  6.9    3.7    4.0
+ultraspar     SunOS 5.5  167     2.5     5.1     7.0     3.0   14    1.4    1.5
+sc1000        SunOS 5.5   50     4.5      19      24      23   10     11    8.0
+
+        *Local* Communication latencies - factor slower than the best
+        -------------------------------------------------------------
+Host                 OS  Pipe       UDP    RPC/     TCP    RPC/
+                                            UDP             TCP
+--------- ------------- ------- ------- ------- ------- -------
+6000-990        AIX 3.x     2.8     1.4     2.0     2.0     1.9
+powerpc.2       AIX 4.x     2.0     1.1     2.0     1.8     2.0
+snake     HP-UX A.09.03     5.8     1.4     3.1     1.6     2.3
+k200      HP-UX B.10.01     3.4     2.3     2.5     2.4     1.9
+IP22+     IRIX 5.3-ALPH     3.6     1.4     2.1     1.7     1.7
+IP19+          IRIX 5.3      10     4.4     3.4     4.7     2.6
+i586.1    FreeBSD 2.1-S     3.2     1.2     1.4     1.6     1.3
+i586.120   Linux 1.3.28     *33     1.0     1.4     2.9     2.1
+pc64       Linux 1.3.38     1.0    *180     1.2     2.6     1.7
+nobozo        OSF1 V3.2     4.3     2.1     2.7     2.5     1.9
+8400-32.p     OSF1 V3.2     2.2     1.4     1.3     1.6     1.1
+ss20.61       SunOS 5.4     4.5     2.3     2.3     2.1     2.3
+ultraspar     SunOS 5.5     1.9     1.1    *267    *162    *346
+sc1000        SunOS 5.5     8.4     4.1     4.1     5.3     4.0
+
+        *Local* Communication bandwidths - percentage of the best
+        ---------------------------------------------------------
+Host                 OS Pipe  TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+                                  reread reread (libc) (hand) read write
+--------- ------------- ---- ---- ------ ------ ------ ------ ---- -----
+6000-990        AIX 3.x  *84  20%   *187   *106   *170   *242 *204  *363
+powerpc.2       AIX 4.x  35%  32%    21%    48%    12%     8%  30%    7%
+snake     HP-UX A.09.03  45%  68%    23%    30%    14%    12%  24%   14%
+k200      HP-UX B.10.01  44%  54%    34%    38%    27%    22%  47%   24%
+IP22+     IRIX 5.3-ALPH  38%  13%    19%    44%    19%    13%  33%   19%
+IP19+          IRIX 5.3  16%  32%    20%    40%    19%    13%  32%   19%
+i586.1    FreeBSD 2.1-S  25%   0%    16%    50%    24%    16%  35%   22%
+i586.120   Linux 1.3.28  40%  13%    12%     8%    24%    15%  36%   20%
+pc64       Linux 1.3.38  86%  17%    13%    16%    22%    16%  35%   19%
+nobozo        OSF1 V3.2  64%  20%    25%    24%    26%    18%  42%   24%
+8400-32.p     OSF1 V3.2  54%  21%    35%    73%     0%     0%  58%   33%
+ss20.61       SunOS 5.4  28%  38%    16%    28%    13%     9%  28%   11%
+ultraspar     SunOS 5.5  71%  *51    45%    95%    97%    35%  62%   41%
+sc1000        SunOS 5.5  10%  21%    10%    26%     8%     6%  18%    8%
+
+            Memory latencies in nanoseconds - factor slower than the best
+		    (WARNING - may not be correct, check graphs)
+            -------------------------------------------------------------
+Host                 OS   Mhz  L1 $   L2 $    Main mem    Guesses
+--------- -------------   ---  ----   ----    --------    -------
+6000-990        AIX 3.x    70   ???    1.3        *141    No L1 cache?
+powerpc.2       AIX 4.x   133   2.0     16         2.8
+snake     HP-UX A.09.03    98   ???    *10         2.8    No L1 cache?
+k200      HP-UX B.10.01    99   ???    *10         3.0    No L1 cache?
+IP22+     IRIX 5.3-ALPH   250   2.7    6.4         8.3
+IP19+          IRIX 5.3   250   2.7    6.4         8.4
+i586.1    FreeBSD 2.1-S   133   2.3     11         1.3
+i586.120   Linux 1.3.28   120   2.7     11         1.1
+pc64       Linux 1.3.38   275    *3    8.3         2.5
+nobozo        OSF1 V3.2   196   3.0    5.1         2.0
+8400-32.p     OSF1 V3.2   302    *3    4.2         2.8
+ss20.61       SunOS 5.4    60   5.3     12         5.8
+ultraspar     SunOS 5.5   166   2.0    4.2         1.9
+sc1000        SunOS 5.5    50   6.7     14         8.8

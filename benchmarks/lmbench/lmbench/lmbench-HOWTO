@@ -1,0 +1,102 @@
+This is the lmbench HOWTO, a brief message on how to build, run, and
+view results of the lmbench database.
+
+Building
+--------
+	I sent the code out with RCS files, you need to go to the top
+	level directory and do this:
+
+	lmbench$ co RCS/*
+	lmbench$ make get
+
+	You may need to put rccs in your bin directory or in your path.  There
+	is a checked out copy in the top level directory.
+
+Running
+-------
+	lmbench$ cd src
+	lmbench/src$ make results
+
+Viewing results
+---------------
+	Each run will put a results file into the database.  The database
+	is a series of directories rooted at lmbench/Results. The database
+	is organized as <OS name>/<hostname.run number>.  You can always
+	go wading through the raw data in the file if all else fails.  Note
+	that there are man pages for all (most?) of the benchmarks in 
+	the doc directory.
+
+	All of the following assume you are in lmbench/Results.
+
+	Specifying the machines to view
+	-------------------------------
+
+	By default, the scripts will view all machines in the database.  This
+	gets a bit noisy.  You can pick the ones you want by specifying them
+	in the LIST variable.  Like so
+
+		make LIST="linux/* FreeBSD/*"
+
+	You can also put the list of machines, all on one line, in 
+	lmbench/Results/LIST and the scripts will honor that.
+
+	Different views of the results
+	------------------------------
+
+	Ascii summary
+	-------------
+	There are several ways to review the results.  If you have perl,
+	you can get an ascii table, like the one I posted to comp.benchmarks,
+	by saying "make".   This may or may not work, I've had problems 
+	with the scripts working on hpux.  I can say that they do work
+	on IRIX, SunOS, and Linux because I have tried them there.  If you
+	put the effort into making them work elsewhere, please mail me
+	your version.
+
+	Ascii relative summary
+	----------------------
+
+	If you say "make percent" you'll get a similar table with all the
+	numbers relative to the best for each catagory.
+
+	Graphs
+	------
+
+	If you have groff, and you built and installed xditview (for some
+	reason this doesn't always get installed), you can say "make x"
+	and page through a bunch of bargraphs, and x/y graphs for context
+	switches and memory latency.  This is the best way to look at the
+	x/y data - the bargraphs are just kind of cutesy.
+
+	You can also do "make ps" to build postscript versions of the 
+	above.
+
+	Consult the Results/Makefile for other interesting ways to view
+	the data.
+
+
+Porting
+-------
+
+	It's either easy or hard :-)  If you are bringing up lmbench on
+	one of the known operating systems, then it should just work.
+
+	If it is not a known os, you will need to modify two files
+	(at least).  They are:
+
+	scripts/os - you need to pick a name for your OS and make
+	this script figure it out and print it out.
+
+	src/Makefile - put a target in the Makefile for your system.  If
+	the default setting of CC/CFLAGS doesn't work, then modify them
+	in the same was they are modified for other operating systems.
+
+	Then build and see if it works.  If it doesn't, contact me and
+	we'll figure it out.
+
+	If you make changes, just check them into RCS and mail me the
+	,v file.
+
+Good luck and happy benchmarking!
+
+Larry McVoy

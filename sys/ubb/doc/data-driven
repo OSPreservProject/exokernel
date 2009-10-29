@@ -1,0 +1,19 @@
+This must be algebraic?
+
+Run function to get coverage; it looks at values, you track and build
+up a set.
+
+Run coverage; it builds up a set.  Cannot intersect with the previous
+one.
+
+Add-c: make mod, coverage must change by the right amount.
+Add-d: make mod, coverage domain must change by the right amount.
+
+If overlap, must know this so you can retest, right?  Is speed going
+to be a problem?
+
+What are the rules for when these values can be modified.
+
+How do you know where the index is?  Do they have to go through
+and modify?   Allow it to be relocatable.  Massive hacks at all
+levels.

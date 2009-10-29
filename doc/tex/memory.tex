@@ -1,0 +1,79 @@
+\section{Memory}
+
+This section describes how the kernel multiplexes physical memory. At
+a later time page revocation and how ExOS implements paging will be
+added.
+
+\subsection {Xok and physical pages}
+
+Each physical page is described by a {\tt Ppage}
+structure.\footnote{See sys/kern/pmap.c and sys/xok/pmap.h for
+details} This structure tracks the following key information about the
+page:
+
+\begin{itemize}
+\item whether the page has been allocated by the kernel, a user level
+process, or if it's free.
+
+\item whether the page is pinned for pending DMA
+
+\item whether the page contains a disk buffer
+
+\item what capabilities are associated with the page via an ACL
+\end{itemize}
+
+Pages are reference counted if they are allocated to a user-level
+process.  The kernel can hold references to such pages, but the only
+way a user-level process can hold a reference is by mapping the
+page. When the last mapping to a page is removed the page is
+considered free-able.
+
+Process call {\tt sys\_insert } to modify the x86 page table
+associated with the environment. To unmap a page, insert a pte without
+the PG\_P (present bit) set. To map a page, insert a pte that points
+to a physical page that is not allocated (to allocate it) or to a
+physical page that is allocated and which the caller presents an
+appropriate capability for.
+
+\subsection {Shared data structures in ExOS}
+
+In order for libos's to communicate with each other and share state
+(such as fd's across forks and the mount table), shared memory is
+used. Currently, sysv shared-mem interfaces are used to provide
+this.\footnote{see lib/libexos/os/shared.c} Due to limitations in our
+sysv implementation the first process booting must allocate the
+segments that are going to be used and then other processes may attach
+them as needed.
+
+Shared memory is being used less and less since it does not give the
+fault isolation that is typically desired. However, it is interesting
+to note that while developing ExOS we never ran into an occasion of a
+buggy libos crashing the system by scribbling bogus data into a shared
+memory region. The problem we did run into, though, was version
+control.  Every time we changed the structure of the shared memory
+region every application had to be updated to understand the new
+layout.
+
+\subsection {Memory layout}
+
+Processes load at 800000 and their entry point is 800020 (to skip the
+initial a.out header). Their code, data, and heap all follow. Then
+staticly reserved blocks of memory begin.\footnote{see
+lib/include/exos/vm-layout.h for details} After this, optionally, is a
+read-only mapping of the shared library followed by the private
+write-able data and heap for the shared library.
+
+Growin down from the high-end of the address space is the kernel which
+maps all of physical memory high in the address space, then the
+kernel, kernel data, etc.\footnote{see sys/xok/mmu.h} Then comes the
+kernel readonly data structures and finally an unmapped page to
+delineate between kernel addresses and user-addresses. At the upper
+end of the user part of the address space is the user stack.
+
+\subsection {Page faults}
+
+When the kernel detects a page fault of any kind (writing to RO page,
+access page not present, etc) it propagates the fault up to a user
+level fault handler that.\footnote {see lib/libexeos/os/fault.c} ExOS
+uses this facility to demand-page itself in and to dynamically grow
+the stack down as needed as well as to handle copy-on-write faults.

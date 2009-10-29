@@ -1,0 +1,16 @@
+/Makefile.inc/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/cfgetispeed.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/cfgetospeed.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/cfmakeraw.c/1.2/Sun Aug 30 00:41:23 1998/-ko/
+/cfsetispeed.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/cfsetospeed.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/cfsetspeed.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcdrain.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcflow.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcflush.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcgetattr.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcgetpgrp.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcsendbreak.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcsetattr.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+/tcsetpgrp.c/1.1.1.1/Mon Jun 15 21:10:34 1998/-ko/
+D

@@ -1,0 +1,114 @@
+
+To install OpenBSD on a new pdos PC, you need to get four things from Dave:
+a DOS diskette, an OpenBSD boot diskette, an OpenBSD install diskette and
+an IP address (with corresponding name).
+
+The procedure is as follows:
+
+ - insert the DOS floppy and boot the machine.
+
+ - run `exsetup' and configure the ethernet card with the following values:
+   + change setup? y
+   + I/O Base Address? 280
+   + IRQ? 2
+   + RAM base address? d0000
+   + add wait states? n
+   + Net connection type? 1
+   + ROM disabled? y
+   + save? y
+
+ - remove DOS diskette (no longer needed)
+
+ - reboot machine and hit <F1> during system initialization to enter BIOS
+
+ - select the `Plug and Play Configuration' option from the `Advanced' menu
+
+ - set IRQ 9 to `Used for ISA card' and the other IRQs to `Available'
+
+ - set `Shared Memory Region' to 16K, and set `Start Address' to 0xd0000
+
+ - insert OpenBSD boot diskette
+
+ - hit <F10> to save configuration and reboot
+
+ - when the machine asks for the second diskette, insert the OpenBSD install
+   diskette and hit Enter/Return
+
+ - when prompted for the shell, just hit return
+
+ - you will be prompted for some disk configuration information next.  You
+   need to get this info from another machine with the same kind of disk
+   (by executing `disklabel sd0').  For the 6 machines delivered recently,
+   you can get the information from whap.  The partition map provided by
+   disklabel includes a, b, c, e and f.  These correspond to / (or root),
+   swap, no name (whole disk), usr and var.  You will be prompted explicitly
+   for root and swap.  You type in the other two explicitly.
+
+ - after finishing this config step, type `halt' to shutdown the machine.
+   Remove the OpenBSD install diskette (no longer needed) and insert the
+   OpenBSD boot diskette.
+
+ - reboot.  This time, when the system prompts for the second diskette, just
+   hit return without switching them.
+
+ - when prompted for the shell, just hit return
+
+ - then type "copy_kernel", it will prompt you for the disk 'sd0' this is
+   right.  
+  
+ - when copy_kernel is complete, type 'halt'.  Remove the floppy from the
+   driver.
+
+ - reboot the machine, by pressing the reboot button.  Let the machine
+   boot from the hard disk.
+
+ - figure out the ethernet card's name by typing `ifconfig ed0' and
+   `ifconfig ed2'.
+
+ - configure the ethernet card with:
+   `ifconfig ed0 18.26.4.30 up netmask 0xffff0000', where 18.26.4.30 and ed0
+   should be replaced with the appropriate values.
+
+ - mount 18.26.0.144:/usr/distrib /mnt
+
+ - cd /mnt
+
+ - mount -u -o async /
+
+ - mount -u -o async /usr
+
+ - mount -u -o async /var
+
+ - bin/pax -rw -pe . /
+
+ - cd /var/tmp
+
+ - type `Configure' and answer the questions asked (using the previously
+   configured values).
+
+ - cd /var/tmp
+
+ - ftp 18.26.0.144 and login as `config' with password `pldi-96'.  cd pub/sup.
+   get inst.list and then quit.
+
+ - type `hostname sled.lcs.mit.edu', where sled should be the actual machine
+   name corresponding to the chosen IP address.
+
+ - type `sup inst.list'
+
+ - type "/usr/local/bin/ssh-keygen -f /etc/ssh_host_key -N ''".
+
+ - type `halt'.  Remove diskette (no longer needed) and reboot.
+
+ - on hing, edit /etc/netgroup to add the new pdos machine to the pdospc
+   network group.  Then, cd /var/yp and type make (all of this as root).
+
+ - on amsterdam, after the hing step, cd /var/yp and type make (also as root).
+
+ - on new machine, type `sup -s' and patiently wait.
+
+ - after rebooted, run `/etc/rdist/pushpwd sled' on redlab.
+   Of course, replace "sled" with the proper machine name.
+
+ - when you get the prompt back, it is done!
+

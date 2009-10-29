@@ -1,0 +1,16 @@
+How to use the OpenBSD emulator:
+
+* Do a gmake install in the bin/emu directory.
+* type 'emulate' to get get usage info
+* you can set the EMULATOR environment variable to /bin/emulate and the loader
+  will automatically run the emulator run unrecognized binares. (but you
+  can't use the extra command line arguments to the emulator this way)
+
+There are some options. The neatest of which will keep a log file of
+all syscalls and their arguments.
+
+To run Mosaic:
+emulate Mosaic http://pdos/
+
+* currently lib/libc/os/shexec.c needs to be redone to work properly
+  with OpenBSD programs - sometimes it works, sometimes it doesn't

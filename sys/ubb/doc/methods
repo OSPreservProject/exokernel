@@ -1,0 +1,302 @@
+Simple methods.
+
+Have 
+	public : (can be called by client)
+	private : (can only be called by this type)
+	friend: T1, T2, T3, ... (can be called by the
+		listed types)
+
+very cool. very simple.  overriding is still a bit sucky, but what the
+hell.  That is for PLDI.
+
+How to bind?
+	Only allow the call to go through them?  this gets rid of the
+	binding problem with fields.  For the moment that is pretty
+	damn easy, neh?  
+
+	Problem: global updates are still a real pain.  Problem and then
+	we can start designing:  how to update the nbytes field in 
+	a parent?  Don't really want to have to go all the way back 
+	up through the parent.  
+
+	I suppose we could attach an annotation to the block (``decends
+	from x'') or something of that nature, right?  Ok.  This is
+	solution sort of sucks, though.  we don't really want to traverse
+	up through indirect, direct, etc blocks right?	I guess an
+	annotation is probably the best after all.  Or, they can make
+	some pieces sticky.  Can make it very clear: form a pointer between
+	this node and another ok.  This is sort of the spartan, in general,
+	requirement needed.
+
+	Now just need to typecheck.  Fucking mother fucking cool.
+
+	There can be a raw write, I suppose.
+
+--------------------------------------------------------------------
+[ *** need to allow aggregates to be formed from various pieces. ]
+
+	access control through type relationships
+
+	   	(harmless = inheritence, untrusted = marked)
+goals:
+
+	1. harmless augmentations are clearly such --- should not taint
+a node simply because we want *more* security.
+
+	2. able to ensure that only a particular type:method can call
+another.  this is a requirement for forcing sequences of methods to be
+called in combination *and only in combination* (e.g., modify_file_name
+is only called in conjunction with update_name_cache).
+
+	3. able to, if necessary, taint piece of the interface
+with replacement, but in such a way that only these pieces that
+could be harmed are seen, and no piece that cannot cann be clearly
+seperated.
+	
+	4. methods should not be ``privileged.'' able to have
+untrusting type sytems safely share state.  this is a confluence of the
+above features: want overwriding a method in file x to have absolutely
+no impact on file y.  further, augmenting file x should grant no new
+privileges on file y.  this is essentially a statement that methods are
+unprivileged and so are protected from harming things they do not have
+access too.
+
+	5. able to restrict interactions in clear, effective ways.
+enforcing composition is partly a requirement.
+
+the mechanism:
+  type paths - these can be highly specified or not.
+
+	D:rename -> S* -> I:change_name
+
+	(change name can only be called from a directory that reaches
+	it by going through 0 or more S's, and called by rename).
+
+        * -> I:read_name
+
+	read name can be called by anything.
+
+In full generality, for a method give a sequence of types, with
+operations specifying how many occurances of each.
+
+Augmentation:
+	inheritence: adds more semantics, but does not invalidate old
+	invariants.
+
+	replacement: may invalidate old invariants, but we want to be
+	able to specify *exactly* what falls under the tainted spell.
+
+EXOGOAL: should be to figure out what machinery to put in place so
+	*they* can do the above.  simpler to just do it first, but
+	later should redo.
+
+Why instead of servers: light weight vs heavy-weight.
+
+  Three styles of use:
+	1. augmentation: add further functionality in terms of existant
+	functions.  With methods, just overlay and can ensure things
+	are ok.  With servers either have to force overlaying via
+	capabilities or some such mechanism (may be possible to do with
+	a type system) and must also use IPC to go between (expensive).
+
+	2. extention: add a new method, for a new field that does not
+	impact the others.   methods is easy, without requires a new
+	server (for the same reasons as (1)).  Additionally, the issue
+	of lightweight logical segmentation comes up, complicating our
+	life.
+
+	3. replacement: methods allow us to know *exactly* what is tainted.
+	if i replace name modification routine, i can know that that is
+	the only thing that can be wrong (additionally, can insert tests
+	around it).  
+
+Inheritance lets you "tell" when something is safe. (ie. when the
+invariants you reqruire will be preserved).  The first two uses are
+inheritence.  
+   Is this what we want?  Or is there a better way?
+
+Servers: essentially layer (extra IPC) or duplicate (can't trust); additionally
+	forcing that a server cannot be called directly but must be called
+	after another (e.g., to enforce mod times) is problematic.  Simple
+	with methods.
+
+
+
+-------------------------------------------------
+
+#ifndef __UBB_AC_H__
+#define __UBB_AC_H__
+#include "ubb.h"
+
+typedef enum { U_NONE = 1, U_CAP, U_METHOD, U_PARENT } u_ac_t;   
+
+/* Different operations capabilities can protect. */
+typedef enum { 
+	U_READ = (1<<0), 	/* read in xn pt'd to by ptr. */
+	U_WRITE = (1<<1), 	/* write "	"	" */
+	U_EXEC = (1<<4),	/* run a method on this region. */
+	U_ALL = (U_READ | U_WRITE | U_BREAD | U_BWRITE | U_EXEC)
+} u_op_t;
+
+clear statement of what can be protected:
+   rule 1: 
+	If a ubb is associated with a byte range, you can only
+	modify it through the kernel.
+
+  rule 2: 
+	Before any byte range can be read or written you must have
+	the associated capability.
+
+  rule 3:
+	Currently specify in two ways (I know, it sucks, will unify 
+	into a special method ``raw'' and everything else. 
+
+	raw methods:
+		if you have the capability, can do the business.
+
+cap: 
+
+   How to say can only be read by the parent? (not sure)
+   How to say can only be read by methods? (nil raw set)
+
+	RAW: id_low, id_high
+     	UBB: id_low, id_high
+
+Want them to associate list of capabilities with each thing, right?
+	- can associate reads with anything associated with ubbs.
+	- can only assocate raw writes with things not associated
+	with methods (no, not true, is it?)  can only associate
+	raw writes with things not claimed exclusive province of
+	methods.
+
+this is confusing.
+
+	(0, 8, cap1, uread)
+
+/*
+ * Semantics: an privileged ``or'' of the ranges if the types
+ * are either (U_CAP and U_PARENT) or (U_METHOD and U_PARENT) 
+ * otherwise, it is an error.  We will (perhaps) 
+ *
+ * The thing to keep in mind is that the simple case is simple.
+ */
+struct ubb_ac {
+	size_t n;
+	struct ubb_eac { 
+		u_ac_t type;	/* type of entry. */
+		flags
+		size_t id; 	/* method or cap id. */
+		size_t lb, ub; 	/* byte range [lb, ub) */
+	} *acl;		/* list of all guards for type. */
+};
+
+struct ubb_type {
+	/* human readable string; no guarentees about contents. */
+	char type_name[80];	
+
+	size_t 	nbytes;		/* size of the object. */
+	struct ubb_library l;	/* methods for this type. */
+	
+	/* 
+	 * semantics of a capability: cannot call method unless you
+	 * have the cap for it?
+	 */
+	/* essentially the special case of mapping in uninterpreted
+	 * data. */
+	struct xn_ac ac;	/* access control for the type. */
+};
+
+#endif
+-----------------------------------------------------------------
+
+
+/* 
+ * How to grow extents?  *FOR THE MOMENT* force everything to be db aligned
+ * at the front.   We can ask them for the type, eh?  
+ * Does it need to be sent?  How to write db if it is not known?  I.e.,
+ * they ``don't care.''  What if they want to update more stuff?  Hmm.
+ * Convention to write the db in the first block?  Or send as the first
+ * argument.  Currently they *must* allocate the block. Baddddd.
+ */
+struct db_tuple {
+        db_t db;        /* hint to start allocating, nil for grow? */
+        size_t nelem;   
+        xn_elem_t t;    /* type. */
+};
+        
+/* How to know what library? <--- get that from the type. */
+ubb_alloc(da_t meta, size_t own_id, struct m_vec *mv, struct db_tuple *db) {
+        ask the meta data for capability x if it guards region
+                        (n, nbytes]?  or do we have the kernel check
+                this?  What, exactly, is the tradeoff here?
+        typedescription:
+                cap location <- do we allow overlap?
+                [base, nbytes] pairs for what it guards.
+
+                parent:
+                [base, nbytes]
+
+                method: (mdescription)
+                [base, nbytes]
+
+	given a capability and a byte range, check to see that
+	it is cool to run the code on that range.
+
+	They give us a byte region, right, and we just blast it in 
+	there.  Or, they give us index of a write method that can
+	just write what the method reads.  This seems most sensible.
+
+	Need to be more careful with modification times.
+
+	The problem is to ensure that raw writes are allowed.
+	just have a raw ``method?'' don't have to go through it,
+	can just modify directly. <--- going to be true on the 
+	byte range.
+
+	ah.  we want to see all capabilities, right?  otherwise
+	capability segregation will be a pain in the ass.
+
+	we want to know *exactly* what ranges are overlapping,
+	right?  map the block to a page where everyone has write
+	access to it, is this correct?
+
+	data page: they can map in pieces of a page.
+	have a raw read/write set.  allow them to associate
+	capabilies with it?
+
+struct access_control {
+	fuck it.  let them check directly instead of doing it ourselves,
+	right?
+
+	uch.  except every method must check, which is a bit of a bummer.
+
+	For each method say the list of caps that have access to it?
+
+cap list, method list.
+};
+}
+Need for sure:
+	1. way to associate method with byte range (i.e., cannot 
+	modify range except through it (or another in the list))
+
+		[ method # x SEQ of [lb, ub] ]
+		[ NONE x SEQ of [lb, ub] ]
+
+	2. way to guard sub-block byte ranges (clusters, whatever).
+		[ cap # x SEQ of [lb, ub] ]
+
+	3. Way to say only reachable from parent, can do (inherit
+	caps from there.) [..] type pointer
+		[ PARENT x SEQ of [lb, ub] ]
+
+	4.
+
+
++ want to be able to create fragments; how to indicate that
+	the subblock is owned?  we interpret something in the
+	parent?  another challeng, but not for now.
+
++ do protected subsystem using inheritence, right?
+
++ how to express that you must have permission for every dir down
+	from '/'?

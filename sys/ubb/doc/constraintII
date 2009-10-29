@@ -1,0 +1,451 @@
+   Allocate:
+	A->B edge
+	B->init = 0;
+
+   Can write:
+	If miss || state != PERSISTENT || n->outgoing == 0
+		return 1
+	else
+		return 0;
+
+   Write:
+	if !initialized
+		sect->init = 1;
+		if no edges
+			coalesce up
+	find a proxy <---- first owner of volatile pointer that reaches us.
+	create a link to us
+	write
+
+	need to write children below us (recursively); 
+		Sectors have pointers to kids that are in core.
+
+	free will free entries.
+
+   Free(block):
+	foreach sector
+		go up through dependencies, removing all to us.
+
+   Remove backing store:
+	When there is no will free.
+
+   Insert entry:
+	Must be reachable (if parent is) with no in core kids, right?
+
+   db -> type
+	backing store, what else, doesn't seem to need much.
+
+   Registry inserts the mapping. 
+   It is up to the registry to track verious shit.
+   All writes on non-volatile data are blocks. 
+
+   Note:
+	State transitions from volatile/reachable/persistent 
+	are made en mass.  (pointers point to blocks) --- ask
+	parent what state is, if you need it.
+
+	Parent entries (if not the pages) remain in core; can always
+	find them and, thus, create a dependency.
+
+	Persistent blocks can have dependencies on any other block
+	that will not create a cycle.
+
+	Volatile blocks cannot have dependencies to anything besides their
+	children.  This enforces a simple partial order (XXX there is
+	a theory problem here in making this restriction cogent and less).
+
+	Persistent sectors cannot be written to disk when they have
+	a dependency.
+	
+	Volatile blocks can be.  Must track that there is a dependency.
+	Do this by adding one from each parent until the volatile one
+	is hit: the next node is then saddled with this dependency.
+	Note will not hit a persistent block before volatile since
+	otherwise we would be persistent.
+
+	Reachable node with U -> create link from P -> R, not allowed
+	to write when exists.  Remove this link when R has no pointers.
+
+	Simple: 
+		Create edge when dependency created.
+			If N is persistent, cannot be written
+
+			If N is reachable, then on write, propogate up through
+			reachable nodes til hit the next volatile link and 
+			attach to N.
+
+		Remove edge when no links: happens when U -> I propogates
+		up.
+
+		Cool.
+
+	Attacht must free to *sectors* when sector freed, flush it.
+
+Can we falsely mark things as persistent?
+Can we falsely mark things as freeing kids? --- don't free until
+an entire block write, I guess.  Advantage is that the reg
+entry does not take too much space.
+ */
+
+/* Have sectors track where the tainted pieces are, right? */
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include <demand.h>
+#include <kexcept.h>
+#include <list.h>
+#include <table.h>
+#include <xn.h>
+
+/* The maximum amount of time we are willing to run with interrupts off. */
+#define MAX_VISIT	128
+
+#ifndef TEST
+#	define FREE(x) free(x)
+#	define MALLOC(x) malloc(x)
+#else
+#	include <kalloc.h>
+#	define MALLOC kalloc
+#	define FREE kfree
+#endif
+
+typedef unsigned long sec_t;
+
+/* Used for form edge A -> B. */
+struct edge {
+	struct sec *a;
+	LIST_ENTRY(edge)	out_next;	/* List of out edges. */
+
+	struct sec *b;
+	LIST_ENTRY(edge)	in_next;	/* List of in edges. */
+};
+
+   Remove sector:
+	When it is persistent 	% Otherwise may need to do a transition.
+	&& no outgoing edges 	% We don't depend on anything
+	&& no will free list 	% otherwise we don't know what to free.
+	&& no volatile children	% Need pointers to them to make transition
+
+The dependencies of free lists, etc are better left to higher level objects.
+Block writes, sector writes have to proceed differently.
+
+Add constraints to *persistent* nodes.
+
+struct sec {
+	unsigned epoch;
+	sec_t	sector;
+	unsigned ins;	/* Count of incoming edges. */
+	unsigned outs;	/* Count of outgoing edges. */ 
+	LIST_HEAD(elist, edge)	in, out;
+
+	struct rule_state	*state; 	/* Supplied by rules. */
+};
+
+	sec[4];
+
+	Cannot write if state is persistent and there are dependencies.
+
+	struct xr *xr;	/* Our parent object; used to get state. */
+	/* Each block has dependencies. */
+	Do fucking rules work on a god damned sector???
+
+	LIST_HEAD(wlist, xr)	willfree;  /* Free xr's when sector written. */
+
+	/* Parent gets list of stable and volatile kids from us. */
+	LIST_HEAD(vlist, xr)	v_kids;	   /* volatile kids. */
+	LIST_HEAD(slist, xr)	s_kids;	   /* stable kids. */
+
+/* Routines to track active nodes. */
+static Table_T sec_table;	/* Hold dependency entries. */
+
+static int insert(sec_t sec, struct sec *s)
+        { return Table_put(sec_table, (void *)sec, s) != (void *)-1; }
+static struct sec *delete(sec_t sec)
+        { return Table_remove(sec_table, (void *)sec); }
+static inline struct sec *lookup(sec_t sec) 
+	{ return Table_get(sec_table, (void*)sec); }
+
+/*
+ * Support routines for manipulating dependency graphs. 
+ */
+
+/* Does d have any connections to the outside world? */
+static int sec_can_free(struct sec *d) {
+	return !d->ins && !d->outs;
+}
+
+/* Can A be written? */
+xn_err_t sec_can_write(sec_t A, struct sec **a) {
+	struct sec *s;
+
+	if((s = lookup(A)) && s->outs)
+		return 0;
+	if(a)
+		*a = s;
+	return 1;
+}
+
+/* Install sector in table if it does not already exist. */
+static inline struct sec *sec_install(sec_t sec) { 
+	struct sec *s;
+
+	if((s = Table_get(sec_table, (void*)sec)))
+		return s;
+
+	if(!(s = MALLOC(sizeof *s)))
+		return 0;
+	LIST_INIT(&s->in);
+	LIST_INIT(&s->out);
+	s->sector = sec;
+	s->epoch = s->ins = s->outs = 0;
+
+	if(insert(sec, s))
+		return s;
+	FREE(s);
+	return 0;
+}
+
+/* Remove sector from our universe if there are no references to it. */
+static inline void sec_remove(struct sec *s) {
+	if(!sec_can_free(s))
+		return;
+	demand(!l_first(s->in) && !l_first(s->out), Should be nil!);
+	demand(s->sector, Bogus sector);
+	delete(s->sector);
+	FREE(s);
+}
+
+/* Add edge a-> b (assumes they have been installed). */
+static struct edge *add_edge(struct sec *a, struct sec *b, int *found) {
+	struct edge *e;
+	struct edge *p, *l;
+
+        /* Find sorted place for it. */
+        for(p = 0, l = l_first(a->out); l; p = l, l = l_next(l, out_next)) {
+		if(l->b > b)
+			break;
+		if(l->b == b) {
+                       *found = 1;
+			return l;
+		}
+	}
+
+	*found = 0;
+	if(!(e = MALLOC(sizeof *e)))
+		return 0;
+
+	e->a = a;
+	a->outs++;
+        if(!p) 	l_enq(a->out, e, out_next);
+        else 	l_enq_after(p, e, out_next);
+
+	e->b = b;
+	b->ins++;
+	l_enq(b->in, e, in_next);
+
+	return e;
+}
+
+/* Remove edge a -> b. */
+static void remove_edge(struct sec *a, struct sec *b, struct edge *e) {
+	demand(e->a == a, Bogus A);
+	demand(e->b == b, Bogus B);
+
+	l_remove(e, out_next);
+	l_remove(e, in_next);
+
+	a->outs--;
+	b->ins--;
+	FREE(e);
+	sec_remove(a);
+	sec_remove(b);
+}
+
+/*
+ * Detection of cycles using mark and sweep. 
+ */
+static unsigned epoch;		/* [0 to +inf) used to detect cycles. */
+static int no_cycle(struct sec *a, int visited) {
+	int res, cum;
+	struct edge *e;
+
+	if(a->epoch == epoch)
+		return 0;
+	if(visited >= MAX_VISIT) {
+		fatal(Too many nodes were visited);
+		return 0;
+	}
+
+	a->epoch = epoch;
+	cum = visited;
+	for(e = l_first(a->out); e; e = l_next(e, out_next)) {
+		if(!(res = no_cycle(e->b, visited)))
+			return 0;	
+		cum += res;
+	}
+	return cum + 1;
+}
+
+static int has_cycle(struct sec *a) {
+	epoch++;
+	return !no_cycle(a, 0);	
+}
+
+/*
+ *  External interface.
+ */
+
+/* Make A depend on B. */
+xn_err_t sys_sec_depend(sec_t A, sec_t B) {
+	struct sec *a, *b;
+	struct edge *e;
+	int found;
+
+	/* Make sure we have space for edge. */
+	if(!(a = sec_install(A)))
+		return XN_CANNOT_ALLOC;
+	if(!(b = sec_install(B))) {
+		sec_remove(a);
+		return XN_CANNOT_ALLOC;
+	}
+
+	/* The real work: see if adding edge creates a cycle. */
+	if(!(e = add_edge(a, b, &found)))
+		return XN_CANNOT_ALLOC;
+	if(found || !has_cycle(a))
+		return XN_SUCCESS;
+	remove_edge(a, b, e);	/* Remove cycle. */
+	return XN_CYCLE;
+}
+
+
+xn_err_t sys_sec_can_write(sec_t A) {
+	return sec_can_write(A, 0) ? 
+		XN_SUCCESS : XN_TAINTED;
+}
+
+/* Remove all dependencies on B. */
+xn_err_t sec_write(sec_t B) {
+	struct sec *b;
+
+	/* no dependencies at all. */
+	if(!sec_can_write(B, &b))
+		return XN_TAINTED;
+	else if(b) {
+		struct edge *l, *p;
+
+		/* Remove all edges to b and (free is implicit). */
+		for(l = l_first(b->in); l; l = p) {
+			p = l_next(l, in_next);
+			remove_edge(l->a, b, l);
+		}
+	}
+	demand(!lookup(B), Should have been removed);
+	return XN_SUCCESS;
+}
+
+#ifdef TEST
+
+#define EDGES	10
+
+static void make_edges(int n, int step) {
+	int i, j;
+
+	printf("Testing simple linear dependencies.\n");
+	for(i = 1; i <= n; i += step) {
+		printf("i = %d\n", i);
+		demand(sys_sec_depend(i, i + step) == XN_SUCCESS, sec failed!);
+		demand(sys_sec_can_write(i + step) == XN_SUCCESS, cannot fail); 
+	}
+
+	printf("Exhaustive circularity test.\n");
+	for(j = 1; j < n; j++)
+		for(i = j; i > 0; i--) {
+			printf("(i, j) = (%d, %d)\n", i, j);
+			demand(sys_sec_depend(j, i) == XN_CYCLE, Must fail);
+			demand(sys_sec_can_write(n+step) == XN_SUCCESS, cannot fail); 
+		}
+
+
+	for(i = 1; i < n; i += step)
+		demand(sec_write(i) == XN_TAINTED, Must fail);
+	for(i = n+1; i > 0; i -= step) {
+		printf("(i) = %d\n", i);
+		demand(sec_write(i) == XN_SUCCESS, Must succeed);
+	}
+	demand(!k_memcheck(), memcheck failed!);
+
+	printf("Many to one test.\n");
+	for(i = 1; i < n; i++)
+		assert(sys_sec_depend(i, n + 1) == XN_SUCCESS);
+	for(i = 1; i < n; i++)
+		assert(sys_sec_depend( n + 1, i) != XN_SUCCESS);
+	demand(sec_write(n + 1) == XN_SUCCESS, Must succeed);
+	demand(!k_memcheck(), Should have removed all dependencies);
+	
+	printf("One to many test.\n");
+	for(i = 1; i < n; i++) {
+		printf("i = %d\n", i);
+		assert(sys_sec_depend(n+1, i) == XN_SUCCESS);
+		assert(sys_sec_depend(n+1, i) == XN_SUCCESS);
+	}
+
+	for(i = 1; i < n; i++) {
+		assert(sys_sec_depend(i, n+1) == XN_CYCLE);
+		assert(sys_sec_can_write(n+1) == XN_TAINTED);
+		assert(sys_sec_depend(n+1, i) == XN_SUCCESS);
+	}
+
+	for(i = 1; i < n; i++) {
+		assert(sys_sec_can_write(n+1) == XN_TAINTED);
+		assert(sys_sec_depend(i, n+1) == XN_CYCLE);
+	}
+	for(i = 1; i < n; i++) 
+		demand(sec_write(i) == XN_SUCCESS, Must succeed);
+	demand(sys_sec_can_write(n+1) == XN_SUCCESS, Must succeed);
+	demand(!k_memcheck(), Should have removed all dependencies);
+
+	/* Now all schedules should succeed. */
+	for(i = n; i > 1; i -= step)
+		demand(sys_sec_depend(i, i - 1) == XN_SUCCESS, Must succeed);
+}
+
+int main() {
+	sec_table = Table_new(128, 0, 0);	
+	make_edges(EDGES, 1);
+	printf("Success!\n");
+	return 0;
+}
+#endif
+
+#if 0
+/* Make A depend on [B, B + nsecs) */
+int add_edges(sec_t A, sec_t B, size_t nsecs) {
+	int i, res;
+
+	for(i = 0; i < nsecs; i++)
+		if((res = add_edge(A, sec + i)) < 0) {
+			clear_sectors(A, sec, i);
+			return res;
+		}
+	return XN_SUCCESS;
+}
+
+/* 
+ * Cycle detection is expensive.  Probably want to do it all at once,
+ * right? 
+ */
+
+int add_sectorv(struct sec_vec *v, size_t nelem) {
+	int i;
+
+	for(i = 0; i < nelem; i++, v++)
+		if((res = add_edgev(v->A, v->B, v->nsecs)) < 0) {
+			delete_edgev(v, i);
+			return res;
+		}
+
+	return XN_SUCCESS;
+}
+#endif

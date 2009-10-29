@@ -1,0 +1,59 @@
+Future projects...
+
+
+I haven't yet done 4M page tables.  This are enabled/disabled for
+Linux in include/asm/pgtable.h
+
+Demand page physical memory.  Give guest n megs, but only allocate it
+when they use it.
+
+FPU can throw exceptions, and it has state to be virtualized.  I
+haven't thought about it much.
+
+finish cpu.c:guest_ports_accessible() to trap bad guest apps
+
+virtualizations:  disk, keyboard, ...
+
+port.c needs cleaned up.
+
+Shrink the footprint in the virtual address space:
+- Compile this with libwafer, not libexos
+- Make my own memory handling stuff; don't use malloc, strdup, etc.
+- Remove segments -- linux doesn't care, but others might.
+    look at ethernet stuff -- these used segments?  no longer?
+- Load monitor higher.  See:
+    bin/exosloader/os/shexec.c
+    GNUmakefile.global
+
+Make a tmp REGs which is used for emulation, and rolled back if an
+exception occurs, else is copied over.  Keeps things simpler, cleaner.
+
+grep for FIXME, XXX, and ERR_UNIMPL
+
+use sys_batch for [un]protect regions of memory.  Actually do it right
+before leaving the monitor.
+
+if CPL isn't taken from descriptor, is there any reason at all to
+write protect LDT?
+
+make prot_transition, etc, cleaner.  Make it   if (!IS_PE || prot_transition...)
+disable the hardware interrupt we're currently servicing...
+virtualize eflags better -- keep in vmstate.  or just use VIF?  for IF, ... ?
+bc errors  pagetable.c  search on -E_BUFFER
+beware in handlers; guest will have things mapped with supervisor bit.
+  make handlers check if they can read/write a guest page before trying.
+  put that in set_memory
+  pull out of pagefault.c
+times out -- might the time out error be caused by not having IF set?
+  in_revocation set too long
+  set when entering epilogue
+  ..explicitly yielding fixes this, but then keyboard is dead.  :(
+int.c:run_int() expects real mode?
+should i set TS (CR0) in the prologue?  kinda like a task switch.
+  also in prologue, restore GDT, etc, if multiple guests
+all memory should go through get/set_memory to catch guest exceptions
+get_descrpitor copies it; don't always have to.  make a const struct gate *get_descr_ptr()
+in general, cache aspects of guest descriptor tables rather than reparsing.
+sys_run_guest could watch the VM flag.  If changes to set, fix IDT so that GPF
+ goes to kernel.  If changes to cleared, fix IDT back to uidt.   ....assumes
+ only 1 guest though.   or make syscall to make it direct/indirect

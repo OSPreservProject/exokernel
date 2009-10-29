@@ -1,0 +1,20 @@
+The buffer cache is simply a map from pairs (device, block) -> ppn
+where ppn holds a 4k block. Every application can read from the buffer
+cache directly and map any pages containing buffers that it has
+capabilities for. By convention, the buffer's page is protected by the
+same capabilities that protect the block on disk. There is a single
+system call to insert a new block into the cache. The kernel requires
+that the proc doing the insertion have write permission for the
+relevant page being inserted and that the proc pass in a proxy-xnode
+that shows the proc has write permission to the underlying block.
+
+A buffer is guranteed not to be deallocated out from under a process
+that is mapping the buffer. If no one is mapping the buffer the kernel
+will keep the page in the buffer cache until the kernel runs out of
+pages. At this point the kernel will start taking pages that no one is
+mapping from the buffer cache.
+
+test/bc/main.c gives a rough example of how to create a proxy xnode,
+how to add an extent to it, and then how to insert pages into the
+buffer cache and how to later look them up. See sys/kern/bc.c for more
+details, specifically the meaning of arguments to sys_bc_insert.

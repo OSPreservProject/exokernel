@@ -1,0 +1,208 @@
+
+#/*
+# * Copyright (C) 1997 Massachusetts Institute of Technology 
+# *
+# * This software is being provided by the copyright holders under the
+# * following license. By obtaining, using and/or copying this software,
+# * you agree that you have read, understood, and will comply with the
+# * following terms and conditions:
+# *
+# * Permission to use, copy, modify, distribute, and sell this software
+# * and its documentation for any purpose and without fee or royalty is
+# * hereby granted, provided that the full text of this NOTICE appears on
+# * ALL copies of the software and documentation or portions thereof,
+# * including modifications, that you make.
+# *
+# * THIS SOFTWARE IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS MAKE NO
+# * REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED. BY WAY OF EXAMPLE,
+# * BUT NOT LIMITATION, COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR
+# * WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR
+# * THAT THE USE OF THE SOFTWARE OR DOCUMENTATION WILL NOT INFRINGE ANY
+# * THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. COPYRIGHT
+# * HOLDERS WILL BEAR NO LIABILITY FOR ANY USE OF THIS SOFTWARE OR
+# * DOCUMENTATION.
+# *
+# * The name and trademarks of copyright holders may NOT be used in
+# * advertising or publicity pertaining to the software without specific,
+# * written prior permission. Title to copyright in this software and any
+# * associated documentation will at all times remain with copyright
+# * holders. See the file AUTHORS which should have accompanied this software
+# * for a list of all copyright holders.
+# *
+# * This file may be derived from previously copyrighted software. This
+# * copyright applies only to those changes made by the copyright
+# * holders listed in the AUTHORS file. The rest of this file is covered by
+# * the copyright notices, if any, listed below.
+# */
+
+# create
+# pax -r -f lcc.pax lcc
+# extract
+# pax -r -f lcc.pax
+
+sub usage {
+    print STDERR "usage: perl dawson3 #iterations [logfile [m]]\n";
+	exit 1;
+}
+
+$iterations = shift(@ARGV);
+($iterations && $iterations =~ /^\d+/) || &usage();
+
+$log = shift(@ARGV);
+if ($log) {
+    print STDERR "Logging to file: $log\n";
+    $flag = shift(@ARGV);
+    if ($flag) {
+	print STDERR "Please type a message, enter '.' when done\n";
+	while(<>) {
+	    if (/^\./) {last;}
+	    $msg .= $_;
+	}
+    }
+    $status = open(STDOUT,">$log");
+    if ($status == 0) {
+	print STDERR "Error: Could not write to logfile: $log\n";
+	exit 2;
+    }
+    if ($flag) {print $msg;}
+}
+print STDERR "Starting.\n";
+$pass = 0;
+%bench = ();
+print "Doing $iterations iterations\n";
+
+@names = ("Copy small file",
+	  "Uncompress of large file",
+	  "Large copy",
+	  "Untar large tree",
+	  "Copy large tree ",
+	  "Diffing large tree",
+	  "Compiling",
+	  "Deleting many small files",
+	  "Tar large tree",
+	  "Compress large file",
+	  "Delete large tree ",
+	  "Total Time");
+
+
+while ($pass++ < $iterations) {
+    print "\#\n\# Doing pass $pass\n\#\n";
+    $bench{0,$pass} = &run("Copy small file", "cp lcc-3.6.tar.gz lcc.tar.gz");
+    $bench{1,$pass} = &run("Uncompress of large file", "gzip -d lcc.tar.gz");
+    $bench{2,$pass} = &run("Large copy", "cp lcc.tar lcc-copy.tar");
+    $bench{3,$pass} = &run("Untar large tree", "tar -x -f lcc-copy.tar");
+    $bench{4,$pass} = &run("Copy large tree ", "cp -R lcc-3.6 lcc-copy");
+    $bench{5,$pass} = &run("Diffing large tree", "diff -r lcc-3.6 lcc-copy");
+    $bench{6,$pass} = &run("Compiling", "gcc -pipe -c lcc-copy/src/*.c");
+    $bench{7,$pass} = &run("Deleting many small files", "rm -f *.o");
+    $bench{8,$pass} = &run("Tar large tree", "tar -c -f lcc.tar lcc-3.6");
+    $bench{9,$pass} = &run("Compress large file", "gzip lcc.tar");
+    $bench{10,$pass} = &run("Delete large tree ", "rm -rf lcc.tar.gz lcc-copy.tar lcc-3.6 lcc-copy");
+    $lsum = 0;
+    foreach $i (0..10) {$lsum += $bench{$i,$pass};}
+    $bench{11,$pass} = $lsum;
+    printf "Total Time: %3.2f seconds\n", $lsum;
+#    foreach $i (0..10) {print "bench{$i,$pass} = ",$bench{$i,$pass},"\n";}
+}
+
+foreach $i (0..11) {
+    @numbers = ();
+    foreach $j (1..$iterations) {push(@numbers,$bench{$i,$j});}
+
+    printf "%-28s  -  min %3.2f max %3.2f ",
+    @names[$i],&minimum(@numbers),&maximum(@numbers);
+    $avg = &average(@numbers);
+    printf "avg %3.2f  stddev: %3.2f\n",$avg,&stddev($avg,@numbers);
+}
+
+print "\nTimes for each run\n";
+foreach $i (0..11) {
+    @numbers = ();
+    foreach $j (1..$iterations) {push(@numbers,$bench{$i,$j});}
+    printf "times %-28s: ",@names[$i];
+    foreach $i (@numbers) {printf "%3.2f ",$i;}	
+    print "\n";
+#    print "@numbers\n";
+}
+
+exit 0;
+
+#
+# Subroutines
+#
+
+# large copy
+# recursive copy
+# compilation of *.c files
+sub run {
+	local($name, $cmd) = @_;
+	local(@times);
+
+	$| = 1;
+	print "$name: <$cmd> took ";
+	open(TIME, "/usr/bin/time $cmd 2>&1 | ") ||
+		die("Can't run time $cmd: $!\n");
+
+	while(<TIME>) {
+#		print "time = $_\n";
+		if(/(\d+.\d+)\s+real/) {
+			push(@times, $1);
+		} elsif(/^time:\s+(\d+\.\d+)/) {
+			push(@times, $1);
+	        # keep this more specific pattern (for linux)
+		# ahead of the next one
+		} elsif(/(\d+):(\d+\.\d+)elapsed/) {
+			push(@times, $1 * 360 + $2);
+			$skip = <TIME>;
+		} elsif (/(\d+):(\d+\.\d+)/) {
+			push(@times, $1 * 360 + $2);
+		} else {
+			print "Random text seen <<<$_>>>\n";
+		}
+	
+	}
+	close(TIME);
+	$#times > -1 || die "There were no times!\n";
+
+	foreach (@times) {
+		printf "%.2f  CPU seconds\n", $_;
+		return $_;
+	}
+}
+
+sub minimum {
+    local(@numbers) = @_;
+    local($min, $i);
+    $min = @numbers[0];
+    foreach $i (@numbers) {
+	$min = $i  if ($i < $min) ;}
+#    print "minimum of @numbers is $min\n";
+    return $min;
+}
+
+sub maximum {
+    local(@numbers) = @_;
+    local($max, $i);
+    $max = @numbers[0];
+    foreach $i (@numbers) { $max = $i  if ($i > $max);}
+    return $max;
+}
+
+sub average {
+    local($size,$sum,$i);
+    local(@numbers) = @_;
+    $size = @numbers;
+    $sum = 0;
+    foreach $i (@numbers) {$sum += $i;}
+    return $sum/($#numbers + 1);
+}
+
+
+sub stddev {
+    local($avg,@numbers) = @_;
+    local($sum,$i);
+    $sum = 0;
+    foreach $i (@numbers) {$sum += ($i - $avg)**2;}
+    return sqrt $sum ;
+
+}

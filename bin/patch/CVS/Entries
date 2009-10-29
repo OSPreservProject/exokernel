@@ -1,0 +1,24 @@
+/.cvsignore/1.1/Thu Oct  1 01:37:15 1998/-ko/
+/ChangeLog/1.1/Thu Oct  1 01:37:15 1998/-ko/
+/EXTERN.h/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/GNUmakefile/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/INTERN.h/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/Makefile/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/README/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/backupfile.c/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/backupfile.h/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/common.h/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/config.h/1.1/Thu Oct  1 01:37:16 1998/-ko/
+/inp.c/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/inp.h/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/malloc.c/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/patch.1/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/patch.c/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/patchlevel.h/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/pch.c/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/pch.h/1.1/Thu Oct  1 01:37:17 1998/-ko/
+/util.c/1.1/Thu Oct  1 01:37:18 1998/-ko/
+/util.h/1.1/Thu Oct  1 01:37:18 1998/-ko/
+/version.c/1.1/Thu Oct  1 01:37:18 1998/-ko/
+/version.h/1.1/Thu Oct  1 01:37:18 1998/-ko/
+D

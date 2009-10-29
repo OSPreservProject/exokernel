@@ -1,0 +1,11 @@
+/if_ether.h/1.2/Thu Sep 24 23:35:13 1998/-ko/
+/in_systm.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+/ip.h/1.2/Thu Sep 24 19:00:01 1998/-ko/
+/ip_icmp.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+/ip_var.h/1.2/Thu Sep 24 19:00:02 1998/-ko/
+/tcp.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+/tcp_var.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+/tcpip.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+/udp.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+/udp_var.h/1.1.1.1/Mon Jun 22 13:13:25 1998/-ko/
+D

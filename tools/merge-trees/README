@@ -1,0 +1,29 @@
+!!! ALPHA QUALITY SOFTWARE !!!
+
+Attempt at merging overlapping changes from multiple cvs trees. The situation
+handled is where you have a local cvs tree and are trying to track changes
+made by several other people's cvs trees. 
+
+Suppose you're trying to track changes made in tree A and incorporate them
+into B. Then you need to keep the latest and the next to latest copies
+of tree A and your latest copy of tree B. Then run 
+
+merge-trees B A.new A.old
+
+You can optionally supply -n to tell merge-trees to not actually change
+any files but instead print the status of each file.
+
+Each file processed (CVS, obj, and .orig files are ignored) is printed
+with a status of:
+
+LA	Locally added (B has it but not A.new or A.old)
+LD	Locally deleted (A.new and A.old have it but not B)
+RA	Remotely added (B and A.old do not have it but A.new does)
+RD	Remotely deleted (B and A.new do not have it but A.old does)
+P	Needs merging
+C	Needs merging but might have conflicts
+
+Each file that is changed (those marked with P or C) is backed up into
+it's name+.orig.
+
+

@@ -1,0 +1,6 @@
+# These are content-encoding definitions, indicating a MIME name followed
+# by the file name extensions that indicate them.
+
+x-compress         Z
+x-gzip             gz
+

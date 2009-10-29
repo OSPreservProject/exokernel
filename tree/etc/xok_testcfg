@@ -1,0 +1,12 @@
+#!/bin/sh
+if grep -s exopc_boot /etc/inetd.conf; then
+	exit 0
+fi
+cat >> /etc/services <<- EOF
+	exopc_boot	3330/tcp    # exopc auto_boot
+	exopc_test	3331/tcp    # exopc auto_test
+EOF
+cat >> /etc/inetd.conf <<- EOF
+	exopc_boot	stream	tcp	nowait	root	/etc/xok_update
+	exopc_test	stream	tcp	nowait	root	/etc/regression
+EOF

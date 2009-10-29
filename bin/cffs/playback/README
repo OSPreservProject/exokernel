@@ -1,0 +1,21 @@
+playback.c	Source code for the aging program.  
+master		Aging workload used in the USENIX paper.  This simulates
+		300 days of activity on a 500 MB file system.
+run_it		Sample script for running the aging program.  This builds
+		a file system with the same parameters that I used, and then
+		runs the aging program on it.  If you use this, you will
+		want to change the device names and the mount point to
+		correspond to your system.
+
+The usage of the playback program is explained in the opening comments of
+playback.c.  Note that the inodes per cylinder group and the number of
+cylinder groups should be set according to the file system that the
+aging workload was generated from.  See run_it for the correct parameters.
+
+The workload file (master) contains a line reading "SCORE" after each day
+of activity.  If the -c option to playback is used, you can specify a
+command, or script, to be executed each time playback encounters a 
+score directive.  This is how I computed the daily layout scores in
+Figures 1 and 2 of the paper.  The scoring tools that I used are 
+available from http://www.eecs.harvard.edu/~keith/usenix.1995.html
+I will make the correct script, using these tools, available here soon.

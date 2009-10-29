@@ -1,0 +1,42 @@
+Basic Block Counts
+
+What you get: a count for each basic block that tells you how many
+times it was executed, along with the procedure and filename that the
+block is in.
+
+What you don't get: any kind of idea as to how long a procedure takes
+to execute, any idea as to which procedure is taking up the most time
+or cycles, or even instructions.
+
+1. Compile the program you want basic block counts for with the "-a"
+option, one way to do this is to put "DEFS = -a" in the GNUmakefile
+for you program.  This will insert code in each basic block and calls
+to some init and exit functions.
+
+2. Link the program with libgccbb.a.  It has the code for the init and
+exit functions.
+
+3. Run your program.  When it exits, it will create a file "bb.out"
+that is human readable.  If the file already exists, information will
+be appended to it.  If your program doesn't normally exit (like if
+it's a web-server), then you can call "void __bb_exit_func (void)"
+explicitly to write out the data.  But remember that it appends data,
+so if you don't want the file to grow large you should modify gccbb.c
+or delete the file before calling __bb_exit_func.
+
+- BUGS: Sometimes when appending data to bb.out, trash gets inserted.
+But there's no problem if bb.out doesn't already exist.
+
+- The code in gccbb.c was taken from libgcc2.c which comes with gcc.
+For some reason it doesn't work properly on xok, but it does if I move
+these procedures to a separate file and I don't know why, but that's
+not important as long as it works.
+
+- Enhancements could be made to __bb_exit_func to output data in a
+different format or for better analysis, if someone wants to put in
+the time.
+
+- Note that if the -g option is not used during compilation (it is
+currently the default) then you won't get quite as much information
+out of the bb.out file.  And stripping the executable will probably
+cause problems, though I haven't tried it.

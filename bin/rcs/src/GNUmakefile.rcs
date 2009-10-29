@@ -1,0 +1,16 @@
+TOP = ../../..
+PROG = rcs
+o = .c
+
+SRCFILES = rcs$o rcslex$o rcssyn$o rcsrev$o rcsutil$o rcsgen$o \
+	rcsedit$o rcskeys$o rcsmap$o rcsfnms$o rcskeep$o \
+	maketime$o partime$o rcstime$o version$o
+DEFS=-Dlint
+DEFS +=  -Dhas_conf_h 
+UNINITOK = $(SRCFILES)
+UNUSEDOK = $(SRCFILES)
+WARNOK = rcs.c
+
+EXTRAINC = -I$(TOP)/lib/libc -I. -I..
+EXTRAOBJ = 
+include $(TOP)/GNUmakefile.global

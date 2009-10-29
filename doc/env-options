@@ -1,0 +1,11 @@
+This file explains how setting various environment variables will
+affect the running of ExOS:
+
+HEAP_ZERO - the heap will be zeroed
+NO_HEAP_DEMAND_ALLOC - all the memory for the heap will be allocated during
+			 the call to brk
+NO_HEAP_SOFT - by default, ExOS will not immediate deallocate all unused memory
+			when the breakpoint is decremented.  This option will
+			makes sure all unused memory is deallocated.
+NO_DEMAND_LOAD - by default, programs linked to use the shared library will
+			be demand loaded

@@ -1,0 +1,31 @@
+Synchronization
+
+Procedures that are synchronized are tagged with SYNC at the end of the
+declaration. For example,
+
+extern void sched_runnext(void) SYNC
+
+If a procedure assumes that upon entry it must be in a critical section, it
+will have the tag REQ_SYNC
+
+
+The following locks can be acquired at anytime, but must be released before
+any other locks are attempted - in other words, they have very short
+life-span:
+
+  SYSINFO
+
+The following is a strict locking order:
+
+  QVEC[n]_LOCK
+  ipimsg_lock
+  e->env_klock
+  e->env_pd->envpd_klock
+  MALLOC_LOCK
+  pp->pp_klock
+  ENV_LIST_LOCK
+  PPAGE_FLIST_LOCK
+  PPAGE_FBUF_LOCK
+  KBD_LOCK
+  CONSOLE_LOCK
+

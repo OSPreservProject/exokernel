@@ -1,0 +1,23 @@
+/action.c/1.1/Thu Jun  3 15:17:35 1999/-ko/
+/action.h/1.1/Thu Jun  3 15:17:35 1999/-ko/
+/consistency.c/1.3/Thu Jun  3 15:17:35 1999/-ko/
+/demand.h/1.4/Thu Jun  3 15:17:35 1999/-ko/
+/dpf-config.h/1.1/Thu Jun  3 15:17:35 1999/-ko/
+/dpf-internal.h/1.2/Thu Jun  3 15:17:36 1999/-ko/
+/dpf-ir-print.c/1.3/Thu Jun  3 15:17:36 1999/-ko/
+/dpf-ir.c/1.3/Thu Jun  3 15:17:36 1999/-ko/
+/dpf.c/1.7/Mon Jul 12 19:22:42 1999/-ko/
+/dpf.h/1.4/Thu Jun  3 15:17:36 1999/-ko/
+/fast-interp.c/1.3/Sun Nov 14 13:19:50 1999/-ko/
+/gen.c/1.2/Tue Jul 28 07:25:55 1998/-ko/
+/hash.h/1.1/Thu Jun  3 15:17:36 1999/-ko/
+/interp.c/1.1.1.1/Mon Jun 15 21:11:17 1998/-ko/
+/old-dpf.h/1.2/Thu Jun  3 15:17:36 1999/-ko/
+/optimize.c/1.2/Thu Jun  3 15:17:36 1999/-ko/
+/output.c/1.4/Mon Jun 14 20:16:38 1999/-ko/
+/pid.c/1.1/Thu Jun  3 15:17:36 1999/-ko/
+/queue.h/1.1/Thu Jun  3 15:17:37 1999/-ko/
+/queue.man/1.1/Thu Jun  3 15:17:37 1999/-ko/
+/sysdpf.c/1.11/Wed Sep  8 23:46:32 1999/-ko/
+/xlate.c/1.2/Tue Jul 28 07:25:58 1998/-ko/
+D

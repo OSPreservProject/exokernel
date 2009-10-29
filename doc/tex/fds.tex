@@ -1,0 +1,41 @@
+
+ExOS uses a VFS like interface between high-level file operations like
+read, write, close, etc and the underlying filesystem object that
+a fd represents.\footnote{see lib/libexos/fd/proc.c} Each underlying
+object specifies an array of function pointers that implement the
+specified operation allowing new filesystem objects to be transparently
+used.
+
+Several of these file object methods deserve particular attention
+because they do not correspond to typical VFS-like operations:
+
+\begin{itemize}
+
+\item {\bf select\_pred}: This returns a wakeup predicate that will evaluate
+to true when the object is ready for an operation. The top level fd code
+collects wakeup predicates from all fd objects that a select is being
+done on and concatenates them together to form one large predicate
+that the process blocks on.
+
+\item {\bf lookup}: This implements a partial namei. It maps a single
+pathname component from one file object to another. The source and
+destination file objects may be different types of file objects
+if the pathname component corresponds to crossing a mount point.
+
+\item {\bf bmap}: Translates a logical block number to a physical
+block number. Both block numbers are only meaningful to the
+underlying fd object. For example, an NFS fd object might implement
+this function as the identity function since NFS has no concept of
+physical block. This function is used when programs wish to bypass the
+normal filesystem operations and want to read/write an object's blocks
+directly.
+
+\item {\bf mount}: Associates a mapping from one file object to another.
+Subsequent lookup operations at this point will return the new file
+object.
+
+\item {\bf close0}: Close operation called on the underlying object
+every time close is called on the fd. The close method is only
+called when the last reference to an fd is closed.
+
+\end{itemize}

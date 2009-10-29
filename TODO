@@ -1,0 +1,49 @@
+
+Of mucho importance: Documentation!
+
+Critical clean-up activities:
+-----------------------------
+
+1. Regression tests (for both performance and correctness)
+2. Crash recovery of local storage
+   -- XN
+   -- C-FFS
+3. Support for <ctl>-C
+   -- signals and process groups
+4. Real use of capabilities
+   -- also, protection in XN
+   -- also, clean up system calls (protection)
+5. Clean XN/BC/pmap interactions
+   -- do XN protection check during mapping of BC pages
+   -- remove XN registry entries appropriately
+   -- check with XN before considering a BC entry reclaimable
+6. Allow page table sharing and use it for fork
+7. Expose ppage structures and have explicit (rather than implicit) allocation.
+8. Real dynamic shared libraries.
+9. Elimination of the remaining global shared memory structures.
+    -- file descriptors/filps
+    -- UDP socket information
+    -- mount table
+    -- what else??
+10. Find and fix the lingering random process crashes!!
+11. Clean the ExOS level VM and physical page allocation mechanisms
+    -- uniform support for allocating either with particular behavioral
+       characteristics (e.g., shared across forks, shared across execs,
+       immediately allocated physical pages, writeable or not, etc...)
+12. Add support for registering "atPrologue" and "atEpilogue" functions
+13. Fix time management to avoid both the current skew from the rest of
+    the world, and the time reversal that was previously preventing skew.
+14. Fix TCP sockets to correctly support inaddr for both bind and getsockname.
+15. Fix strip or the reason we can't boot xok made xok (only xok.gdb)
+
+Additional functionality needed:
+--------------------------------
+1. Page revocation and paging/swapping.
+2. More drivers (e.g., IDE, other networks).
+3. Harvest and NCSA (for HTTP server comparisons).
+4. Fast NFS server.
+5. X (client and server)
+6. Better binary layout - perhaps ELF
+7. Native debugger
+8. Some type of per-process access to LDT (local descriptor table)
+	to enable emulation of NetBSD, for example

@@ -1,0 +1,23 @@
+/.cvsignore/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/AUTHORS/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/COPYING/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/GNUmakefile/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/Makefile/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/NEWS/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/PROJECTS/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/README/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/dfa.c/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/dfa.h/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/getopt.c/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/getopt.h/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/getpagesize.h/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/grep.c/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/grep.h/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/kwset.c/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/kwset.h/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/obstack.c/1.1.1.1/Mon Jun 15 21:08:36 1998/-ko/
+/obstack.h/1.1.1.1/Mon Jun 15 21:08:37 1998/-ko/
+/regex.c/1.1.1.1/Mon Jun 15 21:08:37 1998/-ko/
+/regex.h/1.1.1.1/Mon Jun 15 21:08:37 1998/-ko/
+/search.c/1.1.1.1/Mon Jun 15 21:08:37 1998/-ko/
+D

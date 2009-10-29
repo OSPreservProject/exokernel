@@ -1,0 +1,34 @@
+This file describes the changes from OpenBSD's files.
+tty_subr.c:
+	-has clist management routines.  
+	We make use of variable CLALLOCSZ (==1024), and variable
+	NCLISTS (for bitmask alloctaion).  
+	We use the define STATIC_ALLOCATION, to determine where we
+	"malloc" the clists from.
+	
+	renamed putc and getc to cl_putc and cl_getc
+	removed a couple of unnecessary header files
+
+tty_pty.c:
+	pt_softc struct is allocated by pt_softc_init
+	the prototype to ttymalloc is changed to include minor number
+
+	tty_attach and tty_detach are disbled since no need to keep a
+tty_tty.c:
+	replaced by ctty.c
+
+terminal list
+
+	renamed ttyflush to __ttyflush
+
+sys/tty.h made it practically identical.
+
+sw.c takes the role of tty_conf.c
+
+subr_xxx.c: same as OpenBSD
+subr_uio.c: similar to kern_subr.c of OpenBSD
+
+os/synch.c: implements tsleep and wakeup, similar to kern_synch.c of OpenBSD
+
+ttymalloc, clalloc, and clfree, are not used because the tty structures are 
+preallocated

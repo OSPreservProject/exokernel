@@ -1,0 +1,7 @@
+Implements simple send and receive test for different size of packets and 
+different patterns of contents. it tests for many types of
+corruption of packets
+
+by default it sends packets to the echo port (7) of maastricht.
+
+Hector

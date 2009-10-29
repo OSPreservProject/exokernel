@@ -1,0 +1,13 @@
+/cpu.h/1.1/Sat Oct 17 20:28:16 1998/-ko/
+/cputypes.h/1.1/Sat Oct 17 20:28:16 1998/-ko/
+/disklabel.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/exec.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/limits.h/1.2/Mon Aug 31 18:37:42 1998/-ko/
+/profile.h/1.1/Thu Jul 23 06:48:21 1998/-ko/
+/ptrace.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/setjmp.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/signal.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/stdarg.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/trap.h/1.1.1.1/Mon Jun 15 21:09:59 1998/-ko/
+/vmparam.h/1.1/Sun Jul  5 04:22:27 1998/-ko/
+D

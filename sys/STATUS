@@ -1,0 +1,227 @@
+
+Current status:
+
+synchronization has been done on most modules, with bc, disk, partitioning,
+xn, and device drivers other than net remaining. I didn't do those mainly I
+never had a chance to set up disk.
+
+both ticket based and trivial implementation of spinlocks exist. ticket based
+spinlocks are more scalable because they trigger less junk on the bus when
+there are contention. ticket based locks, however, have a higher latency.
+since they are only better than spinlocks for very short critical sections,
+they are only used for synchronizing sysinfo fields and simple linked lists.
+
+kernel is not heavily tuned. I optimized some synchronization cases (i.e.
+remove locks when they are not necessary), but synchronization overhead can
+still be reduced. For example, the number of lock acquires on a insert page
+operation is way too high because we do fine grained locking. We may be able
+to relax the granularity a bit in this case.
+
+multiple environments in same address space works, but not heavily tested.
+especially, TLB shootdown is not well tested at all. libpwafer gives an
+example of how to use multiple environments in same address space, but we have
+no real libos support yet.
+
+IOAPIC seems to work, at least for all the interrupts that I am managing right
+now. But there are a boatload of corner cases (take a look at linux kernel)
+that we are not supporting. All in all, I have net cards and keyboard set up
+on IOAPIC and they seem to be fine. Local APIC drives IPIs and timer
+interrupts.
+
+synchronizing interrupt handlers: if_de.c has a device driver that checks if
+the interrupt is level or edge, since they are synchronized differently. in
+the future, a more generic way of doing this check should be invented: the
+check and the appropriate synchronization should be done outside the device
+interrupt handler, in vector.s or some centralized interrupt handler that
+dispatches to more specific handlers after synchronization.
+
+I started to do some encapsulation of kernel data strctures (take a look at
+pmapP.h and sysinfoP.h), but never got around to do them for the Env and bc
+data strctures. Those are two data structures that could benefit. I found that
+with a more modular interface to system data structures, at least
+synchronization was made easier.
+
+
+
+Below are status from 1998, most of them still unfixed:
+------------------------------------------------------
+
+The functions in "solid" files all return proper error codes from
+xok/kerrno.h.  They only panic or assert during kernel startup or when
+structures are discovered to be corrupted.  Header files are properly
+ifded'd. And copyrights are appropriate.
+
+kernel resources that processes can affect
+------------------------------------------
+environments - limited envs/space for struct Env/space for page table
+capabilities - space for acl's, time in kernel for traversing acl's
+wakeup predicates - space for compiled code
+batch/vcopy - time in kernel
+packet rings - limited number of packet rings, space for kernel structures
+dpf - needs some access control; other?
+network taps - limited number of nettaps, space for kernel structures
+pxn - space for pxn, but has lru; limit time during pxn_remove*
+
+"solid" files
+-------------
+i386/isa/clock.c
+i386/isa/nvram.h
+i386/isa/timerreg.h
+kern/capability.c
+kern/env.c
+kern/ipc.c
+kern/kclock.c
+kern/kerncallstr.c
+kern/kstrerror.c
+kern/malloc.c
+kern/picirq.c
+kern/printf.c
+kern/wk.c
+ubb/root-catalogue_decl.h
+ubb/ubb_decl.h
+xok/ae_recv_decl.h
+xok/batch_decl.h
+xok/buf_decl.h
+xok/capability.h
+xok/capability_decl.h
+xok/console_decl.h
+xok/env.h
+xok/env_decl.h
+xok/ipc.h
+xok/kerncallstr.h
+xok/kerrno.h
+xok/kstrerror.h
+xok/malloc.h
+xok/partition.h
+xok/picirq.h
+xok/pktring_decl.h
+xok/pmap_decl.h
+xok/printf.h
+xok/pxn.h
+xok/pxn_decl.h
+xok/scode_decl.h
+xok/syscall.h
+xok/syscallno.h
+xok/wk.h
+xok/wk_decl.h
+
+files with problems
+-------------------
+dev/console.c - needs work, but not causing any problems
+kern/batch.c - propagate user page faults, limit time in kernel
+kern/bc.c - see XXX's in file (mostly, needs more cap checks)
+kern/disk.c - better, problems marked with XXX's, needs work
+kern/loopback.c - what is max size of packet?, possible ash problem
+kern/micropart.c - close, no big problems
+kern/partition.c - super secret printf problem
+kern/pktring.c - how should pktrings be shared?
+kern/pxn.c - almost solid, see XXX's in file
+kern/syscall.c - has several random syscalls that should be moved,
+	       removed, replaced, or have restriced access
+kern/vcopy.c - totally insecure, limit time in kernel
+xok/batch.h - propagate user page faults, limit time in kernel
+xok/bc.h - almost solid, see XXX's in file
+xok/console.h - needs work, but not causing any problems
+xok/disk.h - better, problems marked with XXX's, needs work
+xok/buf.h - this and the disk.c/disk.h still need some "software engineering"
+xok/micropart.h - close, no big problems
+xok/pktring.h - how should pktrings be shared?
+xok/sys_ubatch.h - propagate user page faults, limit time in kernel
+sys/xok/vcopy.h - totally insecure, limit time in kernel
+
+files that don't have to be perfect for now
+-------------------------------------------
+kern/ash.c
+kern/debug.S
+kern/fsprot.c
+kern/i386-stub.c
+kern/kdebug.c
+kern/kern_pam.h
+kern/klock.c
+kern/pam.c
+kern/pctr.c
+ubb/*
+xok/ash.h
+xok/fsprot.h
+xok/pam.h
+xok/pctr.h
+
+unchecked smp files
+-------------------
+kern/apic.c
+kern/smp.c
+kern/smp_sys.c
+kern/smptramp.S
+xok/apic.h
+xok/smp.h
+
+unchecked files
+---------------
+conf/src/gensyms.c
+conf/src/gensys.c
+conf/src/genvec.c
+conf/src/linebuf.h
+conf/syscall.conf
+conf/trap.conf
+dev/bios32.c
+dev/dp8390reg.h
+dev/if_ed.c
+dev/if_de.c
+dev/if_de.original
+dev/kbdreg.h
+dev/lb.c
+dev/ncr.c
+dev/ncr_reg.h
+dev/pci.c
+dev/scsi_all.h
+dev/scsi_base.c
+dev/scsi_disk.h
+dev/scsi_message.h
+dev/scsi_port.h
+dev/scsiconf.c
+dev/scsiconf.h
+dev/sd.c
+dev/smc.c
+dev/smcreg.h
+dev/ic/mc146818reg.h
+dev/isa/isareg.h
+dpf/*
+kern/init.c
+kern/locore.S
+kern/pkt.c
+kern/pmap.c
+kern/reboot.S
+kern/sched.c
+kern/scode.c
+vcode/*
+xok/ae_recv.h
+xok/asm.h
+xok/bios32.h
+xok/bitvector.h
+xok/cdefs.h
+xok/cpu.h
+xok/dc21040reg.h
+xok/defs.h
+xok/idt.h
+xok/if_devar.h
+xok/if_devar.original
+xok/if_edreg.h
+xok/init.h
+xok/isa_device.h
+xok/kdebug.h
+xok/kqueue.h
+xok/locore.h
+xok/mmu.h
+xok/mplock.h
+xok/pci.h
+xok/pkt.h
+xok/pmap.h
+xok/queue.h
+xok/scheduler.h
+xok/scode.h
+xok/sd.h
+xok/sys_proto.h
+xok/sys_syms.h
+xok/sysinfo.h
+xok/trap.h
+xok/types.h

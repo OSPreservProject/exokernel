@@ -1,0 +1,27 @@
+.KS
+.TS
+expand doublebox;
+l c s c s c
+l c s c s c
+l r r r r c
+l r r r r r.
+	Level 1	Level 2	
+	cache	cache	\fBMemory\fP
+System	lat.	size	lat.	size	\fBlatency\fP
+=
+Linux/i586	8	8K	107	256K	150\ 
+FreeBSD/i586	7	8K	111	256K	181\ 
+Linux/i686	12	8K	36	256K	194\ 
+Unixware/i686	14	8K	34	256K	196\ 
+IBM Power2	--	--	13	256K	260\ 
+Sun Ultra1	6	16K	42	512K	270\ 
+DEC Alpha@150	12	8K	67	512K	291\ 
+Linux/Alpha	6	8K	46	96K	357\ 
+IBM PowerPC	6	16K	164	512K?	394\ 
+DEC Alpha@300	3	8K	66	4M	400\ 
+HP 9000/819	--	--	10	1M?	430\ 
+SGI Indigo2	8	16K	64	2M	1170\ 
+SGI Challenge	8	16K	64	4M	1189\ 
+Sun SC1000	20	8K	140	1M	1236\ 
+.TE
+.KE

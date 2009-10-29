@@ -1,0 +1,110 @@
+
+SMP Kernel
+----------
+
+AP = auxiliary processor, BP = boot processor
+
+
+AP Initialization
+-----------------
+
+AP initialization code is in smptramp.S. During initiation (init.c), the BP
+detects SMP processors (smp.c, smp_scan()), and sends an APIC signal to each
+processor (smp.c, smp_boot()) to signal initialization. BP does this in order:
+send signal to AP #1, then wait for it to boot up, send signal to AP #2, etc.
+When an AP gets the initialization APIC signal, it obtains a text address from
+the BIOS vector (MP spec v1.4, Intel). It then starts executing, using that
+text (smptramp.S), in real-mode. The smp trampoline code (smptramp.S) first
+loads up a fake gdt and goes to protected mode, where BP's page table is
+loaded. It then switches to virtual mode (also turns on PSE). After it has
+gone virtual, it loads a real gdt, and jump to the C code.
+
+Since the trampoline code is in real mode (and 16 bit), it must be in low
+memory. Furthermore MP spec says it must be below 640K. In ppage_init (pmap.c)
+we create a page for SMP booting purpose. The trampoline code is copied (on
+the fly) to this page (smp.c), and a few addresses in the trampoline code are
+modified to reflect the address change. The kernel stack is temporarily
+located at the end of this page. The last 4 bytes of the page is left alone as
+a place to put debugging information.
+
+Once the AP jumps to C code (i386_init_secondary), it calls several
+initialization routines, such as env_init_secondary, ppage_init_secondary, etc
+(more on some of these later). Before it jumps into the scheduling loop, it
+waits for a signal from the BP. This allows the BP to finish its own
+initialization tasks, which also include system-wide initialization tasks.
+
+Certain BP initialization tasks (i386_init()) require CPU context of active
+CPUs be initialized (may be other stuff too), they must follow AP
+initializations. 
+
+
+Page Directory and Idle Environment
+-----------------------------------
+
+Page directories for BP and APs are roughly similar for everything under
+KERNBASE, except each CPU has a different mapping for CPUCXT and KSTACKTOP.
+The page for CPU context and kernel stack are created in ppage_init and
+ppage_init_secondary, and they are mapped into the page table of each CPU's
+idle environment in env_init and env_init_secondary. Furthermore, in env_alloc
+we create env with arbitrary KSTACKTOP and CPUCXT mappings. When context
+switching to an env (in env_run) we make sure these two mappings are that of
+the CPU the environment will be running on.
+
+We need to have a separate idle environment for each CPU because Xok does not
+use Intel's task switching facility, and so when an env goes to kernel via
+traps or interrupts, it uses the same page directory in kernel as it does in
+user space. Thus, if we have just one idle environment, then when a second CPU
+runs the idle environment and then traps to kernel, the page directory may be
+that of the first CPU.
+
+
+GDT and TSS
+-----------
+
+Xok does not utilize Intel's task management stuff, thus it only use a TSS'
+stack and data segment fields (not the page directory field). Since for each
+CPU the kernel stack is always mapped to KSTACKTOP, we could technically use
+just one TSS, and ignore the page directory field. But we don't. We actually
+create a separate TSS for each CPU (env.c). No big deal.
+
+
+CPU Context
+-----------
+
+There is a CPU context for each CPU. A context captures:
+
+	1. CPU information - cpu logical id, apic id, etc.
+	2. Traps/interrupt information - page fault mode, etc.
+	3. Scheduling information - quantum vector, etc.
+	4. Environment information - idle environment, page table, etc.
+
+The context for each CPU is created in ppage_init(_secondary) and initialized
+in cpucxt_init. Some information, such as env and scheduling, are initialized
+in env_init(_secondary) and sched_init, respectively.
+
+
+Interrupts and APIC
+-------------------
+
+Interrupts are routed via APIC (apic.c), except the timer. Routing stuff via
+APIC involves programming some interrupt vectors on the APIC (apic.c). It's
+just a mess in there. Timer is more interesting. On the board which I am
+using, I can't get the timer interrupts to be propagated to all the CPUs even
+if I set it up as a ExtINT and set the destination to ALL. The way around this
+is to use the APIC timer on each local APIC. Setting up this timer involves
+first finding out the bus speed of the CPU, then program the timer on the
+local APIC. This is all done in apic.c.
+
+Right now we don't really offer control of how interrupts are to be routed and
+handled. All CPUs get to handle interrupts fairly. In the future, it could be
+interesting to expose this policy to applications.
+
+IPIs go through APIC in pretty much the same way. The only place we use IPI
+right now is to do inter processor IPC.
+
+
+Kernel Internal Locking
+-----------------------
+see kernel_spinlock.txt
+
+

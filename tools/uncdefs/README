@@ -1,0 +1,9 @@
+Usage: uncdefs.pl *.[ch]
+Side-effects: leaves an original file in *.[ch].ori
+and on the file itself it comments out any #include <sys/cdefs.h>,
+removes __{BEGIN,END}_DECLS,__dead,__pure, and processes the macro:
+#define __P(x) x.
+
+Basically it removes the sys/cdefs.h dependency.  This tool is useful when
+grabbing .c and .h files from /usr/include and /usr/src.
+

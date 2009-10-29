@@ -1,0 +1,18 @@
+/.cvsignore/1.2/Fri Sep 11 16:59:57 1998/-ko/
+/FIXES/1.2/Wed Sep  9 22:41:14 1998/-ko/
+/GNUmakefile/1.2/Wed Sep  9 22:41:15 1998/-ko/
+/Makefile/1.2/Wed Sep  9 22:41:16 1998/-ko/
+/OpenBSD-PATCHES/1.2/Wed Sep  9 22:41:17 1998/-ko/
+/README/1.2/Wed Sep  9 22:41:18 1998/-ko/
+/awk.h/1.2/Wed Sep  9 22:41:19 1998/-ko/
+/awkgram.y/1.2/Wed Sep  9 22:41:20 1998/-ko/
+/b.c/1.2/Wed Sep  9 22:41:23 1998/-ko/
+/lex.c/1.1/Wed Sep  9 22:41:24 1998/-ko/
+/lib.c/1.2/Wed Sep  9 22:41:25 1998/-ko/
+/main.c/1.2/Wed Sep  9 22:41:26 1998/-ko/
+/maketab.c/1.2/Wed Sep  9 22:41:27 1998/-ko/
+/parse.c/1.2/Wed Sep  9 22:41:28 1998/-ko/
+/proto.h/1.2/Wed Sep  9 22:41:29 1998/-ko/
+/run.c/1.2/Wed Sep  9 22:41:30 1998/-ko/
+/tran.c/1.2/Wed Sep  9 22:41:31 1998/-ko/
+D

@@ -1,0 +1,136 @@
+\section{Networking}
+
+Most of the networking code resides at user-level. The user-level code
+does two key things: managing routes/interfaces and implementing
+tcp/ip. The tcp/ip implementation is beyond the scope of this
+document.  Useful examples are in bin/webserver/httpd, bin/videod, and
+test/xio-demo. The base tcp/ip stack itself can be found in
+lib/xio. Note that the prime goal of this library is to facilitate
+building specialized apps. This stack is structued as a series of
+primitives that each perform a usefull function rather than a
+monolithic stack.
+
+bin/icmpd/icmpd.c is a fairly simple stand-along example of how to
+write network programs. It uses DPF, packet rings, routes, interfaces,
+and the packet sending interfaces.
+
+\subsection{Kernel Interface}
+
+The kernel implements two sets of interfaces: one for sending packets
+and the other for receiving packets. On the receiving side, packets
+are first demultiplexed to the proper owner and then buffered in
+user-supplied memory in packet rings. 
+
+\subsubsection {DPF}
+
+Each process specifies what packets it's interested in receiving by
+downloading a packet filter. Ideally, the most specific filter
+gets a packet if filters overlap. Currently, however, this doesn't
+quite work. It's not quite clear what happens with overlapping filters
+at the moment.
+
+Filters are specified by building up a collection of <offset, value>
+pairs. The offset corresponds to byte offsets into an incoming packet
+and value corresponds to the value that must be found. Here's an example
+that matches IP packets coming in over ethernet:
+
+\begin{verbatim}
+
+    dpf_begin (&ir);
+    dpf_eq16 (&ir, eth_offset(proto), htons(EP_IP)); /* eth proto = ip */
+    dpf_eq32 (&ir, eth_sz + ip_offset(destination), ip);  /* ip dst = us */
+
+    demux_id = sys_self_dpf_insert (CAP_ROOT, &ir, ringid);
+
+\end{verbatim}
+
+{\tt demux\_id} is a handle to the filter that can be used in future calls
+to manipulate the filter. {\tt ringid} specifies the packet ring that
+matching packets should be copied into. See the following section for
+more details about packet rings.
+
+\subsubsection {Packet Rings}
+
+Packet rings are a ring of pointers to user-supplied buffer
+space. Incoming packets for an application are copied to the next
+empty buffer. Each buffer in the ring is owned by either the kernel or
+the application, depending on the value of a flag field in the buffer
+struct. If this flag is zero the buffer is empty and can be filled by
+the kernel. Non-zero values are the length of the packet that were
+copied into the buffer. When a process is done with a packet it should
+reset the flag to zero.
+
+See bin/icmpd/icmpd.c for a complete example.
+
+\subsubsection {Sending Packets}
+
+{\tt ae\_eth\_send} is a simple interface to both the loopback, slow
+ethernet, and fast ethernet drivers. It does not support
+scatter/gather at the moment so for demanding apps this isn't what you
+want. {\tt sys\_ed\_xmit}, {\tt sys\_de\_xmit}, {\tt
+sys\_loopback\_xmit} are system calls for sending to each interface
+and which support the full capabilities of each card. The xio tcp
+stack is a good example of how to use {\tt
+sys\_de\_xmit}.\footnote{See lib/xio/exos\_net\_wrap.c}
+
+\subsection {Routes, Interfaces, DNS, ARP, etc...}
+
+This section describes the misc. stuff involved in networking. XOK
+supports multiple ethernet interfaces and exopc comes with the
+typical ifconfig, route etc tools along with an arp demon and DNS
+resolver.
+
+\begin{itemize}
+
+\item{\bf Interfaces}:
+During boot up, the kernel initializes the network cards, and
+the sysinfo structure.  The sysinfo structure contains the number of
+slow and fast ethernet cards that the kernel recognized.  
+
+The IP address of the machine will be determined by the first
+process.  This process then proceeds to initialize a global interface
+table that contains basic ``ifconfig'' information, like physical
+interface number, ip address, ethernet address (cached from sysinfo),
+netmask and flags.  Programs use this information to know if an IP
+address is on the local LAN or remote; if it is on a remote location,
+then they look in the route table for the route.
+
+\item{\bf ARP}: The first process spawns an arp daemon.  There is a global 
+arp\_table mapped into each process.  Only the arp daemon can write to
+this table.  Processes check the arp table to find a translation
+IP->ether. If not found, they ipc into the arp daemon to add the
+entry, and block until the status of the entry changes.  The arp
+daemon will retransmit the arp request until it gets a reply or times
+out.  The arp daemon also responds to arp requests from other machines
+in the network.\footnote{see bin/arpd/arpd.c and
+libexos/net/arp\_table.c} There are basically two functions user-level
+programs need to know about:\footnote{see include/exos/net/arp.h}
+
+\begin{itemize}
+\item {\tt arp\_resolve\_ip(ipaddress,ethaddress for result, interface)}
+\item {\tt arp\_remove\_ip(ipaddress)}
+\end{itemize}
+
+\item{\bf Routes}: The route procedures are used to find out which is the proper
+interface for the ipaddress. All process have a route table that is in
+shared memory.  Each process can read and write into this table.  The
+first process sets the routes by default.\footnote{see
+ebin/rconsoled/setup\_net.c} The ``route'' program can also be used
+for this purpose.  It is important to set the routes early on, as most
+libos code uses this to locate which interface to use. More
+information as well as interface definitions can be found in the
+source.\footnote{see include/exos/net/route.h and
+libexos/net/routenif.c}
+
+\item{\bf DNS}:
+
+ExOS uses the same routines used in OpenBSD.  You just have to make
+sure that all the networking code is ready by the time you need to
+resolve your first address.
+
+\end{itemize}
+
+
+
+
+

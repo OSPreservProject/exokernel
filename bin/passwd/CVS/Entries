@@ -1,0 +1,11 @@
+/.cvsignore/1.1.1.1/Mon Jun 15 21:09:05 1998/-ko/
+/GNUmakefile/1.1.1.1/Mon Jun 15 21:09:05 1998/-ko/
+/Makefile/1.1.1.1/Mon Jun 15 21:09:05 1998/-ko/
+/kpasswd_proto.h/1.1.1.1/Mon Jun 15 21:09:05 1998/-ko/
+/krb5_passwd.c/1.1.1.1/Mon Jun 15 21:09:05 1998/-ko/
+/krb_passwd.c/1.1.1.1/Mon Jun 15 21:09:06 1998/-ko/
+/local_passwd.c/1.1.1.1/Mon Jun 15 21:09:06 1998/-ko/
+/passwd.1/1.1.1.1/Mon Jun 15 21:09:06 1998/-ko/
+/passwd.c/1.1.1.1/Mon Jun 15 21:09:06 1998/-ko/
+/yp_passwd.c/1.1.1.1/Mon Jun 15 21:09:06 1998/-ko/
+D

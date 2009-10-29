@@ -1,0 +1,244 @@
+What does it mean to trust software?  
+
+Trust: only want to trust things you control.  This seems to be the 
+strongest requirement that can be justified.  For example, any
+library routine can do more than expected (calling into the OS)
+or not what expected (buggy).  When extended to compiler, shell,
+and other applications that have the same privileges it is clear
+that no stronger restriction, in current common environments
+makes sense
+
+Interfaces are difficult to design; exokernel interfaces are no exception.
+The exokernel principles, like those of stepwise refinement, object
+oriented design, etc., are intended to clarify and (ideally) give
+specific operational procedures for implementation.  However, they do
+not replace thought and hard work.  It takes many iterations to get
+a satisfactory interface.  While this may seem tritely true for all
+interfaces, the twin challenges of seperating control from protection
+and of not precluding {\em unanticipated} uses, make the process for
+exokernels even more strenous.  All important exokernel interfaces have
+gone through multiple designs over several years.  Those that have not
+are merely those that are unused.
+
+How will exokernels be used.
+
+While exokernel interface design is diffcult, library design
+is simpler than kernel design.  
+
+We are about to launch an aggressive technology transfer effort.
+
+Speed is easy.
+
+While exokernel interfaces are hard to design well, they are easy to
+implement efficiently:  a good design places the bulk of functionality
+in a library where it is a mere function call (rather than system call
+or IPC) away.  As a result, there is no particular challenge
+in making boundary crossings efficient.  An additional benefit is that
+both interfaces and implementations can be designed for a few specific
+uses rather than general, ``anything goes.''   Concrete results of this
+are that during the construction of the first exokernel, Aegis, when the
+first implementation of a microbenchmark was not a ten times faster on
+than on a monolithic system we looked for ``what was wrong.''  
+A particular strength of the design is that speed does not require the
+heroic efforts of microkernels~\cite{liedtke}; while Aegis was heavily
+tuned, xok is not.  It's performance on applications does not
+seem to suffer.
+
+Unix interface.  Well, strong protection, what is needed.
+
+Why server/why application.
+
+Non-reentrant kernel's are easy.  All three exokernels have disable
+interrupts in the kernel.  This eliminates ``spl0'' poisoning of 
+the code, makes reasoning about its behavior as simple as kernel
+behavior can get, and makes for speed.  As a side effect it has
+a strong pressure to ensure that exokernel code paths are terse.
+(Microkernel.)
+
+(A small kernel stack is another somewhat arbitrary limit.)
+
+Easy operational step to ensure a kernel will be 
+
+Consequences of a low-level interface.
+
+Kernel architects are familar with the malavolent mutation of the familar
+``edit compile debug'' cycle into ``edit compile reboot debug.''  This 
+modification is tedious.  A practical benefit of placine OS functionality
+in libraries, is that the ``reboot'' is replaced by ``relink.''  Acumulated 
+over many iterations this replacement is a thing of wonder.
+
+Centralization is simple.  Frequently been able to 
+
+A little bit of code goes a long way.  There are crux points in any
+design dealing where there are a multitude of choices.  These points
+can profitably be left to clients by the injection of code.  Concrete
+areas where we have found them useful are 
+the exact semantics of an action, the representaiton of data, and  
+the lightweight application shipping.  A multi-leveled example of
+this drive is our disk subsystem.  At the bottommost level there is
+the question of representation: what do a set of bits mean?  The
+kernel needs this information so that it can know what disk blocks
+are owned by a piece of meta data.  However, representing this information
+with a set of pre-canned types that it knows about is not feasible.
+One could imagine using providing disk block pointers (but how many
+bits to use?  how many disk blocks does a single pointer represent?
+How do we know what type is pointed to by the pointer?  How is the 
+pointers notion overridden?  When can the type change?), 
+disk block extents (how many bits for the counter?
+is the count located next to the base pointer or elsewhere?  What is the 
+alignment needed?) or bitvector ranges (How is the size of the vector
+determined?  How is the size of each object determined?  Can a bit
+vector point only to a single type?).   A plexus of questions 
+surround representation.  even if rep gotten, the larger questions
+of how can be organized, mutated, variant unions, etc arise.
+By 
+using application-supplied untrusted deterministic functions we have
+been able to leave representation issues mainly to the client.
+The next level deals with security: what are the semantics of 
+access control?  Given a set of capabilities, how do we know what
+it grants?  Can applications look at names in a block but not 
+create new ones, can they write but not read,  allocate but not
+read?  Does having a capability for a parent allow
+access to any child?  To only some and, if so, which?  (E.g., 
+direct, indirect, double, triple indirect blocks of an inode) 
+Is a block divided up into multiple trust ranges?  Do multiple
+capabilities have to be presented rather than one?  Does the
+access depend on application data (e.g., bits in the meta data)?
+Again, these questions can be answered by the appropriate interface
+(e.g., grant access(void *ptr, len)) and injected code.
+[how to determine interface?  usesually questions will carve
+it out.]
+Associating the code with each type allows applications to control.
+Finally, an even higher level is application-level protection.
+Kernel guarentees may be too weak.  For instance, a file system
+may wish to guarentee that names in a directory are unique.
+Methods.
+
+Challenge becomes inporting the correct data and allowing
+output to be attached in the appropriate places.
+The first problem, in many cases is solved implicitly
+by exposing bookeeping data structures.  This was a nice
+fallout for wakup predicates.
+Wakeup predicates.
+
+Places where it is not clear. 
+
+Future work.
+
+Trust of privileged software, trust of use (or consensus).
+
+Alternative protection techniques (speculation).
+
+All operating systems have to deal with this.  Without a microkernel
+religion, these dealling lead naturally to code importation.  For
+instance, the well known packet filter was introduced into BSD
+UNIX kernels to demultiplex packets whose semantics of layout
+were not understood by the kernel.
+
+do-everything design.  
+since this violates our own principle, not surprising it failed.
+
+Next was stripped down.  this was more complex for file systems, since
+they had to wedge themselves into the design, and complex in the kernel
+too since the complexity of self-description required that some constructs
+be supported by the kernel directly. (e.g., grouping)
+
+a key step was the notion of templates: few types of meta data, have a
+simple template that describes them.  eliminates the need for many 
+uses, allowed meta data to be the same.  however, here too, the exokernel
+says
+
+client controlled interfaces.
+
+	the main day-to-day operational change is absorbing the mindset
+that whenever something interesting or complex happens, the client should
+do it. a common idiom is to have the client do something and then check
+that it is ok.
+
+	this principle, like exhortations for top-down design, and 
+well-fined interfaces is deceptively simple to state and surprisingly
+hard to implement.  as with other design principles we have required
+numerous iterations over interfaces, culling functionality that shold
+be left to others from them, and increasing power.  internalizing this
+design principle is, perhaps, the single most important transition to
+building exokernels.  we have not fully made it.
+
+	semantics of ``minimal''
+
+	(``leave it to the client'')
+
+experience:
+
+	the proponents of any research idea, if they are not absolute
+fanatics, push it to see what happen, rather than believe it totally.
+there is a transition where it either becomes untenable (perhaps with
+increasing caveats as one gets closer to the core group) or is
+acceptable.  we have crossed the latter mark.  we detail the three
+below.
+
+	robust architecture. built unnder the corrosive influence of repeated
+deadline pressure (``get it to work'').  however, and an endless bounty
+of surprise for us, is that it ``just worked.''  out of the box we were
+faster, typically be 10x than other organizations (for a contrasting
+view in the context of microkernels see ~liedtke where heroic efforts
+were required).   exokernels are easy.
+
+security can have as much impact on power as basic interface design.
+the best design is not useful if the security apparatus precludes
+important uses.  for example, different protection levels for reading
+the bytes in an inode and the actual disk blocks that are pointed
+too.  with
+
+------
+Want to let untrusted libraries implement OS abstractions.  can select
+among implementations and interfaces as easily as you do between compilers
+and languages, with, we hope, a similar proliferation of utility.
+
+polemics are in the paper.
+
+**** Concrete ****
+
+Bitter experience
+
+We have succeeded in relearning lessons that others have amply documented.
+Deadline driven coding is corrosive.  Large amounts of code was written
+to ``just get it to work.''  It did work.  Unfortunately, it did not work 
+well.  A cynic could view exokernels as a simple shell game of source 
+rearrangement.  The difficulty we have had with this restructuring 
+(i.e., the almost certain failure we experienced when an existing
+interface was not thought through) demonstrated that this is not.
+Difficulty, of course, does not imply depth but it does imply 
+non-slieght of hand.
+
+We didn't use system; is still a curiosity, rather than.
+
+Our plans to change this include technology transfer to unix.  Disk
+for example.  A change in refereeing procedures would be 
+
+What type of protection:
+	1. security - ownership should be enforced.
+	2. coherence - want to ensure that something occurs when another
+	thing does.  And that membership criteria are enforced
+	3. well formed.  
+	4. meta-data vs data tradeoffs.
+	5. overriding without 
+
+The current interfaces are not well-worn.  They are workable, however,
+their do not 
+
+When would we not use exokernel.
+
+When we were doing it for money, we would still use an existing 
+system.  If there was an exokernel with sufficient maturity would
+use that.
+
+Disk:
+	1. Do move.
+	2. Do shrink methods.
+	3. Do access control methods.
+	4. Design a general method framework.
+
+Turn off writing.
+
+Talk about temporary file systems?  Do this by turning off cffs synchronous
+writes?

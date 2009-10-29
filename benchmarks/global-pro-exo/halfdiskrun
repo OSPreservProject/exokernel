@@ -1,0 +1,5 @@
+#!/bin/csh
+install -d /mnt/benchmarks/global-pro-exo
+pax -r -w -luv run test0.new.tar.gz /mnt/benchmarks/global-pro-exo
+cd /mnt/benchmarks/global-pro-exo
+run $argv

@@ -1,0 +1,8 @@
+We are starting a new documentation effort (some would say we're starting
+our first documentation effort...) Anyway, tex/guide.tex is a first
+stab at an "Installation and Booting" guide for the system while
+tex/internals.tex gives a high-level tour of the system sources.
+Misc info about profiling, debugging, writing libos code that deals
+with signals, and our old getting started files can be found in this
+directory. Note that the TeX files contain the latest information
+and should be considered the primary reference.

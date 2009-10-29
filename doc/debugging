@@ -1,0 +1,178 @@
+GENERAL DESCRIPTION OF REMOTE DEBUGGING
+---------------------------------------
+
+  If you are trying to debug a program running on a machine that
+cannot run GDB in the usual way, it is often useful to use remote
+debugging.  For example, you might use remote debugging on an
+operating system kernel, or on a small system which does not have a
+general purpose operating system powerful enough to run a
+full-featured debugger.
+
+  When remote debugging GDB is run on one machine and the target (the
+program/kernel to be debugged) is run on a different machine.  GDB and
+the target communicate using a the "GDB remote serial protocol".  GDB
+already understands this protocol.  
+
+  Your program must be linked with a few special-purpose subroutines
+that implement the protocol and communicate it to GDB.  The file
+containing these subroutines is called a "debugging stub".
+
+  The stub's job is to service requests from GDB via the GDB remote
+debugging protocol.  For example, a request could be to read the byte
+at a particular address and report it back to GDB.  The stub/protocol
+also allows GDB to read/write registers/memory addresses.  With this
+functionality GDB can modify program variables and set breakpoints.
+
+
+LIMITATIONS OF REMOTE DEBUGGING
+-------------------------------
+There are 2 main limitations inherent to remote debugging.
+
+  * The first draw back of remote debugging is that only once your
+  program transfers control to the debugging stub can GDB do anything.
+  Normally, GDB cannot asynchronously interrupt your target and have
+  it transfer control to the debugging stub.
+
+  A program must explicitly transfer control to the stub (perhaps on
+  startup), but once GDB has control, you can set breakpoints that will
+  transfer control to the stub once they are executed.
+
+  Since this is pretty limiting special hacks have been written into
+  both the user and kernel stubs to allow process/kernel to be
+  "interrupted".  But more on the specifics later.
+
+  * The other limitation is that part of a target is used to communicate
+  with GDB and to implement the protocol.  There are 2 issues involved
+  here:
+    * First, 
+      the part of the target that is "used to debug" can not itself be
+      debugged.  For instance, if your debugging stub uses malloc, you
+      can not debug (ie. step into or set breakpoints in) malloc or
+      any functions that malloc uses.
+   
+      The best that can be done is to minimized the software
+      resources that the stub requires.  This has been successful to
+      various degrees in the kernel and user stubs.
+
+      The user stub uses TCP to communicate so none of the TCP code can
+      be debugged.  The kernel stub only uses malloc and the ether
+      drivers.  
+   
+      If you accidentally set break pnts in a function used by the
+      debugging stubs "Recursive debugger exception detected" will be
+      printed, and the debugging target will terminate.
+   
+   
+    * Second, 
+      the target has minimum limits on how badly is can be broken
+      before it can no longer communicate with GDB.  Also, the target can
+      not be in a precarious state when being debugged.  The kernel is in
+      such states during the execution of the interrupt/exception stubs.
+      And user processes are in such states while forking or execing.
+      
+      As a general rule the user debugger is not very good at low-level
+      things, but the kernel debugger is.  With it one can can step
+      through system calls or even through device drivers.
+
+
+  Two debugging stubs have been written.  The first one is in libc and
+it supports the debugging of user processes; it communicates via TCP.
+The other is compiled into the kernel so that it can be debugged; it
+use UDP.
+
+  Defaultly, GDB can use parallel ports, serial port, TCP ports,
+etc. to communicate with the stub.  And now the hacked version that is
+installed in /usr/local/bin/gdb.xok can use UDP ports.
+
+
+GENERAL PROCEDURE  
+-----------------
+The general procedure for remote debugging is outlined here.  The
+differences between debugging the kernel and a user process are
+noted.
+
+  - Compile debugging support into you debugging target.
+    + KERNEL
+      This means defining KDEBUG in sys/GNUmakefile.
+    + USER
+      Debugging support is built into libc, so just link it.
+
+  - Run the target and transfer control to the debugging stub.
+    + KERNEL
+      This means boot the kernel.  And the debugging stub gets control 
+      in one of two different ways.  This is explained later.
+    + USER
+      Run the program.  And again the debugging stub gets control in one 
+      of three different ways. Also, explained later.
+      After control is transfered to the debugging stub you will see something
+      like: "(/bin/ls pid:9 envid:8) waiting for GDB to connect on port 9999..."
+
+  - Start gdb
+    on an open-bsd machine by typing /usr/local/bin/gdb.xok
+ 
+  - Load the target
+    + KERNEL
+      Into gdb, type "file /path/to/xok.gdb"
+    + USER
+      Into gdb, type "file /path/to/program"      
+
+  - If your program use's Tom's shared library 
+    Into gdb, type "add-symbol-file /path/to/libexos.so 0x0"
+
+  - Tell GDB to connect to the xok machine.
+    + USER
+      User level debugging uses TCP to communicate to GDB.  So type
+      "target remote hostname:port_num", into GDB.  The hostname is 
+      the name of the xok machine and the port_num is the port on 
+      which the debugging stub is listening.
+    + KERNEL
+      The kernel communicates to GDB using UDP.  So into GDB just append
+      "udp" onto "target remote ....".  For example you'd type something
+      like "target remote fnord:9999udp".
+
+  - That's it.  now you can set breakpoints, examine memory and do all
+    that stuff.
+
+
+
+TRANSFERRING CONTROL TO GDB
+--------------------------
+
+ * USER DEBUGGING
+   There are 3 ways to transfer control to the debugging stub.
+
+   - The first method is to send a signal 31 (via kill) to your
+     program.  Then next time your process is scheduled to run, it
+     will transfer control to the debugging stub and hence back to
+     gdb.  This method has the advantage that you can asynchronously
+     stop and examine your process.  Also, your program does not have
+     to be modified to support debugging (as long as it links in
+     libc).
+
+   - The following method requires one to explicitly modify the program
+     by putting the line:
+     asm ("int $3");
+     mostly likely in "main".  This transfers control to the debugger and 
+     waits for GDB to connect and for you to set break points 
+     (or whatever you want to do) before your program begins to run.
+   - The last method is convenient when your program crashes randomly.  This 
+     method "catches" your program when it seg faults and prompts you
+     (on the xok machine) if you want to debug the faulting program or just
+     let it die.
+
+ * KERNEL DEBUGGING
+   - Control is transfered  to GDB when the first packet 
+     which is an IP packet containing a UDP packet which contains
+     KDEBUG_PORT [sys/kdebug.h] as the destination port is received.
+
+   - Control can also be transfered by typing Ctrl-C, while the target
+     is running in gdb.  This method can only be used when the
+     processor is running in user mode.  But this is normally the
+     case, so this works as expected.
+
+TODO
+----
+ - Maybe use a serial port to do the communication.  This way you
+   could debug much more of the startup/shutdown of a process.  And the
+   debugging stub wont stomp on other parts of your program, b/c no
+   one will be using the serial port.

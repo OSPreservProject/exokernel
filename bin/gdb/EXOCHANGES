@@ -1,0 +1,6 @@
+Garth Goodson                                                           6/4/98 
+
+Changes made in order to get gdb working under the exokernel have been marked
+with a /* EXOPC CHANGE */ tag.
+
+GDB currently does NOT compile with the KERNEL_DEBUG flag defined.

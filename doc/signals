@@ -1,0 +1,91 @@
+SIGNALS, how to program your libexos to handle signals.
+
+Signals are checked in the epilogue and everytime the highest nested
+signals_on() is called.  Signals are posted with the kill call.
+
+Although the state of signals is checked often, their signal handler
+will not be called (that is the signal will not be delivered) while
+signals are off (there is at least one more call to signals_off() than
+to signals_on()).  
+
+Signals handlers can be accidentally called while inside a critical
+region if something happens that calls kill onto our process, since
+when we call kill to our process, we immediately call its handler
+(unless signals are off).
+
+- calles to signals_off, signals_on can be nested.  only the last
+signals_on will enable the signals to be delivered.
+
+
+In order to make most of the FS code handle signals well, signals_off
+are called everytime we lock a filp, and signals_on is called
+everytime we unlock it.
+
+
+Here is a simple code sniphet on how to make your code interruptable
+or restartable to signals:
+
+prototypes:
+int tsleep (void *chan, int pri, char *wmesg, int ticks);
+int tsleep_pred_directed (struct wk_term *u, int sz0, int pri, char *wmesg, int ticks,
+			  int envid) {
+int tsleep_pred (struct wk_term *u, int sz0, int pri, char *wmesg, int ticks) {
+
+chan: 	an address to sleep on, until someone calls wakup(chan);
+wmesg: 	not used
+pri: 	under OpenBSD the priority with which we resume.  We can also add
+  the flag PCATCH, if we want to be woken up by signals.  if the channel
+  is woken up, or the predicate is true, it returns 0.  if tsleep* is
+  interrupted by a signal, it returns EINTR or ERESTART depending
+  whether the signal has the SA_RESTART flag set.
+ticks: 	ticks to timeout if nothing happens (return EWOULDBLOCK)
+
+
+
+#include <exos/critical.h>
+#include <exos/synch.h> /* for tsleep_pred */
+#include <exos/signal.h> /* for signals_{on,off} */
+
+Code sample:
+
+
+  signals_off()
+  EnterCritical()
+  
+  bunch of tests
+  
+  ExitCritical(); /* not needed since tsleep_pred will stop critical regions before
+                   sleeping */
+  build predicate
+
+  /* if you have PCATCH instead of 0, then tsleep_pred can be interrupted by 
+     a signal. that is tsleep_pred can return EINTR or ERESTART if PCATCH is passed
+     into tsleep.  It can also return EWOULDBLOCK is a timeout value in ticks is 
+     passed in.  It returns 0 if the predicate is true.  ERESTART is return if
+     tsleep was interrupted by a signal that has the SA_RESTART flag set. */
+
+  ret = tsleep_pred(predicate,sz, PCATCH, "wait4", timeout if you want);
+  if (ret == EWOULDBLOCK) { if had timeout not 0 .... }
+  if (ret == EINTR) {errno = EINTR; retval = -1; goto donec;}
+  if (ret == ERESTART) {
+      /* Will deliver the signal */
+      signals_on();
+      signals_off();
+      /* or you can return -1, errno ERESTART on read or write, and the call will
+         get restarted */
+    }
+    /* for ERESTART we'll try again */
+  }
+  EnterCritical();
+  goto loop;
+donec:
+  signals_on();
+  return retval;
+
+
+There is another blocking primitive, which is tsleep/wakeup.  One process does
+tsleep(address,...) and sleeps until another process does a
+wakeup(address);
+
+
+

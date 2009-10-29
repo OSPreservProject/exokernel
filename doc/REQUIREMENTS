@@ -1,0 +1,37 @@
+HARDWARE AND SOFTWARE REQUIREMENTS TO BUILD AND USE THE XOK EXOKERNEL
+
+To Build you need:
+OpenBSD with gcc 2.7.2.1 (it should work with 2.7.2)
+or
+linux with libc6 and the cross-compiling tools supplied
+
+Currently the system only boots off a openbsd boot loader from an
+openbsd partition.
+
+To Run you need:
+-Pentium, Pentium Pro, or Pentium II class machine.
+
+SCSI:
+-NCR 810/815/875 chipset SCSI Card
+	-any scsi disk
+Ethernet Cards supported:
+SMC Elite 16
+SMC EtherEZ 
+	although you need to run the ezsetup.exe to set the card in:
+	I/O Base Address 280:	IRQ 2:	RAM Address d0000:
+	wait states = no:  net connection type = 1 :	ROM disabled = yes
+EtherPower 10/100.  Pass 1.2 and 2.0 cards work for us.
+D-Link DFE 500TX
+
+Display Adapter:
+	We currently only use the machine in text mode.  so the
+	internal or default adapter should be fine.
+
+We currently mount the root off an nfs server.  So you will need to
+use an NFS server to mount the root of the machine (after that you can
+switch the root to a local disk).  
+
+Optionally, if you want to make machines easy to configure you can
+also use a BOOTP daemon, so that it can get important information at
+boot time, rather than having it hardcoded into the first
+process. (more information about this in the BOOTING file).

@@ -1,0 +1,781 @@
+An application uses the pgacl_mod and pxn_add_cap system calls to
+protect the shared state with the capability of their choice.
+
+int
+pgacl_mod (u_int   slot,  // slot where access capability is stored in uenv
+	   u_int   pa,    // physical address within page to be protected
+	   u_short pos,   // position in the ACL where to add the capability
+	   cap     *p_cap // capability to be added to the page's ACL 
+	   );
+
+int 
+pxn_add_cap (struct Xn_name *p_xnode, // address of the xnode to protect
+	     u_int          pos,      // position in the ACL where to add the cap
+	     cap            *p_cap,   // capability to be added to the xnode's ACL
+	     u_int          slot      // slot where access cap is stored in uenv
+	     );
+
+Then it defines the protected methods and places them all in one page
+(for now). It then uses the prot_define system call to pass the kernel
+the protected methods and the capability that protects the shared
+state (is there a reason to have more than one capability ?). Once
+prot_define completes, the abstraction is defined and ready for use.
+
+Naming issue: how should other apps refer to the abstraction? At this
+point I do it by number, but there should be some better way. Perhaps
+it could query (IPC) the app that defined the abstraction (and thus
+prot_define would need to return an abstraction ID).
+
+Right now it is a little inefficient to delete abstractions, because
+of the static structures I use. After moving to dynamic structures,
+this should be easier.
+
+While running a protected method, there should be special interrupt
+handlers that are taken care of by the protected abstraction. The
+debugger trap can thus be used when defining the abstraction and allow
+for easy (customized) debugging. Perhaps the wrappers around the
+user-level interrupt handlers should be special methods belonging to
+the abstraction.
+
+Should add a new system call (or modify an existing one) that would
+allow a capability to be voluntarily removed from the uenv. This
+cleans up the protmeth syscall.
+
+Clearly the capability protecting the shared state should not be
+duplicatable. Why not?
+
+May want to restrict access to certain abstractions.    
+
+
+TRUST RELATIONSHIPS
+===================
+
+Defining application trusts the kernel to guarantee that the
+abstraction's state will only be accessed via the protmeths.
+
+User applications must trust the abstraction definer to preserve the
+invariants and to not corrupt the user's own state.
+
+HOW TO DEFINE A PROTMETH
+========================
+
+The general structure that a protmeth must follow is:
+
+	- map whatever you need
+	- do your stuff
+	- unmap whatever you care not to be clobbered
+	- relinquish the access capability for the shared state
+
+
+HOW TO DEFINE AN ABSTRACTION
+============================
+
+The abstraction owner would do something like this:
+
+	- sys_forge a non-duplicatable capability cap_new (I 
+	  recommend that it be dominated by CAP_EUID only)
+	- use sys_pgacl_mod and sys_pxn_add_cap to protect the
+	  shared state with the new capability
+	- call sys_prot_define and pass in the method table
+	  and the clist slot that contains the new capability
+
+
+ISSUES
+======
+
+Interrupts, stack overwriting, etc.
+- What happens if an epilogue occurs while in a protected method?
+- What happens if the protmeth takes a user-handled interrupt (page
+  fault)?
+
+- The app can use asynchronous methods to overwrite the protmeth's 
+  stack, to unmap and then map garbage, and so on (e.g., through 
+  using a collaborating ASH, or using a pending DMA) 
+
+  There are essentially three ways in which memory pages can be
+  asynchronously written to:
+	1. by the kernel -- not a concern in our case
+	2. by the hardware -- we can check for pending DMA's
+	   on the stack page and if there are any, we simply
+	   don't execute the protected method
+	3. by an application, such as via a collaborating ASH
+	   Of course, we need to distinguish between the type of
+	   accesses that can and those that cannot interrupt the
+	   protected method.
+ 
+  For fault-isolation purposes, it seems better to have a stack
+  for each abstraction. This will make debugging easier and may
+  be an extra step for the future, when we may want to provide
+  full protection from the protected method.
+
+- The app could overwrite the protmeth's stack pointer ?
+
+How many of these issues would be solved if the protmeth had its own
+stack?
+
+- Need to make sure that the shared state stays around even after
+application dies. Will this be a problem?
+
+Performance: Leaving it up to the protmeths to map the state they need
+may lead to a bunch of extra system calls. The CFFS protmeths,
+however, don't need a lot of state to be mapped in, so for that
+particular case we might not really see a performance hit. However, if
+it is a problem, I may want to extend the interface to allow an app to
+specify that certain state should be mapped (dealt with) prior to
+giving control to the protected method. 
+
+Naming: What is the best way to name the abstractions? This seems to
+be an exokernel-wide issue.
+
+================================================================================
+
+At this point I will implement a much simpler form of the protected
+methods. I assume that:
+
+- protected method text resides in a fixed region (PROT_AREA_BOT to
+  PROT_AREA_TOP) and begins at a fixed address (PROT_AREA_BOT). This
+  makes mapping easy (and don't need to worry about PIC code for now).
+- the protected method uses the same stack as the application
+  (this will definitely need to change)
+- we do not account for interruptions (e.g., epilogue, page fault)
+
+To write an abstraction:
+
+	- define all the functions that are supposed to be protected
+	  methods
+	- in main, fill out a mtab_t structure with the addresses of
+	  the protected methods
+	- allocate whatever state is necessary and protect it with a
+	  unique capability
+	- call sys_prot_define and pass in the mtab_t table and the
+	  slot for the capability
+
+================================================================================
+
+The following instruction generates the trap that brings us into
+sys_prot_call. Notice from the assembly that
+
+- the syscall number (SYS_prot_call) is placed in %eax
+- the interrupt we generate is T_SYSCALL
+- the arguments are passed in registers: first in %edx and the second
+  in %ecx (this is in conformance with the gcc calling convention)
+
+  __asm __volatile ("\n"
+                    "\tmovl %3, %%eax\n"
+                    "\tint %4\n"
+                    : "=a" (ret) :
+                    "c" (a2),
+                    "d" (a1),
+                    "i" (SYS_prot_call), "i" (T_SYSCALL)
+                    : "eax", "edx", "ecx", "cc", "memory");
+
+================================================================================
+
+The system call entry point can be found in locore.S. 
+
+Upon entry, it expects 
+	- the number of the syscall in %eax
+	- the 1st arg (if any) in %edx
+	- the 2nd arg (if any) in %ecx
+	- the 3rd arg (if any) in %ebx
+	- the rest of the args (if any) are on the stack at %esp + 12
+	  (note that user %esp is saved in trapframe)
+
+Here is the "documented" code:
+
+ENTRY(syscall)
+	pushl	%ds			# save D data segment register on stack
+	pushl	%es			# save E data segment register on stack 
+	andl	$(MAX_SYSCALL-1),%eax	# Save one cycle with lazy decoding ???
+	pushal				# Save all registers on stack, in case of fault in syscall
+	pushl	$GD_KD			# Load into %ds and %es
+	popl	%ds			  # the kernel data segment 
+	pushl	$GD_KD 			  # data segment
+	popl	%es			  # registers
+	movl	_sctab+4(,%eax,8),%esi	# 'sctab' is the table of syscalls (see sys/conf/obj/sys_sctab.c)
+					  # extract the number of args to syscall and put it in %esi
+	subl	$3,%esi			# Compute # of stack args (to take the slow path for > 3 args)
+	ja	1f			# (the number of stack arguments remains in %esi)
+	pushl	%ebx			# Push 3rd argument on stack
+	movl	_sctab(,%eax,8),%esi	# Address of function for syscall (extract from 'sctab')
+	call	%esi			# Call the syscall; upon return we will get back here
+	movl	8(%esp),%esi		# Restore %esi from pushal. No other regs were touched.
+	addl	$36,%esp		# Throw away the rest of pushal
+	popl	%es			# Restore the E data segment register from stack
+	popl	%ds			# Restore the D data segment register from stack
+	iret				# Return from interrupt (back to user process)
+
+Not interesting from here on....
+
+===========================================================================
+
+   A page may also be pinned for pending dma. Allocation requests will
+   not be satisfied with pinned pages even if they are free. This
+   prevents someone from allocating a page, starting a disk read into
+   it, releasing the page, having a second process allocate that page,
+   store data into it, and then having it trashed when suddenly the
+   disk completes the read request and dma's data into the
+   memory. PP_IS_PINNED(struct Ppage *) is true if a physical page is
+   pinned.
+
+===========================================================================
+
+Here are the steps involved in executing a protected method:
+
+1. IN THE CALLER APPLICATION (USER LEVEL)
+-----------------------------------------
+
+The user application loads EAX with the system call number
+(SYS_prot_call in our case) and does an INT <T_SYSCALL> (0x30 in our
+case). This is done by the sys_prot_call stub in xok/sys_ucall.h.
+
+
+2. IN THE INTERRUPT HANDLING MECHANISM (KERNEL LEVEL)
+-----------------------------------------------------
+
+The idt[] array (kern/init.c) contains an interrupt gate for interrupt
+T_SYSCALL, with SS (segment selector) GD_KT (non-conforming kernel
+text segment) descriptor at DPL 3 (because it must be callable from
+user mode, i.e. CPL=3). From the GD_KT segment selector a CPL=0 is
+deduced for the interrupt handler code.
+ 
+The effect of going through the interrupt gate is as follows (note
+that the stack is switched to the one indicated by the TSS of caller):
+
+	USER STACK 		    <--- ESP before making interrupt
+			-----------
+			Calling SS
+			-----------
+			Calling ESP
+			-----------
+			EFLAGS
+			-----------
+			Calling CS
+			-----------
+			Calling EIP
+			-----------
+
+	KERNEL STACK
+			--------------
+			Calling SS
+			--------------
+			Calling ESP
+			--------------
+			Calling EFLAGS
+			--------------
+			Calling CS
+			--------------
+			Calling EIP    <--- ESP at the beginning of
+			--------------      interrupt handler
+
+The interrupt will transfer control to the 'syscall' entry point
+(kern/locore.S). At this point, CPL=0 and we are running in the
+context of the calling process (except with a new stack). The
+interrupt handler then does the following:
+
+- push DS and ES (data segment regs) onto the kernel stack
+- push onto kernel stack EAX, ECX, EDX, EBX, original ESP, EBP, ESI, 
+  and EDI via a PUSHAL (is this really necessary ???)
+- load DS and ES with the kernel data segment regs
+
+At this point the KERNEL STACK looks like this:
+
+			--------------
+			Calling SS
+			--------------
+			Calling ESP
+			--------------
+			Calling EFLAGS
+			--------------
+			Calling CS
+			--------------
+			Calling EIP
+			--------------
+			User DS
+			--------------
+			User ES
+			--------------
+			EAX
+			--------------
+			ECX
+			--------------
+			EDX
+			--------------
+			EBX
+			--------------
+			Original ESP
+			--------------
+			EBP
+			--------------
+			ESI
+			--------------
+			EDI            <--- ESP at the beginning
+			--------------      of interrupt handler
+
+At this point, a CALL is made to the syscall procedure corresponding
+to syscall number in EAX (in our case sys_prot_call).
+
+
+3. IN THE SYS_PROT_CALL FUNCTION (KERNEL LEVEL)
+-----------------------------------------------
+
+After sys_prot_call does its work (granting the capability to the
+caller, etc.), it alters the trap frame on the kernel stack, so that
+IRET (in locore.S) returns into the protected method, instead of the
+caller.
+
+I assume that the calling SS and CS equals the protmeth's SS and CS,
+respectively.  Thus, sys_prot_call modifies the EIP word on the kernel
+stack (a.k.a. utf->tf_eip, the "Calling EIP"). In order to give the
+protected method its own stack, it also changes the "Calling ESP" word
+on the kernel stack (utf->tf_esp) to point to the protmeth's stack
+(the ptr to this stack is stored in the abstraction table, along with
+all the other information). Thus, sys_prot_call does the
+following before returning:
+
+- changes tf_esp word on kernel stack to contain protmeth's stack ptr
+- changes tf_eip word on kernel stack to contain protmeth's EIP
+- pushes on protmeth's stack the caller's EIP
+- pushes on protmeth's stack the caller's ESP
+- pushes on protmeth's stack the argument pointer passed in by the
+  caller (i.e. the ptr to the arguments for the protmeth)
+
+When sys_prot_call returns, it gets back to the syscall code in
+sys/kern/locore.S and causes the following:
+	
+- ESI is restored from the kernel stack (the rest of PUSHAL is thrown away)
+- DS and ES are restored from the kernel stack
+- the IRET:
+	- loads CS:EIP (i.e. protmeth's EIP) from kernel stack
+	- pops EFLAGS from kernel stack
+	- loads SS:ESP (i.e. protmeth's ESP) from kernel stack
+
+At this point, control is transferred to the protected method.
+
+
+4. IN THE PROTECTED METHOD (USER LEVEL)
+---------------------------------------
+
+We are at the beginning of the protected method, having on the
+protmeth's stack a ptr to the args, the caller's ESP, and the caller's
+EIP (the latter will be kept there for the RET). The protected method
+does the following:
+
+- pop the argument pointer from the protmeth's stack 
+- perform the work (map of state, update, throw away cap, etc.)
+- pop ESP from the stack 
+- RET (which returns to the caller's EIP)
+
+
+5. IN THE CALLER APPLICATION (USER LEVEL)
+-----------------------------------------
+
+At this point, control is back in the caller, just as if it had made a
+normal procedure call.
+
+
+
+
+A CALL does the following:
+
+	- push EIP
+	- change to new EIP
+
+A RET does the following:
+
+	- pop EIP from stack
+	- if RET has 16-bit operand, let ESP be ESP+operand
+
+===========================================================================
+
+Random thoughts:
+
+1. Instead of passing in a void * as the pointer to arguments in
+   sys_prot_call, we should pass in a "struct args *" which would
+   be something like
+
+	typedef struct _x {
+		uint num_args;
+		uint va_args;
+	}
+
+
+   A page may also be pinned for pending dma. Allocation requests will
+   not be satisfied with pinned pages even if they are free. This
+   prevents someone from allocating a page, starting a disk read into
+   it, releasing the page, having a second process allocate that page,
+   store data into it, and then having it trashed when suddenly the
+   disk completes the read request and dma's data into the
+   memory. PP_IS_PINNED(struct Ppage *) is true if a physical page is
+   pinned.
+
+2. Why does this happen ?
+   If for define.c the LDADDR is 10000020, then xok crashes with a 
+   segfault.
+
+===========================================================================
+===========================================================================
+===========================================================================
+===========================================================================
+===========================================================================
+ORIGINAL FILE FOLLOWS
+===========================================================================
+===========================================================================
+===========================================================================
+===========================================================================
+===========================================================================
+INTRO
+=====
+
+A shared abstraction (be it OS abstraction or anything else), is
+defined by a piece of STATE and an INVARIANT on that state. In order
+to enforce the invariant, access to the state is restricted to a set
+of protected methods (protmeths), which constitute the interface to
+the abstraction.
+
+It is essential that the kernel require no knowledge about the state
+or the invariant in order to provide protection. It is also crucial
+that protmeths run in user space.
+
+Protection is provided via an exclusive capability owned by the
+abstraction, which prevents any other unprivileged entities in the
+system to access the shared state. The user of an abstraction must
+trust the definer of the abstraction, because the protmeths have full
+access to the user's state.
+
+
+DEFINING AN ABSTRACTION
+=======================
+
+To define an abstraction, a process provides the kernel with the
+protmeths and a capability that protects the shared state.  I expect
+such a program to follow the following steps:
+
+1. Allocate the shared state (memory pages, disk blocks, etc.) and
+   protect all of it with a sytem-wide unique capability (dominated by
+   CAP_EUID only), using standard system calls (sys_self_forge,
+   sys_pgacl_mod, sys_pxn_add_cap).
+
+2. Make a syscall (sys_prot_define) and pass it a description of the
+   methods along with the cap that protects the state. An additional
+   parameter can specify whether the abstraction is stable (available
+   after reboot) or volatile.
+
+The system call then returns the system-wide ID of the abstraction,
+which the defining application can then advertise to the users of the
+abstraction.
+
+Pending questions:
+
+- Should sections of the state be protected by different caps? A
+  unique cap is probably sufficient.
+- Is there a better way to name abstractions other than by numeric
+  IDs that the "owner" must then communicate to all the users?
+  (Naming seems to be an exokernel-wide problem)
+
+
+USING AN ABSTRACTION
+====================
+
+To use an abstraction, a process makes a system call (sys_prot_call)
+and passes to the kernel the abstraction ID, method ID, and a pointer
+to the arguments for the requested method. The system call returns the
+status code of the protmeth's execution.
+
+
+STRUCTURE OF A PROTECTED METHOD
+===============================
+
+Protmeths run in the calling application's context and have no special
+privilege except for the capability to access the shared
+state. Hence, the following structure:
+
+1. Map (bind) the necessary parts of the shared state (only the
+   protmeths have the capability required for this)
+
+2. Perform the required updates to the shared state.
+
+3. Unmap the state that may not be accessed by other entities and
+   relinquish the exclusive capability protecting the state.
+
+
+INTERFACE
+=========
+
+The interface for defining and manipulating abstraction consists of
+three system calls: sys_prot_define, sys_prot_delete, and
+sys_prot_call.
+
+
+int sys_prot_define (uint mtab_addr, uint slot, 
+		     uint nbytes, uint stable )
+
+  - 'mtab_addr' is a pointer to a table that describes the location of
+    the protected methods. This table is defined by:
+
+      typedef struct _ {
+        uint nmethods;            // no. of protmeths in abstraction
+        uint start[MAX_NMETHODS]; // each protmeth's start address
+      } mtab_t;
+
+  - 'slot' is the entry in the caller environment's cap list where the
+    capability for the shared state can be found
+  - 'nbytes' is the total size (in bytes) of the methods. The reason
+    for this argument is that the abstraction can have both public and
+    private methods, i.e. the interface just shows the tip of the
+    iceberg.
+  - 'stable' is a flag indicating whether the abstraction is to be
+    made stable accross reboots (and thus placed in an on-disk
+    registry) or volatile (for the current session only)
+
+
+int sys_prot_delete (uint abs_id, uint slot, uint permanently)
+
+  - 'abs_id' is the ID of the abstraction to be deleted
+  - 'slot' is the entry in the caller's environment's cap list where
+    the capability for the abstraction's shared state can be found
+    (note that this could mean that only processes with the root cap
+    can remove stable abstractions)
+  - 'permanently' is a flag indicating whether the abstraction should
+    be removed from the on-disk registry or only from volatile memory
+
+
+int sys_prot_call (uint abs_id, uint meth_id, void *arg_ptr)
+
+  - 'abs_id' and 'meth_id' identify the protmeth to be called
+  - 'arg_ptr' is a pointer to the arguments; this pointer will be
+    passed along to the protmeth
+
+
+IMPLEMENTATION
+==============
+
+The kernel maintains an on-disk registry and a volatile list of
+currently defined abstractions. Each entry in the volatile table has
+the following structure (the on-disk structure is very similar):
+
+  typedef struct _ {
+    uint         nmethods;            // no. of methods in this abs.
+    struct Ppage *ppages[MAX_PAGES];  // the pages containing the methods
+    uint         start[MAX_NMETHODS]; // the methods' start VA's
+    cap          state_cap;           // cap needed to access the state
+    uint         npages;              // the number of pages in this abs
+    struct Ppage *stack_page;         // page containing abs' stack
+    uint         stack_offset;	      // stack's offset within page
+  } ktab_t;
+
+In order for the abstraction's methods to be accessible, 'ppages' must
+be mapped. At this point, protmeths will always be mapped in the same
+"reserved" address range and the addresses in 'start' will fall within
+that range.
+
+---------------
+sys_prot_define
+---------------
+
+1. Allocate a new entry in the volatile abstraction table (and the
+   stable one too, if necessary)
+2. Allocate a stack for this abstraction
+2. Figure out which phys. pages contain the methods and increase their
+   reference count, so that they don't get deallocated when the
+   defining process terminates
+3. Fill out the entry in the abstraction table
+
+
+-------------
+sys_prot_call
+-------------
+
+The steps involved in executing a protected method are described in
+greater detail below:
+
+1. In the caller application (user level)
+-----------------------------------------
+
+The user application loads EAX with the system call number
+(SYS_prot_call in our case) and does an INT <T_SYSCALL> (0x30 in our
+case). This is done by the sys_prot_call stub in xok/sys_ucall.h.
+
+
+2. In the interrupt handling mechanism (kernel level)
+-----------------------------------------------------
+
+The idt[] array (kern/init.c) contains an interrupt gate for interrupt
+T_SYSCALL, with SS (segment selector) GD_KT (non-conforming kernel
+text segment) descriptor at DPL 3 (because it must be callable from
+user mode, i.e. CPL=3). From the GD_KT segment selector a CPL=0 is
+deduced for the interrupt handler code.
+ 
+The effect of going through the interrupt gate is as follows (note
+that the stack is switched to the one indicated by the TSS of caller):
+
+	USER STACK 		    <--- ESP before making interrupt
+			-----------
+			Calling SS
+			-----------
+			Calling ESP
+			-----------
+			EFLAGS
+			-----------
+			Calling CS
+			-----------
+			Calling EIP
+			-----------
+
+	KERNEL STACK
+			--------------
+			Calling SS
+			--------------
+			Calling ESP
+			--------------
+			Calling EFLAGS
+			--------------
+			Calling CS
+			--------------
+			Calling EIP    <--- ESP at the beginning of
+			--------------      interrupt handler
+
+The interrupt will transfer control to the 'syscall' entry point
+(kern/locore.S). At this point, CPL=0 and we are running in the
+context of the calling process (except with a new stack). The
+interrupt handler then does the following:
+
+- push DS and ES (data segment regs) onto the kernel stack
+- push onto kernel stack EAX, ECX, EDX, EBX, original ESP, EBP, ESI, 
+  and EDI via a PUSHAL (is this really necessary ???)
+- load DS and ES with the kernel data segment regs
+
+At this point the KERNEL STACK looks like this:
+
+			--------------
+			Calling SS
+			--------------
+			Calling ESP
+			--------------
+			Calling EFLAGS
+			--------------
+			Calling CS
+			--------------
+			Calling EIP
+			--------------
+			User DS
+			--------------
+			User ES
+			--------------
+			EAX
+			--------------
+			ECX
+			--------------
+			EDX
+			--------------
+			EBX
+			--------------
+			Original ESP
+			--------------
+			EBP
+			--------------
+			ESI
+			--------------
+			EDI            <--- ESP at the beginning
+			--------------      of interrupt handler
+
+At this point, a CALL is made to the syscall procedure corresponding
+to syscall number in EAX (in our case sys_prot_call).
+
+
+3. IN THE SYS_PROT_CALL FUNCTION (KERNEL LEVEL)
+-----------------------------------------------
+
+After sys_prot_call does its work (granting the capability to the
+caller, etc.), it has two more important things to do:
+- vector the user-level interrupt handlers meant to protect the
+  protmeths from interrupts; this part isn't well fleshed out,
+  so I need to do some more thinking about it.
+- alter the trap frame on the kernel stack, so that IRET (in locore.S)
+  returns into the protected method, instead of the caller.
+
+I assume that the calling SS and CS equals the protmeth's SS and CS,
+respectively.  Thus, sys_prot_call modifies the EIP word on the kernel
+stack (a.k.a. utf->tf_eip, the "Calling EIP"). In order to give the
+protected method its own stack, it also changes the "Calling ESP" word
+on the kernel stack (utf->tf_esp) to point to the protmeth's stack
+(the ptr to this stack is stored in the abstraction table, along with
+all the other information). Thus, sys_prot_call does the
+following before returning:
+
+- changes tf_esp word on kernel stack to contain protmeth's stack ptr
+- changes tf_eip word on kernel stack to contain protmeth's EIP
+- pushes on protmeth's stack the caller's EIP
+- pushes on protmeth's stack the caller's ESP
+- pushes on protmeth's stack the argument pointer passed in by the
+  caller (i.e. the ptr to the arguments for the protmeth)
+
+When sys_prot_call returns, it gets back to the syscall code in
+sys/kern/locore.S and causes the following:
+	
+- ESI is restored from the kernel stack (the rest of PUSHAL is thrown away)
+- DS and ES are restored from the kernel stack
+- the IRET:
+	- loads CS:EIP (i.e. protmeth's EIP) from kernel stack
+	- pops EFLAGS from kernel stack
+	- loads SS:ESP (i.e. protmeth's ESP) from kernel stack
+
+At this point, control is transferred to the protected method.
+
+
+4. IN THE PROTECTED METHOD (USER LEVEL)
+---------------------------------------
+
+We are at the beginning of the protected method, having on the
+protmeth's stack a ptr to the args, the caller's ESP, and the caller's
+EIP (the latter will be kept there for the RET). The protected method
+does the following:
+
+- pop the argument pointer from the protmeth's stack 
+- perform the work (map of state, update, throw away cap, etc.)
+- pop ESP from the stack 
+- RET (which returns to the caller's EIP)
+
+This last part is a little tricky here, because RET needs to get the
+ESP from the current stack, and popping ESP beforehand will not
+work. I'll need to figure out a workaround.
+
+5. IN THE CALLER APPLICATION (USER LEVEL)
+-----------------------------------------
+
+At this point, control is back in the caller, just as if it had made a
+normal procedure call, and its stack is in the expected state.
+
+
+STUFF THAT DOESN'T FIT IN ANY PREVIOUS SECTION
+==============================================
+
+- We might be able to get away without using a separate stack for the
+  protected method by simply checking that there is no pending DMA on
+  the page containing the stack. If there is, then the protected method
+  should not be started. However, there is also the possibility of 
+  getting messed up by an ASH, although we don't use them anymore.
+
+- It might be interesting to have some optional arguments telling the
+  kernel what state to map for the protected method (of course, based
+  on the cap it has). This adds complexity, but may improve performance
+  because it saves the protected method from doing lots of syscalls.
+
+- There is a big question regarding code relocation: either I use PIC
+  code for all protected methods and then go through the trouble of
+  doing run-time relocation (and pay the performance hit) or just
+  assume we always map the abstraction currently being used at some
+  fixed address (and then all abstractions will be linked with -L<addr>).
+  Some of the problems with this latter approach is that abstractions
+  cannot use other abstractions. Additionally, we may get lots of cache 
+  misses when alternatively using two abstractions (and they map on top
+  of each other).
+
+- Some abstractions may want to use library functions (such as printf
+  during debugging) which cannot be guaranteed to be safe. What can
+  we do about that?
+
+- One of the underlying assumptions in the protmeth stuff is that the 
+  code is contiguous in memory. When would this assumption break (aside
+  from using library functions)?
+

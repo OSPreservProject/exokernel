@@ -1,0 +1,4 @@
+rm -f scripts/rccs
+cp rccs scripts
+rccs get -s
+make clean

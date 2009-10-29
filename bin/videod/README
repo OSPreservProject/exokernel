@@ -1,0 +1,25 @@
+SIMPLE VIDEO SERVER
+
+1) This program is really a very simple web server. It receives HTTP GET
+requests for a file, opens the file, and sends the data back. Currently,
+this is used to send mpeg files to netscape.
+
+2) It currently listens to port 10102. It does not translate the pathname
+it receives in a url at all. So, if you have a file /usr/lib/mpeg/wallace.mpg
+you can get it with the url (assuming videod is running on machine zap):
+http://zap:10102/usr/lib/mpeg/wallace.mpg.
+
+3) The code is structured as a server independent portion that handles
+de-multiplexing connections, most of retransmission, and connection
+shutdown. The rest of the code is a sequence of actions for each
+state the server can be in. Ideally, the server independent part would
+be in a library and only the actions would be specified. The current
+convention is each action takes a state struct as it's argument and
+returns either 0 or 1. O means suspend the connection associated with
+this state until something interesting happens (packet arrives or
+a timeout occurrs) and 1 means continue on processing with the next
+state (explicitly set by the current state handler).
+
+4) Currently, the file input side of things is purely unix fd calls
+(open and read). Only the tcp output side has been at all exokernelized
+and only minimally enough to get something that works.

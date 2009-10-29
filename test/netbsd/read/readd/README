@@ -1,0 +1,4 @@
+Tests the behavior of reading a directory
+on a local file systems it should be ok
+on a remote file system it should fail with EPERM (1)
+Usage: read [directory] (directory "." is the default)

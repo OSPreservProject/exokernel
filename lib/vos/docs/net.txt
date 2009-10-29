@@ -1,0 +1,41 @@
+
+Network devices are detected by kernel drivers. The init program (vinit for
+now) constructs an interface table with all the available network interfaces,
+up or down. Each entry in the table contains the interface name, eth address,
+ip address, netmask, mtu, etc. This table is mapped read only for most
+processes, except privileged ones such as init and ifconfig. The ifconfig
+program can be used to change ip address, netmask, mtu, etc. Other network
+applications need to read this table to determine which interface to use to
+send packets.
+
+In a very similar fashion, a route table is constructed.
+
+DPF are the packet filters in xok that moves packets into rings after initial
+demultiplexing. Network applications will most likely need to register dpf
+filters. For example, the program that answers arp requests must register a
+dpf filter that receives arp requests.
+
+The program that answers arp requests is embedded in init (it would be trivial
+to separate this arpd program out of init). It has two functions. One, it
+sends arp reply messages after receiving arp requests. Two, it remembers arp
+reply messages in a table. Only this program can receive arp reply messages.
+An application can browse the table to find out the ethernet address of a
+host. If the host's ethernet address is not in the table (arp cache), the
+application can send an arp request. If the arp request is answered, the reply
+will be saved in the table by the arpd program. The original application can
+then find out what the ethernet address for this host is by browsing the arp
+table again. This may seem a bit inefficient, but doing arp is often off the
+critical path, and most of the time the arp cache will come through.
+
+UDP and TCP (the XIO implementation) are embedded in each libOS. Both the udp
+and tcp implementation need to interact with the interface and arp tables to
+determine which interface to use to send the packet and where to send it to.
+
+Additionally, udp and tcp must insert DPFs to receive appropriate packets. The
+ability to insert DPFs are associated with the ability to allocate a port
+(i.e. udp or tcp ports). The ports are a software abstraction, they are
+negotiated in a cooperative fashion (modules/ports/ports.c). Untrusted
+processes can only insert DPFs and obtain ports via IPC to a ports daemon
+(bin/portsd/portsd.c). The ports daemon creates a ports table that, among
+other things, include its IPC task IDs (modules/ports/ports.h).
+

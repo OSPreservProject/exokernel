@@ -1,0 +1,8 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:1129: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -ldir   1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -ldir
+ld: -ldir: no match
+configure:1198: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c

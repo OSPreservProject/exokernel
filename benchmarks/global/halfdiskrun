@@ -1,0 +1,5 @@
+#!/bin/csh
+install -d /mnt/benchmarks/global
+pax -r -w -luv run test0.tar.gz /mnt/benchmarks/global
+cd /mnt/benchmarks/global
+run $argv

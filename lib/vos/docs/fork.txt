@@ -1,0 +1,87 @@
+
+Fork and Copy-On-Write
+
+Fork semantics in VOS is similar to that of UNIX. The following tasks
+are done in fork:
+
+  1. A new environment is created for the child process (sys_env_alloc).
+  
+  2. Using Copy-On-Write technique, the page table of the parent is
+     duplicated, modified, and placed as the page table of the child.
+     Page table entries are grouped in the following ways:
+       
+         - not present or shared (no COW needed): PTE directly copied
+	 
+	 - exception page on stack: exception page is copied, new PTE
+	   created for the child
+	 
+	 - UAREA: PTE not changed
+	 
+	 - RO or already COW pages: PTE directly copied
+	 
+	 - writeable pages: PTE for parent changed to COW, copied over for
+	   the child.
+
+  3. UAREA of the parent is duplicated, modified, and placed (sys_wru) as
+     the UAREA for the child process. In particular, the entprologue is
+     temporarilly changed to a new location (see 7) so that process specific
+     initializations for the child can be executed before the child really
+     runs.
+
+  4. The environment (Env structure) of the parent is duplicated, modified,
+     and placed (sys_wrenv) as the Env structure for the child process. In
+     particular, register values are saved into the child's trapframe
+     (e->env_tf).
+
+  5. Schedule the child process (sys_quantum_alloc).
+
+  6. Parent returns child PID.
+
+  7. A special prologue code segment executes when the child is upcalled
+     for the first time. In this code segment process specific
+     initialization are set up, and returns 0 to the instruction after the
+     call to fork.
+
+
+Copy-On-Write:
+
+     Only pages that were writable can be changed to be Copy-On-Write.
+     Therefore, if a page is Copy-On-Write, it must be writable.
+
+     To avoid inconsistency and races, the COW bit in the the parent's PTE
+     for a not-shared page is set AFTER the COW bit for the child PTE is set
+     and that PTE inserted into the child's page table. This ordering is
+     important. In our COW fault handler, if a COW page has only one
+     reference count, it will be changed to a private and writeable page.
+     Therefore, if parent's PTE has the COW bit set first, this page can be
+     changed to writeable even though the child will set the COW bit
+     in its PTE and insert the PTE into its page table, therefore
+     incrementing the reference count. As a result, the child can view
+     parent changes.
+
+     The only way a PTE can be turned from W to COW is via a fork path. The
+     only way to turn it off is if the environment tries to write to the
+     page.
+
+
+Sharing:
+
+     Although fd table is usually shared, in vos the synchronization algorithm
+     require each process to have a private copy of even the shared fd entry.
+     Therefore across fork, fd table is also COW. Certain meta data
+     information that are used for the synchronization of file descriptors
+     are shared. See sbuf.h.
+
+
+Before fork handlers:
+
+     Before page tables are copied in fork, application defined fork handlers
+     are executed. These handlers have the signature 
+     
+         void (*func)(u_int new_envid)
+	 
+     and can be registered with proc_before_fork(func). For example, there is
+     a before fork handler for the fd system that increment the reference
+     count for each fd entry. The new_envid argument specifies the new
+     process' envid.
+

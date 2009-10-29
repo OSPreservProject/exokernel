@@ -1,0 +1,114 @@
+
+# Take the list of files and turn them into an html file that points
+# at their context & mem latency GIFs.
+#
+# Usage: html-list file file file....
+#
+# Hacked into existence by Larry McVoy (lm@sun.com now lm@sgi.com).
+# Copyright (c) 1995 Larry McVoy.  GPLed software.
+eval "exec perl -Ss $0 $*"
+	if 0;
+
+open(H, ">HTML/specific.html");
+print H <<EOF;
+<title>LMBENCH System Results</title>
+<h1>LMBENCH System Results</h1>
+<p>
+EOF
+
+# The order that is passed in is the order of the generated 
+# graphs so save that.
+$val = 0;
+foreach $file (@ARGV) {
+	$number{$file} = ++$val;
+}
+
+# Now sort them so we can group by OS
+@ARGV = sort(@ARGV);
+
+# Figure out the different OS
+foreach $file (@ARGV) {
+	($os = $file) =~ s|/.*||;
+	push(@os, $os);
+	$done{$os} = 0;
+}
+
+foreach $os (@os) {
+	next if $done{$os};
+	$done{$os} = 1;
+	# Print out an OS specific heading
+	print H "<hr><h2>Results from $os</h2><p>\n";
+
+	for ($i = 0; $i <= $#os; $i++) {
+		$file = $ARGV[$i];
+		next unless $file =~ /$os/;
+		open(F, $file);
+		$_ = <F>;
+		close(F);
+		next unless /lmbench1.[01]/;
+		chop; chop;
+		s/.lmbench1.? results for //;
+		($sys = $file) =~ s|.*/||;
+		if ($i > 0) {
+			($prev_sys = $ARGV[$i - 1]) =~ s|.*/||;
+		}
+		if ($i < $#os) {
+			($next_sys = $ARGV[$i + 1]) =~ s|.*/||;
+		}
+		print H <<EOF;
+<h3>Dataset: $sys</h3>
+<h4>Uname: $_</h4>
+<a href="${sys}-ctx.html">Context switch details</a>
+<br>
+<a href="${sys}-mem.html">Memory latencies</a>
+EOF
+
+		# Create the files referencing the data GIFs
+		open(S, ">HTML/${sys}-ctx.html");
+		print S "\n<a href=lat_ctx.8>Man page for this benchmark</a>\n";
+		printf S "<p><IMG SRC=\"ctx%02d\">\n<p>", $number{$file};
+		print S "<a href=lmbench-toc.html><img align=middle src=\"gifs/arrows/b_arrow.gif\">Table of contents</a>\n";
+		print S "<a href=lmbench-S-6.html><img align=middle src=\"gifs/graph.gif\">Results page</a>\n<br>";
+		print S "<a href=${prev_sys}-ctx.html><img align=middle src=\"gifs/arrows/back.gif\">Previous context switching result</a>\n"
+		    if $i > 0;
+		print S "<a href=${next_sys}-ctx.html><img align=middle src=\"gifs/arrows/forward.gif\">Next context switching result</a>\n"
+		    if $i < $#os;
+		print S "<br><a href=${sys}-ctx-unscaled.html><img align=middle src=\"gifs/arrows/darrow.gif\">Unscaled context switches for this system</a>\n";
+		print S "<a href=${sys}-mem.html><img align=middle src=\"gifs/arrows/darrow.gif\">Memory latencies for this system</a>\n";
+
+		open(S, ">HTML/${sys}-ctx-unscaled.html");
+		print S "\n<a href=lat_ctx.8>Information on this benchmark</a>\n";
+		print S "<br><a href=lmbench-S-6.html>LMBENCH results table of contents</a>\n";
+		print S "<br><a href=${sys}-ctx.html>Scaled context switches for this system</a>\n";
+		print S "<br><a href=${sys}-mem-unscaled.html>Unscaled memory latencies for this system</a>\n";
+		print S "<br><a href=${prev_sys}-ctx-unscaled.html>Previous unscaled context switch graph: $prev_sys</a>\n"
+		    if $i > 0;
+		print S "<br><a href=${next_sys}-ctx-unscaled.html>Next unscaled context switch graph: $next_sys</a>\n"
+		    if $i < $#os;
+		printf S "<p><IMG SRC=\"ctx-unscaled%02d\">\n", $number{$file};
+
+		open(S, ">HTML/${sys}-mem.html");
+		print S "<a href=lat_mem_rd.8>Information on this benchmark</a>\n";
+		print S "<br><a href=lmbench-S-6.html>LMBENCH results table of contents</a>\n";
+		print S "<br><a href=${sys}-mem-unscaled.html>Unscaled memory latencies for this system</a>\n";
+		print S "<br><a href=${sys}-ctx.html>Context switch times for this system</a>\n";
+		print S "<br><a href=${prev_sys}-mem.html>Previous memory graph: $prev_sys</a>\n"
+		    if $i > 0;
+		print S "<br><a href=${next_sys}-mem.html>Next memory graph: $next_sys</a>\n"
+		    if $i < $#os;
+		printf S "<p><IMG SRC=\"mem%02d\">\n", $number{$file};
+
+		open(S, ">HTML/${sys}-mem-unscaled.html");
+		print S "<a href=lat_mem_rd.8>Information on this benchmark</a>\n";
+		print S "<br><a href=lmbench-S-6.html>LMBENCH results table of contents</a>\n";
+		print S "<br><a href=${sys}-mem.html>Scaled memory latencies for this system</a>\n";
+		print S "<br><a href=${sys}-ctx-unscaled.html>Unscaled context switch times for this system</a>\n";
+		print S "<br><a href=${prev_sys}-mem-unscaled.html>Previous unscaled memory graph: $prev_sys</a>\n"
+		    if $i > 0;
+		print S "<br><a href=${next_sys}-mem-unscaled.html>Next unscaled memory graph: $next_sys</a>\n"
+		    if $i < $#os;
+		printf S "<p><IMG SRC=\"mem-unscaled%02d\">\n", $number{$file};
+		close(S);
+	}
+}
+exit 0;

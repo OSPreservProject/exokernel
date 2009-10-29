@@ -1,0 +1,181 @@
+INFORMATION ABOUT BOOTING AND SETTING UP THE FIRST PROCESS.
+
+This file has information about setting up the first process and also
+information about how to re/boot over the network.  The second topic
+is discussed towards the end of this document.
+
+The machine currently is used much like a diskless workstation.
+
+The exokernel can only boot using an NFS partition as its root (which
+once booted you can change to the disk).  So this means that the
+network setup has to be done without the help of any files.  The
+information needed is:
+	- ip address of machine
+	- netmask of primary interface
+	- ip address of gateway
+	- ip address of nfs server, and path
+	- interface to use ("ed0" or "de0" for example)
+
+there are currently 3 ways to obtain this information and hence to
+boot:
+
+1) From the keyboard: you type in all the network parameters by hand
+as you boot: ip address, netmask, gateway, ip address of nfs server,
+path of exokernel root on the server.
+2) All the information is hardcoded into the first program
+	(for compatibility reasons this is done in rconsoled).
+3) All the information is obtained via BOOTP
+
+
+The use of the init program is controlled by the env variable INITPROG
+(which its default is found in ebin/GNUmakefile
+right now it could be one of four choices:
+
+1) setenv INITPROG kbdinit
+if kbdinit is your init process it will prompt you for all the information
+you need to boot and setup the network at boot up time.  you must type
+this information at the console.  
+
+Please Enter your IP Address:
+Please Enter your netmask: 
+Please Enter interface of this IP address [%s]: 
+Please Enter your Gateway [press return if you dont care]: 
+Please Enter IP Address of your NFS Server: 
+Please Enter name your NFS directory: 
+
+The NFS directory you mount should be the same directory that is
+pointed to by your EXODEST env variable.
+
+(note that OpenBSD machines want the exact directory that you are
+mounting to appear on the /etc/exports file, or you can put the first
+directory on that partition followed by the "-alldirs" flag such that
+ALL directories in that partition are exported.
+
+2) setenv INITPROG hardcoded
+
+The network information is hardcoded in the ifinfo structure and the first 
+3 variables of
+hardcoded.c:
+
+#define DOMAIN "lcs.mit.edu"
+struct ifinfo {
+  char *interface;
+  int flags;
+  ipaddr_t ip;
+  ipaddr_t netmask;
+} ifinfo[] = {
+  {"de0", IF_UP|IF_BROADCAST,{18,26,4,36},{255,255,255,0}},
+  {"ed0", IF_DOWN|IF_BROADCAST,{18,26,4,33},{255,255,255,0}}
+};
+ipaddr_t mygateway = {18,26,4,1};
+char nfs_server_ip[] = "18.26.4.40";
+char nfs_server_path[] = "/disk/av0/hb/tree";
+
+This way you can set multiple interfaces at startup.
+
+3) setenv INITPROG rconsoled
+
+This approach should be compatible to how people before november 1997
+used to setup their exokernel.  It uses hosttable.c to find out the ip
+address of the machine.  It assumes incorrectly a netmask of
+255.255.0.0, it has the gateway hardcoded 18.26.4.1 (both pieces of
+information codified in the file hosttable/get_ether_from_ip.c). 
+
+So if you need to use this, make sure your machine appears in the file
+libexos/netinet/hosttable/hosttable.c.
+
+You will need to insert a line of the form:
+   /* 1 */ {"panam", {18,26,4,38}, {0x0,0x0,0xc0,0x81,0xe0,0xe2}, 1},
+
+which corresponds to the machine name, ip address, ethernet address,
+and card number.  The card numbering scheme is as follows:
+0 					= loopback
+1 to MAXSMC (found in sys/xok/sysinfo.h)= slow ethernet interfaces (ed#)
+MAXSMC + 1 to MAXTULIPS + MAXSMC + 1	= fast ethernet interfaces (de#)
+
+The nfs information is passed at compilation time into setup_net.c in
+rconsoled (the only place that uses it) via env variables
+NFS_ROOT_HOST and NFS_ROOT_PATH. 
+
+For example, I have the following lines in my .cshrc to setup these
+variables (/home/pinckney/exopc/root is where binaries compiled to run
+under XOK/ExOS are put. This is also the directory that has to be NFS
+exported from NFS_ROOT_HOST).
+
+# building exopc
+setenv NFS_ROOT_HOST '\"plebic\"'
+setenv EXODEST /home/pinckney/exopc/root
+setenv NFS_ROOT_PATH '\"/home/pinckney/exopc/root\"'
+
+
+4) setenv INITPROG bootp
+
+This is the most flexible boot up process. it obtains all the
+information on itself and the nfs root via the BOOTP protocol.  To use
+it, enable the bootp daemon in some machine (your own?) by uncommenting
+the line that starts with "bootps" in the /etc/inetd.conf file.
+restarted inetd by sending it SIGHUP signal (kill -1).
+
+All the information about the machine's ip address, netmask,
+nfs root is obtained via the BOOTP protocol.  To use it add the following
+entry to your /etc/bootptab:
+
+avoch::ha=0000c0d0a54e:\
+	:sm=255.255.255.0:gw=18.26.4.1:
+	:ef="NFS 18.26.4.40:/disk/av0/hb/tree":\
+	:ip=18.26.4.33:\
+	:to=auto:
+
+except that replace:
+avoch,0000c0d0a54e,"NFS 18.26.4.40:/disk/av0/hb/tree",18.26.4.33
+with your:
+machinename, ethernet address, ipaddress of nfs server and path, machine ipaddr
+respectively.
+
+Make sure you use IP addresses for your nfs server, since DNS is not
+up before mounting the root.
+
+*DNS*
+Also before doing a gmake install, check your
+exopc/tree/etc/resolv.conf to make sure you have the right DNS server
+information. 
+
+
+By default all these programs check the existence of /etc/rc.local
+after mounting the root and execute it.  This process by default
+starts inetd which allows you to telnet into the machine.
+
+I think most people will use kbdinit as the init process initially to
+check that everything works ok, and then they will either use
+hardcoded or bootp on a daily basis.
+
+
+* REITERATION *
+To reiterate, you need to setup at least the following variables
+before building and booting the exokernel.
+
+INITPROG (controls which is your first process)
+EXODEST  (controles where binaries, executables, libraries, etc are
+	installed)
+NFS_ROOT_HOST (contains the ip address of your nfs server)
+NFS_ROOT_PATH (contains the path in NFS_ROOT_HOST that corresponds to
+		EXODEST)
+
+Noticed that if you are using bootp or kbdinit as your INITPROG you
+don't need to setup NFS_ROOT_HOST and NFS_ROOT_PATH.
+
+check the exopc/tree/etc/resolv.conf to make sure it has the right
+name server.
+
+
+BOOTING OVER THE NETWORK
+------------------------
+Two points:
+* Given a copy of the kernel, the program 'loadkern' can essentially
+reboot the computer using that image.
+* The default init programs will check the file /boot/xok.osid and it
+the contents does not match the running kernels osid then a 'loadkern'
+will be performed on /boot/xok.  If the file .noboot exists then a
+'loadkern' will not be performed.  Be sure to perform a 'gmake
+install' on the 'sys' directory after recompiling the kernel so that
+xok will be copied to /boot.

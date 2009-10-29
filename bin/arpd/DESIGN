@@ -1,0 +1,78 @@
+Entries can either be in one of four states:
+FREE     - the entry if free
+RESOLVED - the IP address belongs to such ether address.
+TIMEOUT  - a while ago I tried resolving such IP address but timedout
+PENDING  - waiting for a response
+
+
+Both RESOLVED and TIMEOUT entries get timed out.  This allows processes
+to reuse RESOLVED entries, and to avoid lookups for recent lookups
+that failed.
+
+Pseudo code:
+
+Process needs to find an ether addr for IP:
+in a critical region searches for the entry:
+	if entry is RESOLVED and not timed out, return success
+	if entry is TIMEOUT and not timed out, return error
+	if entry is PENDING, wait until status changes
+Otherwise 
+	IPC into arpd to add entry IP address you want
+add_entry does:
+	Searches for entry
+	if entry is RESOLVED but not timed out, returns
+	if entry is TIMEOUT but not timed out, returns
+	if entry is PENDING, returns
+	otherwise allocate an entry on the following priority
+		FREE
+		a timedout TIMEOUT 
+		a timedout RESOLVED
+	then increment npending
+	else return error (EAGAIN)
+
+
+the arpd sleeps until npending changes, or retransmission on a entry
+is necessary or until a packet comes in.
+
+
+-----------------------------------------------------------------------------
+IP table
+hostname {for sethostname and gethostname}
+	Routing Table
+	Interface Table
+struct interface {
+	name
+	index
+	ip addr
+	netmask
+	metric
+	mtu
+	inet bcast addr
+}
+struct route {
+	flags = {HOST, GATEWAY, REJECT, UP, BLACKHOLE, DEFAULT}
+	ip addr host or gateway
+	netmask // irrelevant for DEFAULT
+	metric
+}
+	Arp Table
+
+
+operations:
+high-level:
+
+bool get_ether_from_ip(ipaddr,&ifnum,&dstether,&more); 
+// more used for IP broadcasting or when multiple interfaces/route match
+bool get_ether_of_ifnum(ifnum,&ether)
+
+if_iter_init()
+if = if_iter()
+
+route_iter_init()
+route = route_iter()
+
+bool route_match(route,ipaddr);
+bool if_match(if,ipaddr);
+
+bool get_ether_if(ifnum,&ether);
+if = get_if(ipaddr,&more,

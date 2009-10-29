@@ -1,0 +1,49 @@
+
+                    L M B E N C H  1 . 0   S U M M A R Y
+                    ------------------------------------
+
+            Processor, Processes - times in microseconds
+            --------------------------------------------
+Host                 OS  Mhz    Null    Null  Simple /bin/sh Mmap 2-proc 8-proc
+                             Syscall Process Process Process  lat  ctxsw  ctxsw
+--------- ------------- ---- ------- ------- ------- ------- ---- ------ ------
+i586.1    FreeBSD 2.1-S  133       9    2.7K   11.9K     20K  105     24     28
+i686.1    EXTRAPOLATED   150       5    1.5K    6.6K     11K   59     13     16
+i586        Linux 1.2.8  120       2    2.4K    8.6K     26K   74     36     47
+i686      EXTRAPOLATED   150       1    1.3K    4.8K     15K   41     20     26
+ultraspar     SunOS 5.5  167       5    3.7K   20.0K     37K  212     14     20
+
+            *Local* Communication latencies in microseconds
+            -----------------------------------------------
+Host                 OS  Pipe       UDP    RPC/     TCP    RPC/
+                                            UDP             TCP
+--------- ------------- ------- ------- ------- ------- -------
+i586.1    FreeBSD 2.1-S     104     213     387     264     450
+i686      EXTRAPOLATED       58     119     217     148     252
+i586        Linux 1.2.8      84     325     451     477     718
+i686      EXTRAPOLATED       47     182     253     267     403
+ultraspar     SunOS 5.5      62     197     267     162     346
+
+            *Local* Communication bandwidths in megabytes/second
+            ----------------------------------------------------
+Note: these are largely motherboard dependent, I suspect they will not
+scale w/ processor speed.
+Host                 OS Pipe  TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+                                  reread reread (libc) (hand) read write
+--------- ------------- ---- ---- ------ ------ ------ ------ ---- -----
+i586.1    FreeBSD 2.1-S   21  0.2   30.2   53.9     42     39   73    83
+i686      EXTRAPOLATED    37  ???   53     94       74     69  129   147
+i586        Linux 1.2.8   22  5.1   21.4   13.3     41     38   74    75
+i686      EXTRAPOLATED    39  9     37     23       73     67  131   133
+ultraspar     SunOS 5.5   61 51.3   84.9  101.1    167     85  129   152
+
+	    Memory latencies in nanoseconds
+            (WARNING - may not be correct, check graphs)
+            --------------------------------------------
+Also mother board dependent, didn't even bother to scale these.
+
+Host                 OS   Mhz  L1 $   L2 $    Main mem    Guesses
+--------- -------------   ---  ----   ----    --------    -------
+i586.1    FreeBSD 2.1-S   133     7    111         181
+i586        Linux 1.2.8   120     8    103         151
+ultraspar     SunOS 5.5   166     6     42         270

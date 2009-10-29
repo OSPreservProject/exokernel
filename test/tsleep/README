@@ -1,0 +1,9 @@
+
+tsleep and wakeup are part of openbsd's blocking primitives.
+
+tsleep takes two important arguments, a tag and a timeout.  The process
+blocks (sleeps) until there is either a wakeup on the tag or a timeout
+occurs.  This test program tries to test our implementation of those
+primitives.
+
+hector

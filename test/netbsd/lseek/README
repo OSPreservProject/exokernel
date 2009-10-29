@@ -1,0 +1,1 @@
+This tests tests the atomic behavior of write on the file offset.

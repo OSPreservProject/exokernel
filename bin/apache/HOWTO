@@ -1,0 +1,45 @@
+How to get apachev1.3.1 to run on xok
+-------------------------------------
+
+To prevent unnecessary bloating and tweaking of makefiles Apache is not
+checked into the xok tree.  Instead, get apachev1.3.1 off the Internet
+and make the following change before compiling on an xok machine -
+either over NFS or CFFS.
+
+Add the following to src/helpers/GuessOS under the OpenBSD lines.
+----
+    ExOS_BSD_Xok:*)
+	echo "${MACHINE}-whatever-openbsd"; exit 0
+	;;
+
+----
+
+Then just follow the Apache directions as normal.
+
+
+==================
+
+Using mod_perlv1.15 with apachev1.3.1
+-------------------------------------
+
+Get mod_perlv1.15 off the internet (perl.apache.org).  Make the mod_perl
+and apache build directories have the same parent directory.  Use the
+following commands, starting in the mod_perl directory [taken from
+README.configure (with modifications) which comes with the apache code]:
+
+    $ perl Makefile.PL APACHE_SRC=../apache_1.3.1/src \
+                       DO_HTTPD=1 USE_APACI=1
+
+    [add "-Wa,-K" to Symbols/Makefile on the line with "CCCDLFLAGS"]
+
+    $ make
+    $ make install
+
+    [optionally you now have the chance to prepare or add more 
+     third-party modules to the Apache source tree]
+
+    $ cd ../apache_1.3.1
+    $ ./configure --prefix=/usr/local/apache \
+                  --activate-module=src/modules/perl/libperl.a
+    $ make 
+    $ make install

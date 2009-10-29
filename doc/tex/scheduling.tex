@@ -1,0 +1,40 @@
+\section{CPU and Scheduling}
+
+The kernel multiplexes the processor by dividing it into time slices of
+a fixed number of ticks. An environment may then allocate time slices
+in order to be scheduled on the processor. By default, the kernel runs
+each time slice for the specified number of ticks and then switches to
+the next time-slice, in order. A time slice may also be marked as
+sleeping in which case the kernel will skip it and not deduct any
+ticks from that slice. When the kernel has cycled through all slices
+in the system it replenishes the ticks of each slice up to a maximum.
+
+A process may donate the rest of its time slice to either a specified
+environment or to any environment via the {\tt yield} ExOS
+call\footnote{see include/exos/process.h}. 
+
+A process may also put itself to sleep by setting it's {\tt u\_status}
+to {\tt U\_SLEEP} and {\em another} process can wake that process up
+by setting the process's {u\_status} to {\tt U\_RUN}. Note the problem
+that once a process goes to sleep it has to rely on some other process
+to wake it up. To get around this problem, wakeup predicates can be
+used.
+
+\subsection {Wakeup Predicates}
+
+Wakeup predicates are predicates on the system state that the kernel
+periodically evaluates. When the predicates are true the environment
+associated with them has its {\tt u\_status} set to {\tt U\_RUN}. Rather
+than use the raw kernel interface for predicates you should use ExOS's
+wrappers.\footnote{see lib/libexos/os/uwk.c, sys/kern/wk.c, and sys/xok/wk.h}
+
+Wakeup predicates are specified using a simple language with only an
+unsigned integer type. The predicate is a sum-of-terms in which
+each term is a product of ``value op value'' triples in
+postfix. Each value can either be a literal or the contents of a
+memory location. The op can be equal, not equal, less then, etc.
+
+Additionally, tags can be associated with each product so that when a
+predicate evaluates to true and a process is moved from sleeping to
+runnable the process can tell which product triggered the wakeup. A
+tag is simply an integer specified with the {\tt WK\_TAG} instruction.

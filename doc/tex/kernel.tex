@@ -1,0 +1,46 @@
+
+\section {General xok Kernel Stuff}
+
+This section describes a number of aspects of the xok kernel that apply
+to many of its subsystems.
+
+\subsection {Adding System Calls}
+
+Adding system calls to the xok kernel is very easy.  To do so, one simply
+writes the code for the system call and adds one line to
+{\tt sys/conf/syscall.conf}.  Scripts invoked by the makefiles will
+re-generate the appropriate header files and stubs in order to export
+the new system call.
+
+The exact format of the lines in {\tt sys/conf/syscall.conf} is as follows
+(illustrated by example):
+
+\centerline{\tt 0x78    loopback\_xmit   int, struct ae\_recv *}
+
+where 0x78 is the system call number, {\tt loopback\_xmit} is the name of
+the system call, "int" is the return type of the system call, and
+"struct ae\_recv *" is the argument list for the call.  Some notes:
+\begin{itemize}
+\item the system call number must be unique (among those specified in
+      {\tt sys/conf/syscall.conf}), which is why we keep it sorted by
+      convention.
+\item the actual system call name (both as defined in the kernel and as
+      defined at user level) will be augmented with "sys\_".  So, the
+      example above specifies {\tt sys\_loopback\_xmit}.
+\item the system call number (as an "unsigned int") will be prepended to
+      the argument list for the system call.  The auto-generated stubs will
+      provide this extra argument (so application writers do not have to know
+      about it), but kernel code writers must accept it in their system
+      call implementations.
+\item the argument list for the system call can be augmented by adding
+      more comma-separated types.
+\end{itemize}
+
+\subsection {Device Drivers}
+
+\subsection {Capabilities}
+
+\subsection {Environments}
+
+\input{environments}
+

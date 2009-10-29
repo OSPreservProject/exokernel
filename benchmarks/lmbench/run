@@ -1,0 +1,12 @@
+#!/bin/csh
+
+echo Checking out data
+cd lmbench
+exo2get
+
+echo Building programs
+exo3build
+
+echo
+echo \'cd\' to \(ROOT\)$PWD and type \'exo4run\' or \'exo5rerun\'
+echo Results are placed in the lmbench/Results/bsd directory

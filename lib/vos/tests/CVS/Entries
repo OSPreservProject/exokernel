@@ -1,0 +1,22 @@
+/GNUmakefile/1.41/Fri Jan  7 00:56:57 2000/-ko/
+/basic.c/1.29/Thu Jan  6 00:20:49 2000/-ko/
+/cksd.c/1.2/Sun Nov 14 17:48:57 1999/-ko/
+/cksd_2.c/1.1/Sun Nov 14 17:48:57 1999/-ko/
+/fopen.c/1.2/Thu Aug  5 23:12:21 1999/-ko/
+/fork.c/1.8/Wed Aug 25 17:55:56 1999/-ko/
+/ipc.c/1.3/Fri Aug 13 16:25:11 1999/-ko/
+/ipcping.c/1.3/Fri Aug 13 16:20:39 1999/-ko/
+/ipcport.c/1.9/Thu Aug 26 00:55:33 1999/-ko/
+/klock.c/1.2/Thu Jan  6 07:03:55 2000/-ko/
+/locks.c/1.5/Mon Sep 13 19:31:01 1999/-ko/
+/locks.h/1.2/Mon Sep 13 19:31:01 1999/-ko/
+/msgring.c/1.2/Fri Jan  7 00:56:57 2000/-ko/
+/msgshm.c/1.1/Fri Jan  7 00:56:57 2000/-ko/
+/pi.c/1.4/Sun Nov 14 08:30:11 1999/-ko/
+/rsync.c/1.3/Wed Nov 24 00:06:48 1999/-ko/
+/simple.c/1.29/Tue Nov 30 19:37:41 1999/-ko/
+/smp_pi.c/1.1/Sun Nov 14 08:27:31 1999/-ko/
+/tcp.c/1.9/Sun Nov 14 17:48:57 1999/-ko/
+/tcpsrv.c/1.3/Sun Aug  8 19:36:48 1999/-ko/
+/udp.c/1.15/Fri Jan  7 00:56:57 2000/-ko/
+D

@@ -1,0 +1,150 @@
+#!/bin/sh
+# This script implements the copy portion of a vaguely efficient master-slave
+# replication system for CVS.  Actual using trapped events on the master side
+# would be better than using file time stamps, but the latter is pretty fast
+# for now.  As it is, this script only relies on those trapped events (i.e.
+# CVS log messages) for proper renaming of removed files. [ It wouldn't be hard
+# to extend the log parsing to include modified file messages as well, making
+# the entire system more event-driven.  The cvs-log mailing list would include
+# a driver mail filter at each mirror site obviating periodic fetches of
+# CVSROOT/cvs-log. ]
+
+MIRRORADM=cblake@lcs.mit.edu      # e-mail for user who can fix things
+REPL_DIR=/var/repl/exocvs	  # directory for replication state
+REPO_U=cblake		          # user account for logging into writable repo
+REPO_H=zwolle.lcs.mit.edu         # host where writable repo is located
+REPO_R=/cvs	 	          # subdir on host with repository.
+REPO_L=/disk/ek0/exocvs/cvs       # absolute path to local host mirror of repo
+LOG_L=$REPO_L/CVSROOT/cvs-log     # absolute path of cvs-log message file
+
+PATH="/usr/local/bin:$PATH"
+
+exec < /dev/null >> $REPL_DIR/log 2>&1		# log everything
+
+echo '************************************************************************'
+echo -n $0 started  " "
+date
+set -ax
+
+HWM_F=$REPL_DIR/hwm               # file for last update pax-friendly timestamp
+PTR_F=$REPL_DIR/log-ptr           # file for last update cvs-log byte offset
+
+# First: pull over all the new stuff with a pax pipeline.
+#-----------------------------------------------------------------------------
+# To avoid clock synchronization issues, we reckon the last time we pulled
+# things over (high water mark) using a timestamp generated on the same machine
+# where file timestamps wll be used to decide "newer".
+#
+# Note if $HWM_F does not exist, everything is pulled over.  This makes it easy
+# to mandate resynchronization from scratch: just rm $HWM_F.
+#
+# Also care is taken so that HWM management will not break if the script is
+# aborted during the potentially long pax->pax transfer.
+
+cd $REPO_L || exit 1
+
+if [ -f $HWM_F ]; then
+    HWM=`cat $HWM_F`
+else
+    FRESH=1
+    HWM=7001010000		# HWM -> 1970-01-01:00:00 to get everything
+    echo $HWM > $HWM_F.last
+    DEFUNCT=$REPO_L/.junk-`date +%s`	# this temp dir makes it unnecessary
+    mkdir $DEFUNCT			# for us to have write permission
+    mv -f $REPO_L/* $DEFUNCT		# anywhere above $REPO_L.
+    mv -f $REPO_L/.* $DEFUNCT
+    rm -rf $DEFUNCT &		# in the background to speed things up
+fi
+
+ssh -l $REPO_U $REPO_H "date +%y%m%d%H%M" > $HWM_F.new || exit 2
+
+ssh -C -l $REPO_U $REPO_H "cd $REPO_R; pax -w -b 32256 -T${HWM}/cm ." |
+                                       pax -r -pe -u -E 0
+
+mv $HWM_F $HWM_F.last || :	# in case it did not exist
+mv -f $HWM_F.new $HWM_F
+
+# Second: munge over the CVS event log to rename any files as necessary.
+#-----------------------------------------------------------------------------
+
+if [ -f $PTR_F ]; then
+    PTR=`cat $PTR_F`
+else
+    PTR=0
+    if [ x$FRESH == x ]; then
+	echo "Warning: " $PTR_F " appears to have been deleted."
+    fi
+fi
+
+NEW_PTR=`/bin/ls -l $LOG_L | awk '{print $5}'`
+echo $NEW_PTR > $PTR_F
+
+[ x$FRESH != x ] && exit 0		# fresh checkout
+
+[ $NEW_PTR -eq $PTR ] && exit 0		# no changes
+
+# The logic of the below pipeline is as follows: first select regions of the
+# log we care about, namely everything, by the dd, we haven't yet processed
+# and, by the seds, is line-bounded above & below (resp.) by "Removed files:"
+# and a blank line.  Having selected our text, transform it with another sed
+# which removes the delimiters and then converts the "directory : files" in the
+# CVS log lines into subshell command loops to move the RCS files.  Finally it
+# pipes these commands to an instance of "sh" to execute our generated
+# commands.  Note this mean you should NEVER HAVE "^Removed files:" BE PART OF
+# THE LOG MESSAGE YOU TYPE!
+#
+
+linejoiner() {			# This is to handle the case of wrapped-lines.
+    cur=""			# Basically join any line not having the
+    while read line; do		# substring " : " to its predecessor.
+	case "$line" in
+	    *:\ *)	echo "$cur"
+			cur="$line" ;;
+	    *)		cur="$cur $line" ;;
+	esac
+    done
+    echo "$cur"
+}
+
+cd $REPO_L/exopc # directory paths in cvs-log are relative to $CVSROOT/Module
+
+if  dd < $LOG_L ibs=1 skip=${PTR} 2>/dev/null  |
+    sed -n "/^Removed files:/,/^$/p"           |
+    sed -e "/^Removed files:/d" -e "/^$/d"     |
+    linejoiner |
+    sed -e "s/^\([^:]*\): \([^:]*\)$/(cd \1; for F in \2; do mv \${F},v Attic; done)/" |
+    sh -x
+then		# success:
+	:
+else		# failure: send mirror administrator a useful message.
+
+    # Hopefully this careful error tracking here will allow high-frequency cron
+    # jobs without making manual repair very painful (i.e. not requiring a full
+    # re-transfer of the tree).  The error file is just a pair of (time,offset)
+    # doublets indicating the boundaries in time/cvs-log space of where our
+    # cvs-log munching error occured.  They can easily by turned back into
+    # shell variables by, e.g., set `cat error.$HWM` and using $[1-4].
+
+    cat $HWM.last  > $REPL_DIR/error.$HWM
+    echo $PTR     >> $REPL_DIR/error.$HWM
+    echo $HWM     >> $REPL_DIR/error.$HWM
+    echo $NEW_PTR >> $REPL_DIR/error.$HWM
+
+    mail -s 'CVS mirror script failure' $MIRRORADM << EOF
+Failure while mirroring cvs-remove's for repository: $REPO_L
+
+The cvs-log file byte range
+    [ $PTR , $NEW_PTR ]
+corresponding to the master-reckoned date range
+    [ `cat $HWM.last` , $HWM ]
+may not have been properly interpreted into 'mv' commands.
+
+The relevant subrange of the log file is given by the output of:
+    dd ibs=1 skip=$PTR count=`expr $NEW_PTR - $PTR` < $LOG_L
+Examining this text may help perfect the script.
+
+Unless you can clearly discern what failed, rm $HWM_F
+and re-run $0 to instigate a from-scratch re-transfer.
+EOF
+    exit 3
+fi

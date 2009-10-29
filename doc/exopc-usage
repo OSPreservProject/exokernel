@@ -1,0 +1,207 @@
+
+********************************************
+*** Setting up and using an Exokernel PC ***
+********************************************
+
+Written by Erik Nygren (nygren@lcs.mit.edu) on 1996.02.17
+after Hector showed me how to do it....  :-)
+
+This document describes how to get started building,
+installing, and using the Exokernel on a PC.
+A quick summary of commands is at the end.
+
+========================================================================
+			       BUILDING
+========================================================================
+
+
+Checking the exokernel out of CVS
+---------------------------------
+
+To build the exokernel, first check a copy out of cvs with:
+
+	cvs -d /home/zw0/cvs co exopc 
+
+This will create a directory "exopc" in your current directory which
+contains the sources to the exokernel and related tools.  All
+pathnames referenced in this document starting with exopc refer to
+files in this exopc directory.  **You will need to be on an OpenBSD 2.0
+machine to do the build.  It is recommended that you do the build
+on the same machine where your checked out files reside because
+since building over NFS is painfully slow.i**
+
+** you should chose a PC machine/directory which has at least 100MB free
+if you don't want to run out of space too early. **
+
+Adding a hostname mapping
+-------------------------
+
+See file BOOTING
+
+Setting up the NFS root and installation destination
+----------------------------------------------------
+
+See file BOOTING
+
+
+Using 100 Mbps Ethernet cards
+-----------------------------
+
+If you want your exokernel machine to use a SMC 100 Mbps Ethernet
+card, you will have to make the following changes before building:
+
+exopc/ebin/rconsoled/setup_net.c
+
+  Change #define DEFAULT_INTERFACE "ed0"
+  to     #define DEFAULT_INTERFACE "de0"
+
+  Change char interface[] = "ed0";
+  to     char interface[] = "de0";
+
+  Add after printf(" Interface: %16s  ",interface);
+            printf("Ip Address: %16s\n",pripaddr((char *)&myip));
+            printf("   Netmask: %16s  ",pripaddr((char *)&mynetmask));
+            printf(" Broadcast: %16s\n",pripaddr(broadcast));
+  the following: sleep(4);
+
+Then you need to change exopc/libexos/netinet/hosttable/hosttable.c to
+reflect the new Ethernet address of your card (and that it is 100
+Mbps). You would have a line like:                             |
+                                                               V
+ {"dexter", {18,26,4,17}, {0x0,0xa0,0xc9,0x9d,0xb5,0x74}, (MAXSMC+1)},
+
+
+Doing the build
+---------------
+
+Once you've made the changes and set the variables described above and
+in the file BOOTING: INITPROG, EXODEST, NFS_ROOT_HOST, NFS_ROOT_PATH.
+cd into the exopc directory and run the "gmake" command to build the
+exokernel and related utilities.  (gmake is GNU make which is
+available on prep.ai.mit.edu in /pub/gnu.  It may also be installed on
+your machine in /usr/local/bin).
+
+Some programs (like the web server) may not build cleanly
+so you may have to comment them out from exopc/bin/GNUmakefile.
+
+
+Install into EXODEST
+--------------------
+
+Once the build is complete, typing "gmake install" in the exopc
+directory will install the system into the directory specified by the
+EXODEST environmental variable (see above for more details).
+
+
+Copying the kernel over
+-----------------------
+
+After the kernel is built, log into the machine you plan to run the
+exokernel on as root while it's booted to OpenBSD.  If OpenBSD is not
+installed on it, you'll need to do that first (described in the file
+exopc/doc/pdospc.install).
+
+As root, copy the kernel from exopc/sys/obj/xok to /xok.
+For example, if your exopc directoey is in 
+/home/zw0/myhomedir/exopc, you'd type:
+
+	cp /home/zw0/myhomedir/exopc/sys/obj/xok /
+
+
+Updating the password file
+--------------------------
+
+The password files right now have a handful of accounts, all with
+password 'exopc'. You will need to add an account for yourself, by
+adding an entry to exopc/tree/etc/master.passwd (which is done
+basically by copying another entry already there and changing the
+username, user id, and home directory) and then running
+exopc/tree/etc/rebuild_passwd (very important). Then add an entry to
+directories/GNUmakefile in order to have a home directory.
+
+========================================================================
+			 USING THE EXOKERNEL
+========================================================================
+
+
+Booting & installing the kernel
+-------   __________ ___ ______
+
+After building and installing the kernel and the root filesystem, boot
+to the exokernel.  If you're still running OpenBSD, make sure to shut
+it down cleanly (with "shutdown -r now").
+
+When the machine boots up, it will provide you with a boot
+selection prompt for a short time.  Enter "xok" to go to the
+exokernel (or press return to go to OpenBSD).
+
+This will start the exokernel up and it will start the program
+specified by INITPROG.  This program will normally spawn rc.local
+which in turn will start telnetd.  After it comes completly up, you
+should be able to telnet in.
+
+
+Use telnet to log into the exokernel machine. To log into a
+machine named myexopc, you'd do:
+
+	telnet myexopc
+
+username: the username added or existing into the password (make sure you ran
+	rebuild_passwd)
+passwd: exopc
+
+This will log you in and will start your shell.  You should be able to
+run commands like "ls" once you've logged in.
+
+If you've gotten this far, you're pretty much gotten
+things working.  Have fun!  
+
+
+========================================================================
+			       SUMMARY
+========================================================================
+
+To do the build (lines starting with > are commands to execute).
+The following will get you started quickly on the PDOS machines:
+
+   On an OpenBSD machine:
+
+	cd to some directory to check out and build the exokernel
+
+	> co -d /cvs co exopc
+
+	change the password files as indicated above
+
+	setup env variables INITPROG, NFS_ROOT_HOST, NFS_ROOT_PATH
+	as described above and in BOOTING. Make necessary changes
+	if using 100 Mbps.
+
+	> cd exopc
+	> setenv EXODEST /development/exopc/tree
+
+	Make sure this directory is mountatble (exportable) to the
+	exokernel machine that is going to use it (this is usually controlled
+	via file /etc/exports)
+
+	> gmake
+	> gmake install
+
+   Under OpenBSD on the machine you plan to run the exokernel on:
+
+	as root:
+
+	> cp /wherever_you_built_it/exopc/sys/obj/xok /
+	> shutdown -r now
+	
+	at the boot prompt (openbsd bootloader), enter "xok"
+
+   Back on some other OpenBSD machine:
+
+        > telnet myexopc
+
+	username: the one you added or already there
+	passwd: exopc
+ 	
+	you're now logged into a machine running an exokernel!
+
+

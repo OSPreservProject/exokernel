@@ -1,0 +1,22 @@
+/.cvsignore/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/ACKNOWLEDGEMENTS/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/GNUmakefile/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/NEW_FEATURES/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/NOTES/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/NO_WARRANTY/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/README/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/closure.c/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/defs.h/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/error.c/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/lalr.c/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/lr0.c/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/main.c/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/mkpar.c/1.1.1.1/Mon Jun 15 21:09:49 1998/-ko/
+/output.c/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+/reader.c/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+/skeleton.c/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+/symtab.c/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+/verbose.c/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+/warshall.c/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+/yacc.1/1.1.1.1/Mon Jun 15 21:09:50 1998/-ko/
+D

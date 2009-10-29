@@ -1,0 +1,27 @@
+To compile xok for use with the monitor, you have to do a little setup
+first.  Primarily this is because syscall.conf and trap.conf are not
+preprocessed, and I've got too much to do too muck with makefiles.
+
+In exopc/src/conf/trap.conf, change this line:
+0x0d	tNT	$UIDT_VECT_TO_ADDR(0x0d)	# GPF
+to this:
+0x0d	iAe	general_protection_fault	# GPF (for monitor)
+
+In exopc/src/conf/syscall.conf, add these system calls:
+0x9c    set_gdt         int, u_int, u_int, struct seg_desc *
+0x9d    run_guest       int, u_int, struct Trapframe_vm86 *, u_int, u_int
+0x9f    set_tss         int, u_int, u_int16_t
+0x98    set_ldt         int, u_int, u_int16_t
+The system call numbers don't matter; just use 4 that are free.
+
+Finally, be sure that EXO_HOST is set when compiling xok:
+export EXO_HOST=1
+
+make
+make install
+Edit and copy your monitor.conf to /etc.
+
+
+Two tweaks to the Linux source before it'll work at all.  See the Linux
+hacks in BUGS.
+

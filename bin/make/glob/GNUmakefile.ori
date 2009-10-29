@@ -1,0 +1,12 @@
+
+TOP = ../../..
+EXTRAINC = -I.. -I$(TOP)/lib/libc -I.
+LIB = libglob.a
+DEFS =   -DSTDC_HEADERS=1 -DHAVE_MEMORY_H=1 -DHAVE_UNISTD_H=1 -DHAVE_STRING_H=1 -DHAVE_DIRENT_H=1 -DHAVE_ALLOCA=1 -DHAVE_STRCOLL=1  
+UNINITOK = 
+UNUSEDOK =
+
+
+SRCFILES=	fnmatch.c glob.c
+
+include $(TOP)/GNUmakefile.global

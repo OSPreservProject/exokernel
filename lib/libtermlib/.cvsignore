@@ -1,0 +1,14 @@
+term.h
+binaries.h
+mkinfo
+boolcodes.c
+boolfnames.c
+boolnames.c
+captoidx.c
+infotoidx.c
+numcodes.c
+numfnames.c 
+numnames.c
+strcodes.c
+strfnames.c
+strnames.c

@@ -1,0 +1,31 @@
+There are currently 5 events that the call counting code counts:
+1. epilogues
+2. aborted/delayed epilogues
+3. yields
+4. kernel calls (counts each one individually)
+5. libos calls (counts each one individually and cross references each with
+	kernel calls if both options are enabled)
+
+To use:
+1. Uncomment out the calls you want to count in include/exos/callcountdefs.h
+	(alternatively, for epilogue/yield calls look at
+	 lib/libexos/os/entry.S and manually change the #ifdef's to
+	 reduce re-compile time)
+2. Compile
+	To minimize recompiling time you can just recompile libc and
+	then compile whatever program you want to callcount as static.
+3. Run the program ipcprint
+	When a program exec()'s or exit()'s it will look for a program
+	called ipcprint and send its counts to that program via ipc.
+	ipcprint will then print them (of course, you can redirect to a
+	file if you want).
+4. Run the programs you want to call count
+
+Warning! Full counting can triple the running times of some loads!
+
+Note! Some kernel calls made at the very beginning of process startup
+      will not be counted.
+
+Aug 5, 1997
+Updated May 13, 1998
+Rusty Hunt

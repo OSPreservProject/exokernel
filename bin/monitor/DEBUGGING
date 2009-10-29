@@ -1,0 +1,37 @@
+1.  Compiling xok with monitor support
+
+If xok crashes in arpd while booting, due to a page fault (read
+non-present page) perhaps related to wk stuff, ensure:
+  unset INITPROG
+  -g -O6 is present in GNUmakefile.global
+
+If while booting xok prints "start running scheduler" and it halts,
+check that _everything_ is compiled with EXO_HOST or not, no mix.
+"make clean" and start fresh.
+
+
+
+This is the stack.  Ugly bugger, ain't it?
+
+gs
+fs
+ds86
+es86
+ss
+esp
+eflags
+cs
+eip
+erc / ds
+es
+eax
+ecx
+edx
+ebx
+esp (unused, cr2 hacked in here for monitor)
+ebp
+esi
+edi     <--  REGS_BASE
+erc
+trapno
+

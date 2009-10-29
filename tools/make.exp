@@ -1,0 +1,30 @@
+#!/usr/bin/expect
+
+if {$argc == 0} {
+   set pid [spawn gmake]
+} elseif {$argc == 1} {
+   set pid [spawn gmake [lindex $argv 0]]
+} elseif {$argc == 2} {
+   set pid [spawn gmake [lindex $argv 0] [lindex $argv 1]]
+} elseif {$argc == 3} {
+   set pid [spawn gmake [lindex $argv 0] [lindex $argv 1] [lindex $argv 2]]
+} else {
+   puts "Unsupported number of arguments to $argv0";
+}
+
+while {1} {
+  expect eof {
+    #puts $expect_out(buffer)
+    wait
+    exit 0
+  } "*\n" {
+    if {[regexp {Error [0-9]} $expect_out(buffer)]} {
+      #puts $expect_out(buffer)
+      exec kill $pid
+      wait
+      exit -1
+    } else {
+      #puts $expect_out(buffer)
+    }
+  }
+}

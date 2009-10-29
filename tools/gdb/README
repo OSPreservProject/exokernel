@@ -1,0 +1,9 @@
+This is a patch to apply to gdb-4.16.  
+
+** This patch adds UDP communication to the remote debugging facility
+of gdb.  The syntax is just like the TCP remote debugging syntax
+except that "udp" is appended. Ex: "target remote fnord:9999udp"
+
+** also, the configuration file for netbsd is changed so that UDP (as
+well as TCP) is compiled into gdb.  so when you configure use 
+./configure --target=i386-netbsd --host=i386-netbsd.

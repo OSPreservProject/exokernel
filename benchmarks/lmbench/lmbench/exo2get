@@ -1,0 +1,5 @@
+#!/bin/csh
+cp rccs scripts >& /dev/null
+rccs get -s
+make get
+

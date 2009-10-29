@@ -1,0 +1,84 @@
+
+Kernel Spinlock 
+---------------
+
+Kernel spinlocks are used to protect data structures and critical
+sections in the kernel. To function correctly in SMP environment, 
+kernel spinlocks are always in memory (volatile).
+
+Spinlocks are blocking locks in that if you wish to acquire them you may
+need to wait for them until they are ready (no sleep-wakeup mechanism).
+This is not a big deal in since our kernel is never preempted. Thus,
+when a CPU acquires a spinlock in kernel mode and intends to release it,
+it is guaranteed the opportunity to do so. And most kernel operations
+are fairly quick.
+
+
+Implementation:
+
+Three inline functions (mplock.h) perform primitive acquisition and
+release of a spinlock given its lock address. 
+
+	prim_spinlock_try     (unsigned long address)  // non-blocking
+	prim_spinlock_get     (unsigned long address)  // blocking
+	prim_spinlock_release (unsigned long address)  // non-blocking
+
+There is a wrapper around a basic spinlock defined in mplock.h as struct
+kernel_spinlock_t. This struct has four fields, the lock itself, the
+owner's CPU id, a depth counter, and a usage counter. Thus, the address
+of an instance of this struct, created in memory, can be used as
+primitive spinlocks. There are three inlined functions (mplock.h) that
+manipulate these wrapper structs. 
+
+	kernel_spinlock_try     (kernel_spinlock_t* the_lock)  // non-blocking
+	kernel_spinlock_get     (kernel_spinlock_t* the_lock)  // blocking
+	kernel_spinlock_release (kernel_spinlock_t* the_lock)  // non-blocking
+
+Acquiring a lock already held (the owner field matches caller's CPU id)
+has no effect other than incrementing the depth counter, and releasing a
+lock that has depth > 1 has no effect other than decrementing the depth
+counter. Usage counter is incremented on both get and release, thus it
+can be used as a version number. Last digit odd = lock held, last digit
+even = lock free.
+
+There is a kernel-wide array of kernel spinlocks in sysinfo, with the
+pointer klocks (declared in mplock.h, instantiated in init.c) pointing
+to it. The size of this array is determined by NR_LOCKS (mplock.h).
+Kernel spinlocks for various purposes may be obtained by indexing this
+array using a lock handle, which is merely a symbolic constant
+(mplock.h). For example, MALLOC_LOCK gives the index of the kernel
+spinlock in klocks that is used to guard malloc routines.
+
+
+Usage Conditions:
+
+Since the kernel spinlocks require a cpuid to keep track of ownership
+and prevent acquiring an already held lock, the kernel_spinlock_xxx
+inlined functions will not work until smp mode is commenced (at which
+time the my_cpu_id symbol (sys_symbols.h) is mapped). Thus, in places
+where the functions may be used before smp commencement (e.g. malloc),
+an additional check on the volatile flat smp_commenced should be placed.
+
+
+Examples:
+
+	if (smp_commenced)
+	  kernel_spinlock_get (&klocks[MALLOC_LOCK]);
+
+	...
+
+	if (smp_commenced)
+	  kernel_spinlock_release (&klocks[MALLOC_LOCK]);
+
+
+Macros:
+
+There is a set of macros in mplock.c that simplifies the usage of these
+klocks. You can just say, for example, MP_LOCK(MALLOC_LOCK) and
+MP_UNLOCK(MALLOC_LOCK).
+
+
+Deadlock:
+
+Use lock ordering to detect deadlocks.
+

@@ -1,0 +1,72 @@
+\section {ExOS Process Management}
+
+When an application starts its library operating system must go
+through what is very similar to a full OS startup in a conventional
+system. This starts by calling {\tt ProcessStartup} which then does
+per-subsystem initialization.\footnote{see lib/libexeos/os/process.c}
+Further, the very first process to start does special
+one-time-per-boot initialization for the entire system.
+
+Sometimes different ExOS subsystems want to be able to do their own
+processing when a process forks or execs (for example, the fd code
+wants to close close-on-exec fd's and up the ref counts on the other
+fd's every time a process forks or execs). We handle this with
+call-backs. You register a function with {\tt OnExec} or {\tt OnFork}
+or {\tt atexit} or {\tt ExosExitHandler}. The function will then be
+called back with some useful args when the specified event
+occurrs.\footnote {see lib/libc/os/oncalls.c}
+
+\subsection{Epilogue and Prologue code}
+
+Each process is responsible for saving and restoring its registers
+when it loses and gains the processor. The kernel notifies a process
+that it is about to gain or lose the processor by calling the
+processes' prologue and epilogue code. The locations of this code is
+set in the processes u-area.
+
+Currently, this code does things like save and restore registers,
+check for timer time-outs, and check for signals.\footnote{see 
+lib/libexos/os/entry.S}
+
+\subsection {procd}
+
+Hector.
+
+\subsection {Process Creation}
+
+New ExOS processes are created through the standard POSIX {\tt fork}
+and {\tt exec} calls. These are slightly complicated by the fact that
+a process must duplicate itself or replace itself rather than having a
+nice kernel context to do this from.
+
+\subsection{exec}
+
+Exec just creates a new environment, loads the new process into it,
+and then kills itself.\footnote{see lib/libexeos/os/exec or
+lib/libexos/os/shexec--I'm not sure which these days} The shared
+library is also mapped into the upper part of the user address space.
+
+Shared libraries are implemented pretty poorly right now. Currently,
+they are just a program that has every libc function linked in. A stub
+.S file is then generated that points to the location of each symbol
+and a program wishing to link against the shared library just links
+against this stub file. {\tt exec} then makes sure that each symbol is
+really where this stub file says it is by mapping in the shared
+library at the right place.
+
+Exec must also run through all the ExOS subsystems and notify them
+that an exec has occurred so that they can update their reference counts
+and other data.
+
+\subsection{fork}
+
+Fork uses copy-on-write to speed forking. It creates a new
+environment, duplicates the page tables of the parent, and marks every
+non-shared entry in both environments as copy-on-write and
+read-only. Then, the page-fault handler in each process handles
+allocating new pages and duplicating them when a write
+occurs.{\footnote{see lib/libexeos/os/cow.c}
+
+Fork must also run through all the ExOS subsystems and notify them
+that a fork has occurred so that they can update their reference counts
+and other data.

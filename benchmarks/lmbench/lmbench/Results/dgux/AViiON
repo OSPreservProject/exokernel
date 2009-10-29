@@ -1,0 +1,1020 @@
+[lmbench1.1 results for dgux gisdtxast 5.4R3.10 USGS AViiON mc88110]
+[DISK: ]
+[FILE: /usr/tmp/XXX]
+[FSDIR: /usr/tmp]
+[REMOTE: ]
+[NETWORKS: ]
+[MB: 8]
+[Fri Oct 27 11:14:08 CDT 1995]
+UX:sh (lmbench): ERROR: uptime: Not found
+[]
+[net: Name  Mtu   Network        Address         Ipkts   Ierrs Opkts   Oerrs Collis]
+[net: loop0 4136  loopback-net   localhost       212289  0     212288  0     0]
+[if: loop0: 127.0.0.1 flags=84c9<UP,LOOPBACK,RUNNING,NOARP,STARTED> netmask=0xff000000  metric=0]
+[net: dgen0 1500  136.177.160    gisdtxast.cr.us 102497628 0     67567779 5     7270111]
+[if: dgen0: 136.177.160.96 flags=8443<UP,BROADCAST,RUNNING,STARTED>]
+[if: broadcast=136.177.160.255  netmask=0xffffff00  metric=0]
+[mount: /dev/dsk/root                  /                   dg/ux rw                                              0 0]
+[mount: /dev/dsk/usr                   /usr                dg/ux rw                                              0 0]
+[mount: /dev/dsk/usr_opt_esri70        /usr/opt/esri70     dg/ux rw                                              0 1]
+[mount: /dev/dsk/usr_opt_X11           /usr/opt/X11        dg/ux rw                                              0 1]
+[mount: /dev/dsk/etm3                  /etm3               dg/ux rw                                              0 0]
+[mount: /dev/dsk/gis_lib               /gis                dg/ux rw                                              0 1]
+[mount: servdtxast:/usr/opt/csuspace   /usr/opt/space      nfs   soft,rw                                         0 0]
+[mount: mailhost:/usr/opt/email        /usr/opt/email      nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/ingres     /usr/opt/ingres     nfs   rw,hard,bg                                      0 0]
+[mount: servdtxast:/usr/opt/ingres/abf /usr/opt/ingres/abf nfs   rw                                              0 0]
+[mount: servdtxast:/usr/opt/python     /usr/opt/python     nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/rdbtools   /usr/opt/rdbtools   nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/perl       /usr/opt/perl       nfs   soft,ro                                         0 0]
+[mount: mailhost:/usr/opt/mh           /usr/opt/mh         nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/qsp        /usr/opt/qsp        nfs   rw,soft,bg                                      0 0]
+[mount: gisdtxast:(pid734)             /u                  auto  intr,rw,port=1010,timeo=8,retrans=110,indirect  0 0]
+[mount: serv:/usr/opt/www              /usr/opt/www        nfs   soft,ro                                         0 0]
+[mount: serv:/usr/opt/news             /usr/opt/news       nfs   soft,ro                                         0 0]
+[mount: serv:/usr/opt/mst              /usr/opt/mst        nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/hifcssii   /usr/opt/hifcssii   nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/sas        /usr/opt/sas        nfs   soft,ro                                         0 0]
+[mount: maildtxast:/usr/opt/tcltk      /usr/opt/tcltk      nfs   soft,ro                                         0 0]
+[mount: maildtxast:/usr/opt/faces      /usr/opt/faces      nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/sedcalc    /usr/opt/sedcalc    nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/tools      /usr/opt/tools      nfs   soft,rw                                         0 0]
+[mount: servdtxast:/usr/opt/x3270      /usr/opt/x3270      nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/wais       /usr/opt/wais       nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/stg        /usr/opt/stg        nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/rdb        /usr/opt/rdb        nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/pbmplus    /usr/opt/pbmplus    nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/gzip       /usr/opt/gzip       nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/ghf        /usr/opt/ghf        nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/exec       /usr/opt/exec       nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/emacs19    /usr/opt/emacs19    nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/disspla11  /usr/opt/disspla11  nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/statit     /usr/opt/statit     nfs   soft,rw                                         0 0]
+[mount: servdtxast:/usr/catman         /usr/catman         nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/wrdapp     /usr/opt/wrdapp     nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/sna        /usr/opt/sna        nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/pstat      /usr/opt/pstat      nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/mxdb       /usr/opt/mxdb       nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/lgp        /usr/opt/lgp        nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/ipt        /usr/opt/ipt        nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/imsl       /usr/opt/imsl       nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/gs24       /usr/opt/gs24       nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/groff      /usr/opt/groff      nfs   soft,ro                                         0 0]
+[mount: servdtxast:/usr/opt/esri       /usr/opt/esri       nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/usr/opt/arcview    /usr/opt/arcview    nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/bin        /usr/opt/bin        nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/arc            /usr/arc            nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/usr/opt/gdiu       /usr/opt/gdiu       nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/gksr30     /usr/opt/gksr30     nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/freedom    /usr/opt/freedom    nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/elvis      /usr/opt/elvis      nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/dgtu       /usr/opt/dgtu       nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/corel      /usr/opt/corel      nfs   soft,ro,bg                                      0 0]
+[mount: servdtxast:/usr/opt/frame      /usr/opt/frame      nfs   soft,ro,bg                                      0 0]
+[mount: admsdtxast:/usr/opt/ais        /usr/opt/ais        nfs   rw,soft,bg                                      0 0]
+[mount: naq0dtxast:/nawq1              /nawq1              nfs   soft,rw,bg                                      0 0]
+[mount: naq0dtxast:/etm2               /etm2               nfs   rw,soft,bg                                      0 0]
+[mount: servdtxast:/annual_report      /annual_report      nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/var/mail           /var/mail           nfs   hard,rw                                         0 0]
+[mount: servdtxast:/contrib            /contrib            nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/software           /software           nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/bsd                /bsd                nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/var/ftp/ftp_depot  /var/ftp/ftp_depot  nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/arc_nff            /arc_nff            nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/arc_users          /arc_users          nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/arc_work           /arc_work           nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/gis_lib            /gis_lib            nfs   soft,rw,bg                                      0 0]
+[mount: envsdtxast:/etm1               /etm1               nfs   rw,soft,bg                                      0 0]
+[mount: envsdtxast:/arc_envs           /arc_envs           nfs   rw,soft,bg                                      0 0]
+[mount: hha1dtxast:/arc_dlgs           /arc_dlgs           nfs   soft,rw,bg                                      0 0]
+[mount: djodtxast:/usr/opt/gnu         /usr/opt/gnu        nfs   soft,rw,bg                                      0 0]
+[mount: servdtxast:/home/pg            /a/imp              nfs   rw                                              0 0]
+[mount: servdtxast:/accounts/serv      /a/serv             nfs   rw                                              0 0]
+[mount: servdtxast:/usr/opt/etc        /usr/opt/etc        nfs   soft,ro,bg                                      0 0]
+[mount: djodtxast:/accounts/djo        /a/djo              nfs   rw                                              0 0]
+[mount: pub3dtxast:/accounts/pub3      /a/pub3             nfs   rw                                              0 0]
+[mount: gemdtxast:/accounts/gem        /a/gem              nfs   rw                                              0 0]
+[mount: hha2dtxast:/accounts/hha2      /a/hha2             nfs   rw                                              0 0]
+[mount: servdtxast:/home/fb            /a/pub4             nfs   rw                                              0 0]
+[mount: servdtxast:/accounts2/serv2    /a/serv2            nfs   rw                                              0 0]
+[df: /                   (/dev/dsk/root       ):     37839 blocks      10152 files]
+[df: /usr                (/dev/dsk/usr        ):     32533 blocks      29323 files]
+[df: /usr/opt/esri70     (/dev/dsk/usr_opt_esri70):    194793 blocks     137929 files]
+[df: /usr/opt/X11        (/dev/dsk/usr_opt_X11):     21244 blocks      18564 files]
+[df: /etm3               (/dev/dsk/etm3       ):   1542395 blocks     562539 files]
+[df: /gis                (/dev/dsk/gis_lib    ):   3300438 blocks     569934 files]
+[df: /usr/opt/space      (servdtxast:/usr/opt/csuspace):    143732 blocks          0 files]
+[df: /usr/opt/email      (mailhost:/usr/opt/email):     14037 blocks          0 files]
+[df: /usr/opt/ingres     (servdtxast:/usr/opt/ingres):    332730 blocks          0 files]
+[df: /usr/opt/ingres/abf (servdtxast:/usr/opt/ingres/abf):    144485 blocks          0 files]
+[df: /usr/opt/python     (servdtxast:/usr/opt/python):      8915 blocks          0 files]
+[df: /usr/opt/rdbtools   (servdtxast:/usr/opt/rdbtools):    383427 blocks          0 files]
+[df: /usr/opt/perl       (servdtxast:/usr/opt/perl):      1304 blocks          0 files]
+[df: /usr/opt/mh         (mailhost:/usr/opt/mh):      3103 blocks          0 files]
+[df: /usr/opt/qsp        (servdtxast:/usr/opt/qsp):      4960 blocks          0 files]
+[df: /u                  (gisdtxast:(pid734)  ):         0 blocks          0 files]
+[df: /usr/opt/www        (serv:/usr/opt/www   ):      8911 blocks          0 files]
+[df: /usr/opt/news       (serv:/usr/opt/news  ):      3777 blocks          0 files]
+[df: /usr/opt/mst        (serv:/usr/opt/mst   ):     13207 blocks          0 files]
+[df: /usr/opt/hifcssii   (servdtxast:/usr/opt/hifcssii):    100673 blocks          0 files]
+[df: /usr/opt/sas        (servdtxast:/usr/opt/sas):     42634 blocks          0 files]
+[df: /usr/opt/tcltk      (maildtxast:/usr/opt/tcltk):      4715 blocks          0 files]
+[df: /usr/opt/faces      (maildtxast:/usr/opt/faces):      4846 blocks          0 files]
+[df: /usr/opt/sedcalc    (servdtxast:/usr/opt/sedcalc):     19933 blocks          0 files]
+[df: /usr/opt/tools      (servdtxast:/usr/opt/tools):    188586 blocks          0 files]
+[df: /usr/opt/x3270      (servdtxast:/usr/opt/x3270):    383427 blocks          0 files]
+[df: /usr/opt/wais       (servdtxast:/usr/opt/wais):      7919 blocks          0 files]
+[df: /usr/opt/stg        (servdtxast:/usr/opt/stg):      7068 blocks          0 files]
+[df: /usr/opt/rdb        (servdtxast:/usr/opt/rdb):      6167 blocks          0 files]
+[df: /usr/opt/pbmplus    (servdtxast:/usr/opt/pbmplus):      6410 blocks          0 files]
+[df: /usr/opt/gzip       (servdtxast:/usr/opt/gzip):      1083 blocks          0 files]
+[df: /usr/opt/ghf        (servdtxast:/usr/opt/ghf):      4117 blocks          0 files]
+[df: /usr/opt/exec       (servdtxast:/usr/opt/exec):     15016 blocks          0 files]
+[df: /usr/opt/emacs19    (servdtxast:/usr/opt/emacs19):     19257 blocks          0 files]
+[df: /usr/opt/disspla11  (servdtxast:/usr/opt/disspla11):    280869 blocks          0 files]
+[df: /usr/opt/statit     (servdtxast:/usr/opt/statit):      8450 blocks          0 files]
+[df: /usr/catman         (servdtxast:/usr/catman):     31205 blocks          0 files]
+[df: /usr/opt/wrdapp     (servdtxast:/usr/opt/wrdapp):    187599 blocks          0 files]
+[df: /usr/opt/sna        (servdtxast:/usr/opt/sna):      6207 blocks          0 files]
+[df: /usr/opt/pstat      (servdtxast:/usr/opt/pstat):    383427 blocks          0 files]
+[df: /usr/opt/mxdb       (servdtxast:/usr/opt/mxdb):      8216 blocks          0 files]
+[df: /usr/opt/lgp        (servdtxast:/usr/opt/lgp):      5344 blocks          0 files]
+[df: /usr/opt/ipt        (servdtxast:/usr/opt/ipt):    383427 blocks          0 files]
+[df: /usr/opt/imsl       (servdtxast:/usr/opt/imsl):    383427 blocks          0 files]
+[df: /usr/opt/gs24       (servdtxast:/usr/opt/gs24):      1904 blocks          0 files]
+[df: /usr/opt/groff      (servdtxast:/usr/opt/groff):    383427 blocks          0 files]
+[df: /usr/opt/esri       (servdtxast:/usr/opt/esri):    115903 blocks          0 files]
+[df: /usr/opt/arcview    (servdtxast:/usr/opt/arcview):    361875 blocks          0 files]
+[df: /usr/opt/bin        (servdtxast:/usr/opt/bin):    383427 blocks          0 files]
+[df: /usr/arc            (servdtxast:/usr/arc ):    127050 blocks          0 files]
+[df: /usr/opt/gdiu       (servdtxast:/usr/opt/gdiu):       526 blocks          0 files]
+[df: /usr/opt/gksr30     (servdtxast:/usr/opt/gksr30):    383427 blocks          0 files]
+[df: /usr/opt/freedom    (servdtxast:/usr/opt/freedom):    383427 blocks          0 files]
+[df: /usr/opt/elvis      (servdtxast:/usr/opt/elvis):      3194 blocks          0 files]
+[df: /usr/opt/dgtu       (servdtxast:/usr/opt/dgtu):       923 blocks          0 files]
+[df: /usr/opt/corel      (servdtxast:/usr/opt/corel):    404314 blocks          0 files]
+[df: /usr/opt/frame      (servdtxast:/usr/opt/frame):     48715 blocks          0 files]
+[df: /usr/opt/ais        (admsdtxast:/usr/opt/ais):    126049 blocks          0 files]
+[df: /nawq1              (naq0dtxast:/nawq1   ):    858200 blocks          0 files]
+[df: /etm2               (naq0dtxast:/etm2    ):   1371626 blocks          0 files]
+[df: /annual_report      (servdtxast:/annual_report):    191600 blocks          0 files]
+[df: /var/mail           (servdtxast:/var/mail):    386019 blocks          0 files]
+[df: /contrib            (servdtxast:/contrib ):     45462 blocks          0 files]
+[df: /software           (servdtxast:/software):    167264 blocks          0 files]
+[df: /bsd                (servdtxast:/bsd     ):    382045 blocks          0 files]
+[df: /var/ftp/ftp_depot  (servdtxast:/var/ftp/ftp_depot):    355497 blocks          0 files]
+[df: /arc_nff            (servdtxast:/arc_nff ):     65764 blocks          0 files]
+[df: /arc_users          (servdtxast:/arc_users):    643333 blocks          0 files]
+[df: /arc_work           (servdtxast:/arc_work):    768382 blocks          0 files]
+[df: /gis_lib            (servdtxast:/gis_lib ):    331212 blocks          0 files]
+[df: /etm1               (envsdtxast:/etm1    ):   1388524 blocks          0 files]
+[df: /arc_envs           (envsdtxast:/arc_envs):    975523 blocks          0 files]
+[df: /arc_dlgs           (hha1dtxast:/arc_dlgs):   1220752 blocks          0 files]
+[df: /usr/opt/gnu        (djodtxast:/usr/opt/gnu):     79095 blocks          0 files]
+[df: /a/imp              (servdtxast:/home/pg ):     56347 blocks          0 files]
+[df: /a/serv             (servdtxast:/accounts/serv):    276051 blocks          0 files]
+[df: /usr/opt/etc        (servdtxast:/usr/opt/etc):    383427 blocks          0 files]
+[df: /a/djo              (djodtxast:/accounts/djo):     61864 blocks          0 files]
+[df: /a/pub3             (pub3dtxast:/accounts/pub3):    721343 blocks          0 files]
+[df: /a/gem              (gemdtxast:/accounts/gem):    970844 blocks          0 files]
+[df: /a/hha2             (hha2dtxast:/accounts/hha2):    353233 blocks          0 files]
+[df: /a/pub4             (servdtxast:/home/fb ):     62100 blocks          0 files]
+[df: /a/serv2            (servdtxast:/accounts2/serv2):    327102 blocks          0 files]
+44.98 Mhz, 22 nanosec clock
+Null syscall: 75 microseconds
+Signal handler installation: 52 microseconds
+Signal handler overhead: 355 microseconds
+Pipe latency: 474 microseconds
+UDP latency using localhost: 1373 microseconds
+TCP latency using localhost: 1381 microseconds
+RPC/udp latency using localhost: 2175 microseconds
+RPC/tcp latency using localhost: 1851 microseconds
+TCP/IP connection cost to localhost: 4635 microseconds
+Socket bandwidth using localhost: 4.60 MB/sec
+Process fork+exit: 8771 microseconds
+Process fork+execve: 12829 microseconds
+Process fork+/bin/sh -c: 66547 microseconds
+Pipe bandwidth: 8.43 MB/sec
+File /usr/tmp/XXX write bandwidth: 869 KB/sec
+Pagefaults on /usr/tmp/XXX: 6326 usecs
+"mappings
+0.01 267
+0.25 549
+0.50 835
+1.00 1409
+2.00 2525
+3.00 3654
+4.00 4786
+8.00 9370
+
+"read bandwidth
+0.02 1.42
+0.03 2.82
+0.06 5.36
+0.12 8.45
+0.19 10.03
+0.25 11.08
+0.38 12.73
+0.50 13.95
+0.75 15.02
+1.00 15.23
+1.50 16.72
+2.00 17.74
+2.50 17.86
+3.00 17.61
+3.50 17.98
+4.00 17.45
+5.00 18.16
+6.00 18.34
+7.00 17.93
+8.00 16.23
+
+"Mmap read bandwidth
+0.02 11.82
+0.03 11.37
+0.06 12.71
+0.12 12.22
+0.19 12.63
+0.25 12.56
+0.38 12.69
+0.50 12.82
+0.75 12.54
+1.00 12.39
+1.50 12.87
+2.00 12.92
+2.50 12.94
+3.00 12.96
+3.50 12.13
+4.00 12.61
+5.00 11.66
+6.00 12.67
+7.00 12.80
+8.00 12.52
+
+"libc bcopy aligned
+0.0625 22.85
+0.1250 21.10
+0.5000 17.24
+1.0000 16.70
+2.0000 16.56
+4.0000 17.05
+
+"libc bcopy unaligned
+0.0625 24.78
+0.1250 22.00
+0.5000 17.53
+1.0000 17.28
+2.0000 17.29
+4.0000 17.39
+
+"unrolled bcopy aligned
+0.0625 25.53
+0.1250 19.05
+0.5000 15.83
+1.0000 15.70
+2.0000 15.93
+4.0000 15.78
+
+"unrolled bcopy unaligned
+0.0625 22.81
+0.1250 20.91
+0.5000 16.64
+1.0000 16.83
+2.0000 16.35
+4.0000 16.69
+
+Memory read bandwidth
+1.0000 36.54
+2.0000 35.70
+4.0000 36.42
+8.0000 36.67
+
+Memory write bandwidth
+1.0000 17.69
+2.0000 19.01
+4.0000 18.78
+8.0000 18.90
+
+"File system latency
+0k	1000	413	1825
+1k	1000	310	1365
+4k	1000	300	1358
+10k	1000	252	1207
+
+
+"size=0 ovr=151
+2 89
+4 104
+8 122
+16 125
+20 129
+
+"size=4 ovr=269
+2 104
+4 116
+8 131
+16 156
+20 159
+
+"size=16 ovr=900
+2 109
+4 187
+8 192
+16 244
+20 264
+
+"size=32 ovr=1773
+2 119
+4 212
+8 263
+16 381
+20 389
+
+"size=64 ovr=3439
+2 299
+4 488
+8 617
+16 753
+20 718
+Memory load latency
+"stride=8
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 22
+0.00781 22
+0.00977 32
+0.01172 44
+0.01367 46
+0.01562 47
+0.01758 48
+0.01953 49
+0.02148 49
+0.02344 50
+0.02539 50
+0.02734 51
+0.02930 51
+0.03125 51
+0.03516 69
+0.03906 69
+0.04297 67
+0.04688 65
+0.05078 64
+0.05469 63
+0.05859 63
+0.06250 73
+0.07031 71
+0.07812 77
+0.08594 78
+0.09375 77
+0.10156 78
+0.10938 75
+0.11719 77
+0.12500 76
+0.14062 78
+0.15625 83
+0.17188 91
+0.18750 100
+0.20312 99
+0.21875 103
+0.23438 101
+0.25000 108
+0.28125 106
+0.31250 110
+0.34375 113
+0.37500 113
+0.40625 115
+0.43750 117
+0.46875 119
+0.50000 123
+1.00000 130
+1.50000 130
+2.00000 130
+2.50000 137
+3.00000 132
+3.50000 131
+4.00000 133
+4.50000 133
+5.00000 132
+5.50000 130
+6.00000 130
+6.50000 135
+7.00000 141
+7.50000 131
+8.00000 131
+
+"stride=16
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 22
+0.00781 23
+0.00977 46
+0.01172 69
+0.01367 70
+0.01562 73
+0.01758 74
+0.01953 76
+0.02148 77
+0.02344 78
+0.02539 79
+0.02734 79
+0.02930 80
+0.03125 81
+0.03516 116
+0.03906 118
+0.04297 114
+0.04688 108
+0.05078 107
+0.05469 105
+0.05859 104
+0.06250 122
+0.07031 120
+0.07812 127
+0.08594 134
+0.09375 131
+0.10156 135
+0.10938 129
+0.11719 133
+0.12500 130
+0.14062 133
+0.15625 144
+0.17188 159
+0.18750 177
+0.20312 179
+0.21875 184
+0.23438 182
+0.25000 195
+0.28125 191
+0.31250 203
+0.34375 205
+0.37500 203
+0.40625 213
+0.43750 213
+0.46875 218
+0.50000 227
+1.00000 236
+1.50000 239
+2.00000 240
+2.50000 243
+3.00000 239
+3.50000 241
+4.00000 240
+4.50000 240
+5.00000 239
+5.50000 240
+6.00000 241
+6.50000 240
+7.00000 239
+7.50000 241
+8.00000 239
+
+"stride=32
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 22
+0.00781 24
+0.00977 77
+0.01172 112
+0.01367 119
+0.01562 123
+0.01758 127
+0.01953 130
+0.02148 132
+0.02344 135
+0.02539 136
+0.02734 137
+0.02930 138
+0.03125 139
+0.03516 180
+0.03906 199
+0.04297 195
+0.04688 191
+0.05078 190
+0.05469 187
+0.05859 186
+0.06250 207
+0.07031 214
+0.07812 215
+0.08594 231
+0.09375 234
+0.10156 239
+0.10938 233
+0.11719 238
+0.12500 239
+0.14062 238
+0.15625 255
+0.17188 283
+0.18750 315
+0.20312 327
+0.21875 336
+0.23438 338
+0.25000 355
+0.28125 354
+0.31250 366
+0.34375 373
+0.37500 378
+0.40625 394
+0.43750 406
+0.46875 405
+0.50000 425
+1.00000 441
+1.50000 445
+2.00000 452
+2.50000 451
+3.00000 465
+3.50000 464
+4.00000 451
+4.50000 460
+5.00000 447
+5.50000 451
+6.00000 444
+6.50000 447
+7.00000 448
+7.50000 446
+8.00000 451
+
+"stride=64
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 22
+0.00781 22
+0.00977 76
+0.01172 112
+0.01367 118
+0.01562 123
+0.01758 129
+0.01953 129
+0.02148 132
+0.02344 133
+0.02539 135
+0.02734 137
+0.02930 138
+0.03125 140
+0.03516 217
+0.03906 256
+0.04297 249
+0.04688 240
+0.05078 234
+0.05469 228
+0.05859 223
+0.06250 261
+0.07031 275
+0.07812 281
+0.08594 311
+0.09375 318
+0.10156 326
+0.10938 314
+0.11719 320
+0.12500 314
+0.14062 315
+0.15625 353
+0.17188 413
+0.18750 475
+0.20312 495
+0.21875 509
+0.23438 519
+0.25000 574
+0.28125 563
+0.31250 594
+0.34375 593
+0.37500 610
+0.40625 610
+0.43750 624
+0.46875 643
+0.50000 680
+1.00000 740
+1.50000 739
+2.00000 736
+2.50000 757
+3.00000 739
+3.50000 743
+4.00000 745
+4.50000 744
+5.00000 736
+5.50000 734
+6.00000 744
+6.50000 775
+7.00000 767
+7.50000 764
+8.00000 747
+
+"stride=128
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 22
+0.00781 22
+0.00977 76
+0.01172 111
+0.01367 120
+0.01562 122
+0.01758 126
+0.01953 129
+0.02148 132
+0.02344 133
+0.02539 135
+0.02734 137
+0.02930 140
+0.03125 139
+0.03516 217
+0.03906 255
+0.04297 246
+0.04688 239
+0.05078 232
+0.05469 226
+0.05859 221
+0.06250 259
+0.07031 274
+0.07812 278
+0.08594 309
+0.09375 321
+0.10156 328
+0.10938 313
+0.11719 322
+0.12500 319
+0.14062 320
+0.15625 363
+0.17188 418
+0.18750 481
+0.20312 508
+0.21875 516
+0.23438 520
+0.25000 556
+0.28125 542
+0.31250 615
+0.34375 598
+0.37500 624
+0.40625 617
+0.43750 638
+0.46875 650
+0.50000 691
+1.00000 724
+1.50000 733
+2.00000 741
+2.50000 740
+3.00000 740
+3.50000 740
+4.00000 761
+4.50000 749
+5.00000 738
+5.50000 736
+6.00000 758
+6.50000 745
+7.00000 737
+7.50000 746
+8.00000 753
+
+"stride=512
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 23
+0.00781 22
+0.00977 76
+0.01172 112
+0.01367 121
+0.01562 123
+0.01758 128
+0.01953 129
+0.02148 132
+0.02344 133
+0.02539 139
+0.02734 140
+0.02930 140
+0.03125 140
+0.03516 209
+0.03906 274
+0.04297 253
+0.04688 245
+0.05078 240
+0.05469 233
+0.05859 228
+0.06250 261
+0.07031 274
+0.07812 287
+0.08594 314
+0.09375 323
+0.10156 338
+0.10938 334
+0.11719 329
+0.12500 364
+0.14062 364
+0.15625 391
+0.17188 467
+0.18750 529
+0.20312 549
+0.21875 561
+0.23438 569
+0.25000 625
+0.28125 608
+0.31250 646
+0.34375 678
+0.37500 677
+0.40625 679
+0.43750 704
+0.46875 732
+0.50000 754
+1.00000 796
+1.50000 809
+2.00000 778
+2.50000 768
+3.00000 779
+3.50000 791
+4.00000 777
+4.50000 805
+5.00000 802
+5.50000 802
+6.00000 807
+6.50000 797
+7.00000 820
+7.50000 833
+8.00000 804
+
+"stride=1024
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 24
+0.00586 22
+0.00781 22
+0.00977 75
+0.01172 113
+0.01367 120
+0.01562 125
+0.01758 127
+0.01953 134
+0.02148 133
+0.02344 135
+0.02539 136
+0.02734 138
+0.02930 140
+0.03125 139
+0.03516 203
+0.03906 255
+0.04297 246
+0.04688 237
+0.05078 231
+0.05469 228
+0.05859 223
+0.06250 254
+0.07031 274
+0.07812 276
+0.08594 303
+0.09375 314
+0.10156 331
+0.10938 314
+0.11719 325
+0.12500 390
+0.14062 390
+0.15625 424
+0.17188 484
+0.18750 543
+0.20312 562
+0.21875 579
+0.23438 584
+0.25000 621
+0.28125 603
+0.31250 643
+0.34375 661
+0.37500 670
+0.40625 681
+0.43750 692
+0.46875 718
+0.50000 750
+1.00000 788
+1.50000 802
+2.00000 806
+2.50000 801
+3.00000 808
+3.50000 813
+4.00000 833
+4.50000 853
+5.00000 921
+5.50000 870
+6.00000 881
+6.50000 865
+7.00000 1140
+7.50000 867
+8.00000 1015
+
+"stride=2048
+0.00049 23
+0.00098 22
+0.00195 27
+0.00293 22
+0.00391 26
+0.00586 27
+0.00781 23
+0.00977 105
+0.01172 128
+0.01367 118
+0.01562 123
+0.01758 128
+0.01953 130
+0.02148 132
+0.02344 134
+0.02539 137
+0.02734 137
+0.02930 138
+0.03125 143
+0.03516 203
+0.03906 254
+0.04297 245
+0.04688 240
+0.05078 232
+0.05469 226
+0.05859 221
+0.06250 253
+0.07031 273
+0.07812 274
+0.08594 303
+0.09375 313
+0.10156 322
+0.10938 311
+0.11719 323
+0.12500 471
+0.14062 468
+0.15625 501
+0.17188 559
+0.18750 622
+0.20312 635
+0.21875 657
+0.23438 680
+0.25000 716
+0.28125 701
+0.31250 751
+0.34375 766
+0.37500 778
+0.40625 798
+0.43750 794
+0.46875 793
+0.50000 845
+1.00000 893
+1.50000 913
+2.00000 913
+2.50000 914
+3.00000 907
+3.50000 905
+4.00000 878
+4.50000 880
+5.00000 881
+5.50000 878
+6.00000 877
+6.50000 881
+7.00000 885
+7.50000 881
+8.00000 880
+
+"stride=4096
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 22
+0.00781 22
+0.00977 89
+0.01172 90
+0.01367 156
+0.01562 156
+0.01758 159
+0.01953 156
+0.02148 156
+0.02344 155
+0.02539 155
+0.02734 155
+0.02930 155
+0.03125 155
+0.03516 155
+0.03906 267
+0.04297 257
+0.04688 249
+0.05078 242
+0.05469 235
+0.05859 231
+0.06250 226
+0.07031 280
+0.07812 267
+0.08594 282
+0.09375 319
+0.10156 329
+0.10938 315
+0.11719 349
+0.12500 330
+0.14062 623
+0.15625 655
+0.17188 710
+0.18750 788
+0.20312 806
+0.21875 818
+0.23438 827
+0.25000 864
+0.28125 841
+0.31250 875
+0.34375 891
+0.37500 903
+0.40625 913
+0.43750 944
+0.46875 945
+0.50000 975
+1.00000 1020
+1.50000 1034
+2.00000 1041
+2.50000 1042
+3.00000 1053
+3.50000 1073
+4.00000 1062
+4.50000 1067
+5.00000 1047
+5.50000 1047
+6.00000 1056
+6.50000 1044
+7.00000 1040
+7.50000 1046
+8.00000 1049
+
+"stride=8192
+0.00049 22
+0.00098 22
+0.00195 22
+0.00293 22
+0.00391 22
+0.00586 23
+0.00781 22
+0.00977 22
+0.01172 22
+0.01367 22
+0.01562 22
+0.01758 98
+0.01953 105
+0.02148 91
+0.02344 112
+0.02539 162
+0.02734 157
+0.02930 157
+0.03125 156
+0.03516 156
+0.03906 156
+0.04297 156
+0.04688 157
+0.05078 157
+0.05469 156
+0.05859 156
+0.06250 157
+0.07031 283
+0.07812 270
+0.08594 260
+0.09375 347
+0.10156 331
+0.10938 318
+0.11719 309
+0.12500 299
+0.14062 282
+0.15625 395
+0.17188 364
+0.18750 394
+0.20312 419
+0.21875 465
+0.23438 496
+0.25000 469
+0.28125 775
+0.31250 810
+0.34375 836
+0.37500 864
+0.40625 854
+0.43750 857
+0.46875 916
+0.50000 930
+1.00000 980
+1.50000 1017
+2.00000 1021
+2.50000 1035
+3.00000 1038
+3.50000 1036
+4.00000 1034
+4.50000 1039
+5.00000 1033
+5.50000 1041
+6.00000 1045
+6.50000 1044
+7.00000 1044
+7.50000 1050
+8.00000 1046
+
+

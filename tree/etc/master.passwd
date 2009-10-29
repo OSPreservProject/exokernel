@@ -1,0 +1,6 @@
+root:fm3cgrQZvMEf6:0:0::0:0:Charlie &:/root:/bin/csh
+bin:*:3:7::0:0:Binaries Commands and Source,,,:/:/sbin/nologin
+nobody:*:32767:9999::0:0:Unprivileged user:/nonexistent:/dev/null
+benjie:fm3cgrQZvMEf6:13126:100::0:0:Benjie Chen:/home/benjie:/usr/local/bin/tcsh
+cblake:fm3cgrQZvMEf6:13615:100::0:0:Chuck Blake:/home/cblake:/usr/local/bin/tcsh
+www:*:67:115::0:0:HTTP server:/var/www:/sbin/nologin

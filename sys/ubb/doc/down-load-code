@@ -1,0 +1,3 @@
+Look at forming sequences as a concrete example of tradeoffs.  
+Code vs data from a control point of view.  How much harder
+to implement with data?  (Or with code for the simple cases.)

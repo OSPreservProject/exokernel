@@ -1,0 +1,124 @@
+Exokernel:
+
+1. Theoretic paper on UDF's.  Say what they can do, and how costly.
+
+2. Paper on UDF-based disk subsystem.  (Release system + app-level fs).
+	(osdi)
+
+2.a Paper on UDF-based extension (popl).
+
+3. Trust: look at the tradeoffs in replacement vs trust and the tecniques
+	that can be used. (osdi)
+
+	Contrast between type systems and capabilities && the structures
+	of control that caps can have (and methods + caps can have)
+
+4. Potentially seperate paper: type systems for access control (this may
+	be in 2).  Look at typing systems and methods for providing fine
+	grained extensibility. (osdi)
+
+4.a Discuss methods in general; design, implementation, goals, what
+	is important.  (pldi)
+
+5. xNFS : apply exokernel principles to nfs.  Potentially high impact
+	since deployment is simple and the system is well understood
+	(makes ``before'' and ``after'' comparisions easier to digest).
+	(usenix, osdi)
+
+6. A type-based file system.  a language view of the disk & co (pldi)
+
+7. Reflections on extension via untrusted code.  Look at non-speed
+	issues for downloaded code --- eg. udf, packet filters and the
+	methods (e.g., the three different types of overriding).
+	also examine speed issues, especially the interprocess 
+	optimizations (e.g., in dpf) and techniques for hyper efficient
+	little languages --- go through the dpf examples, along with
+	declaravtive vs imparative, etc. (popl)
+
+8 Sigmetrics: Measured performance of library file systems.
+	place in unix and (1) measure how much better can write
+	a file system.  For instance, when you now control your
+	own paging, etc.  Look at all of the different uses.
+	Then measure the degredation of performance understrong
+	local control.  Sort of xokernel meausrement of local
+	control paper.
+
+Magik:
+
+1. Interfaces as languages.  Develope precepts for *how* to develope
+easily compiled interfaces and explore the benefits.  Tradeoffs in
+interface design and try to find all the cool things that can be done.
+Understand why interfaces differ from languages. (pldi/popl)
+
+2. The case for application specific compilation: CSE etc not very
+profitable, (1) argues for focusing on optimizing interfaces for
+big wins, (2) argues that incorporating the first class ability to
+rely on a compiler is a huge win.  (exocompilers in a sense.)  (pldi/popl)
+
+3. A real magik paper.  Release system. (pldi/popl)
+
+Compiler:
+
+1. Little languages in a little kernel.  Look at the lang/compilation
+issues in using languages for extensiblity.  Interdiciplinary, so
+in a sense can have a big tutorial basis.  (Version of the domain
+specific language paper) (pldi)
+
+2. A JIT toolkit - show how to use icode/vcode as a compilation substate
+for JITS (pldi)
+
+3. A extensible protected substrate: use a variat of icode (SIMPLE) to
+provide a simple virtual machine that runs on many different
+architecturs that other systems can use to extend themselves.  The
+protection machinery in it should support easy adding of checking.
+E.g., for UDF's, scheduling predicates, methods, etc. <---- developing
+an extensible protection mechnism would be cool.  Additionally it
+should be very simple.  The TCB should not have to suffer because of
+some hairy register allocator.  A simple, provably secure register
+alloctor?
+
+Journal Papers:
+
+1. `C: tutorial + system + application/examples. (toplas)
+
+2. icode/vcode - tutorial + system + application/examples (toplas)
+
+3. exokernel (tocs): this is the big paper (do before thesis)
+
+4. dpf: go through all the algorithms,  add fragment reconstruction,
+	give tutorial on dcg.   (transactions on networking).
+
+
+--------------------------------------------------------------------------
+Nice but don't know how to write yet:
+
+1. Indirection: understand the patterns of use.
+
+2. Global performance characterization and subpartitioning.
+
+3. Reflections on system design.  We must have
+   learned something after all of these years.
+
+4. O(1)FS - make a constant time file system; lean on a
+  number of cool theory tricks to make lookup/caching/etc
+  fast in the worse case.  
+
+------------------------------------------------------------------
+When do you want functionality to be left to the client?  (e.g.,
+when an open system).  Lots of current research is making this
+assumption, not really understood that much.  E.g., exokernels,
+the various hardware projects that push funcitonality into software,
+active networks, java, active x, ...
+
+Would be good to understand when you can expect this approach
+to work well and not.
+
+The little languages paper can focus on optimizations not particularly
+profitable (or possible) in other areas.  DPF is a prime example;
+the wakeup predicates might be similar.  Need, I think, self-modifying
+code for compiled data structures.  Add support for this to the
+substrate --- what about a package for compiling trees and such
+for conditional checking?  Seems like this would be useful for
+tom as well.  UDF init optimization: derive when you can say that
+loading a zero filled block of memory will yield zeros --- eliminates
+the need to test.

@@ -1,0 +1,19 @@
+#!/bin/ksh -ax
+: ${NFS_ROOT_LPATH:=/home/ny3/not_xok_root}	# path used by build host
+
+read super_secret_string
+
+case "$super_secret_string" in
+	"copy_and_boot")
+		if [ -h /bsd ]; then
+			/bin/mv -f /bsd /bsd.last
+		fi
+		/bin/cp -fp $NFS_ROOT_LPATH/boot/xok /bsd
+		shutdown -rf +1 < /dev/null > /dev/null 2>&1 & ;;
+	"reboot")
+		shutdown -rf +1 < /dev/null > /dev/null 2>&1 & ;;
+	*)
+		exit 1
+esac
+sleep 1
+exit 0

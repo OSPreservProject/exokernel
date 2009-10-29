@@ -1,0 +1,14 @@
+/bcmp.S/1.1/Tue Jul 28 07:26:54 1998/-ko/
+/bcopy.S/1.1.1.1/Mon Jun 15 21:11:29 1998/-ko/
+/bzero.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/ffs.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/memcmp.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/memcpy.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/memmove.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/memset.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/strcat.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/strcpy.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/strlen.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/strncmp.S/1.1.1.1/Mon Jun 15 21:11:30 1998/-ko/
+/strncpy.c/1.1/Thu Jan 28 18:02:17 1999/-ko/
+D

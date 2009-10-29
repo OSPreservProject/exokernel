@@ -1,0 +1,21 @@
+(  
+  # check ethernet header
+  (12:16 == 0x0008) &&   	# Check if IP datagram.
+
+  # skip over ether header
+  (SHIFT(6 + 6 + 2)) &&
+
+  (9:8 == 6) &&   		# Check protocol : tcp is 6
+
+  # but shorts work
+  (12:16 == 0x1a12) &&   	# Check source IP address (amsterdam)
+  (14:16 == 0x900) &&   	# Check source IP address (amsterdam)
+
+  # Skip past IP header (fixed sized)
+  (SHIFT(5 << 2)) &&
+
+  # TCP header
+  ( 0:16 == 0x9019) && 	 # Check source port (6544)
+  ( 2:16 == 0x50d)  	 # Check destination port (3333)
+)
+

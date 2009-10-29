@@ -1,0 +1,17 @@
+/.cvsignore/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/GNUmakefile/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/Makefile/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/append.c/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/ar.c/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/archive.c/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/archive.h/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/contents.c/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/delete.c/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/extern.h/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/extract.c/1.1.1.1/Mon Jun 15 21:07:44 1998/-ko/
+/misc.c/1.1.1.1/Mon Jun 15 21:07:45 1998/-ko/
+/move.c/1.1.1.1/Mon Jun 15 21:07:45 1998/-ko/
+/pathnames.h/1.1.1.1/Mon Jun 15 21:07:45 1998/-ko/
+/print.c/1.1.1.1/Mon Jun 15 21:07:45 1998/-ko/
+/replace.c/1.1.1.1/Mon Jun 15 21:07:45 1998/-ko/
+D

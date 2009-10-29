@@ -1,0 +1,17 @@
+data:
+=====
+___in_assert
+_u
+
+___progname - same as regular libc (in crt0.c)
+_environ - same as regular libc (in crt0.c)
+
+functions:
+==========
+___stacktrace
+_fork_execl
+_getcwd
+_kprintf
+_pr_fd2
+_send
+_signal

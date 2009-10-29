@@ -1,0 +1,20 @@
+
+Usage: %s [--help] [-m #] [-j #]
+--help: you get this message
+-m amount of memory to malloc and test in kilobytes
+-j number of simulaneous processes banging on the memory
+-i number of iterations
+with no flags it starts testing memory
+
+
+usage:
+
+running memory by itself, launches 4 jobs that mallocs 4 Megs and as
+each jobs finishes it launches another (10 times).  This checks that
+memory is being deallocated by processes properly.  By doing running a
+total of 14 processes each allocating 4 Megs we know we are using more
+of the total system memory.  The system will break if it is not
+deallocating memory properly.
+
+-hector
+

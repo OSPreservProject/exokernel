@@ -1,0 +1,149 @@
+#!/usr/bin/perl
+
+$usage = "\nscript <options> <exotec_root> <new_cmu_root> <old_cmu_root>\n";
+
+if ($ARGV[0] eq "--help") {
+    print ($usage);
+    print ("options may be -n to not actually merge any changes in, just print status\n");
+    print ("OR -c to print out conflicts between local and remote files\n");
+    print ("\nFiles that have been deleted or added between trees will be printed\n");
+    print ("with a prefix of: LA (local add) RA (remote add) LD (local delete)\n");
+    print ("RD (remote delete), C (conflict), or P (needs patching from remote)\n\n");
+    print ("Differences in remote trees will be merged into your tree.\n");
+    print ("Any updates that conflict with local updates will not be merged and instead\n");
+    print ("their names will be printed prefixed with a 'C'\n");
+    exit (0);
+}
+
+if ($ARGV[0] eq "-n") {
+    $just_look = 1;
+    shift (@ARGV);
+} else {
+    $just_look = 0;
+}
+
+if ($ARGV[0] eq "-c") {
+    $print_conflicts = 1;
+    shift (@ARGV);
+} else {
+    $print_conflicts = 0;
+}
+
+if ($#ARGV != 2) { die $usage;}
+
+@queue = ("/");
+
+while ($queue[$#queue]) {
+    $path = shift(@queue);
+    opendir(TREE1ROOT,$ARGV[0].$path);
+    opendir(TREE2ROOT,$ARGV[1].$path);
+    opendir(TREE3ROOT,$ARGV[2].$path);
+    undef(%all);undef(%tree1);undef(%tree2);undef(%tree3);
+    while ($ent = readdir(TREE1ROOT)) { $tree1{$ent} = 1;   $all{$ent} = 1;}
+    while ($ent = readdir(TREE2ROOT)) { $tree2{$ent} = 1; $all{$ent} = 1;}
+    while ($ent = readdir(TREE3ROOT)) { $tree3{$ent} = 1; $all{$ent} = 1;}
+    close(TREE1ROOT);
+    close(TREE2ROOT);
+    close(TREE3ROOT);
+    
+    foreach $fp (sort(keys(%all))) {
+	if (($fp eq ".") || ($fp eq "..") || ($fp eq "CVS") || ($fp eq "obj") || ($fp =~ /\.orig$/) || ($fp =~ /\.o$/) || ($fp =~ /\.d$/) || ($fp =~ /\.a$/)) { next;}
+
+	my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($ARGV[0].$path."/".$fp);
+	if ($mode & oct("0040000")) {
+	    push(@queue,$path.$fp."/");
+	    next;
+	}
+
+	$dt1 = defined($tree1{$fp});
+	$dt2 = defined($tree2{$fp});
+	$dt3 = defined($tree3{$fp});
+	$change = 0;
+	$found_conflict = 0;
+	$needs_merge = 0;
+
+	if (!$print_conflicts) {
+	    if ($dt3 && !$dt2 && $dt1) {
+		print ("RD");
+		$change = 1;
+	    }
+
+	    if ($dt2 && !$dt3 && !$dt1) {
+		print ("RA");
+		$change = 1;
+	    }
+
+	    if ($dt1 && !$dt2 && !$dt3) {
+		print ("LA");
+		$change = 1;
+	    }
+
+	    if (!$dt1 && $dt2 && $dt3) {
+		print ("LD");
+		$change = 1;
+	    }
+	}
+
+	if ($dt1 && $dt2 && $dt3) {
+	    if ($print_conflicts) {
+		print ("=== ".$fp." ===\n");
+		open(CONFLICT, "diff3 --overlap-only ".$ARGV[0].$path.$fp." ".$ARGV[2].$path.$fp." ".$ARGV[1].$path.$fp." |") ||
+		    die ("Can't run diff3 -E\n");
+		while (<CONFLICT>) {
+		    print;
+		}
+	    } else {
+		open(DIFF, "diff3 -e ".$ARGV[0].$path.$fp." ".$ARGV[2].$path.$fp." ".$ARGV[1].$path.$fp." |") ||
+		    die ("Can't run diff\n");
+		$found_difference = 0;
+		while (<DIFF>) {
+		    if (length ($_) > 2) {
+			$found_difference = 1;
+			last;
+		    }
+		}
+
+		if ($found_difference) {
+		    open(CONFLICT, "diff3 -E ".$ARGV[0].$path.$fp." ".$ARGV[2].$path.$fp." ".$ARGV[1].$path.$fp." |") ||
+			die ("Can't run diff3 -E\n");
+
+		    while (<CONFLICT>) {
+			if (/>>>/) {
+			    print ("C ");
+			    $change = 1;
+			    $found_conflict = 1;
+			    $needs_merge = 1;
+			    last;
+			}
+		    }
+
+		    if (!$found_conflict) {
+			print ("P ");
+			$change = 1;
+			$needs_merge = 1;
+		    }
+		}
+	    }
+	}
+
+
+	if ($change) {
+	    if ($path eq "/") {
+		print "   ".$fp."\n";
+	    } else {
+		print "   ".$path.$fp."\n";		
+	    }
+	}
+	if ($dt1 && $dt2 && $dt3) {
+	    if (!$just_look && !$print_conflicts && $needs_merge) {
+		system ("cp ".$ARGV[0].$path.$fp." ".$ARGV[0].$path.$fp.".orig");
+		system ("diff3 -e --merge ".$ARGV[0].$path.$fp." ".$ARGV[2].$path.$fp." ".$ARGV[1].$path.$fp." > ".$ARGV[0].$path.$fp.".sdfdss");
+		system ("cp ".$ARGV[0].$path.$fp.".sdfdss ".$ARGV[0].$path.$fp);
+		system ("rm ".$ARGV[0].$path.$fp.".sdfdss");
+	    }
+	}
+    }
+}
+
+
+

@@ -1,0 +1,986 @@
+/*
+ * Track user-defined dependencies.  Is complicated by the fact that 
+ * there are ``phantom'' dependencies tracked by the registry itself
+ * to allow discretion in writing blocks that have pointers to uninitialized
+ * meta data when the pointing object will not survive reboot.
+ *
+ * Dependencies are directed graphs.  An edge from A->B means that B
+ * must be written before A.  The main thing we guard against are cycles,
+ * which would not be possible to satisfy.
+ *
+ * David Karger considers efficient detection of cycles ``interesting.''
+ * As a result we use a simple brute force solution that uses standard
+ * mark and sweep to detect when it visits a node more than once.  To
+ * remove the need to initialize the path we use an epoch number incremented
+ * on every addition or deletion.
+ *
+ * [ The following assumes of the xn registry. While this is a seperate
+ * file it is not nicely seperated. ]
+ *
+ * Before A can be added to the graph we mark traverse its parent, grandparent,
+ * etc up to the first node that is persistent, marking the data they contain
+ * (if it is in the dependency registry) as having the current epoch number.
+ * 
+ * Dependencies are created when a persistent xn node becomes tainted.
+ * (Bytes to sectors.)
+ *
+ * Problem: we have to have fine grained tracking of udf updates.  Each
+ * udf should track what offset within the type is it at so that we
+ * can taint just those sectors that it screws up.
+ *
+ * NOTE: we can still lose nodes.  Need to check that we have freed
+ * everything.
+ */
+
+/* Have sectors track where the tainted pieces are, right? */
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include <demand.h>
+#include <kexcept.h>
+#include <list.h>
+#include <table.h>
+#include <xn.h>
+
+/* The maximum amount of time we are willing to run with interrupts off. */
+#define MAX_VISIT	128
+
+#ifndef TEST
+#	define FREE(x) free(x)
+#	define MALLOC(x) malloc(x)
+#else
+#	include <kalloc.h>
+#	define MALLOC kalloc
+#	define FREE kfree
+#endif
+
+typedef unsigned long sec_t;
+
+/*
+	Add dependencies as before, but do not enforce if node is not
+	persistent.  This eliminates all the moving bullshit.
+
+	If you have a dependency, and you write out, then add a dependency
+	to all the guys above us.  
+
+	If you are persistent, cannot write with dependencies.  Otherwise,
+	go up until you hit a guy with a volatile pointer to us (how?
+	if we are volatile?) mark guys as volatile and as reachable, right?
+
+	The bummer: on write have to update all pointers below us.  TThere
+	are volatile and stable ones.
+
+	For the momenet, could walk down all, right?  Or, as an opt,
+	keep 
+
+	(What if they free?  Need to unify.)
+
+  Have to track: 
+
+  (1) will free -- this is an antidependency (i.e., nodes
+  will be freed when it is eliminated.  Could map it to a dependency
+  and just eliminate (have flag ``free''?)   We should also track
+  nodes that are not in core but are freed --- these are orphaned
+  roots.  If you want to gc, need to bring them in and free them.
+  alternatively, could attach and then do a move, I suppose.
+
+  Why put it here:
+	1. need to ensure that cycles are not created even though
+	the blocks don't appear as true dependencies.  They are not
+	dependencies.  We don't allow them.
+
+	2. need sector enforcement.
+
+	Fuck the rest.  This is the deal.
+
+  What we need:
+	allocation: 
+		A -> U
+	write:
+		if A is persistent, fail
+		else 
+			propogate all U links on A up until you hit
+			a reachable block.
+	read:
+		place as uninits
+
+
+	All non-persistent nodes are forced to remain in the registry.
+
+	Can ask registry for parent on write, right?
+
+	We will ask for a proxy.  This seems a bit lame, but what can you
+	do.
+
+	Register depens.  Is there any advantage?
+
+	FindPersistentAttached.
+	For each look for persistent.
+
+Mark each node on the way up as being in epoch x.
+Create these values: how to track when you should be recording dependencies?
+
+	What about tracking dependencies: this forms them.  Ok.
+
+	Registry works.  Don't fuck with it.
+	add_edge(x); 	// these are different edges.
+
+	Trying to write a node that cannot be attached to a proxy,
+	cannot do it.  Unfortunately, prevent someone else from 
+	doing anything.  Must write out your root now.
+
+	Have a call to write out everything that is required.
+
+	Form edge between node and uninit node.
+	When node is initialized and it has no tainted dependents,
+		remove it.
+
+	Can write out all zeroes to a disk block: will ensure that
+	it is no longer tainted.  Will be fucked at reboot though.
+
+	Should we just place up on the persistent node? What is the
+	downside to this?
+
+	Writes occur at this level as do 
+	Form link between A -> U.
+
+	When A is written, form link between P -> U.  How to find P?
+
+	Problem is that things below P are prevented from becoming
+	persistent.
+
+	What if the registry tracks all of this shit?  Ok.
+
+	When node is volatile, what to do?  Cannot throw it away.
+	
+  The represenation:
+	- Form edge between node and new node it creates.
+
+	- Remove edge when node is initialized (when to force things?)
+
+	- When a node has no outgoing dependencies remove it. --- trouble
+	is percolation --- how to know if a damn node below us has
+	something to propogate up?  If you are not in core, do not allow
+	the write to happen that is perfectly reasonable.
+
+	When a node becomes persistent, remove edge
+	Buffer cache doesn't remove entries.
+
+	- Delete edge when node is initialized & persistent.
+
+	The sectors are the only thing that is causing problems.
+
+	When something is not persistent, keep it in core???
+	
+	edges from us to blocks we have pointers to that are tainted
+	when we are written, this is bubbled up to our parent (why
+	is there an edge to us?)
+
+	 get prop when an uninitialized block is created, create a dependency
+	on parent, when parent is written, prop its dependencies up.
+	If the block is persistent, create a true dependency.
+
+  depends: 
+	tainted:  any block on here mark with the current epoch
+	until you reach a persistent node, right?
+	
+	Create dependency on node (in another table?)  should we
+  	mark dependence differently?
+
+  uninitialized nodes: have a tainted list, remove nodes when the
+  entry is written.  
+
+  In some sense this seems like a bad idea.
+ */
+
+/* A -> U uninitialized sector. */
+int sec_uninit(sec_t A, sec_t U) {
+}
+int sec_write(sec_t A) {
+	want to mark as a sector.
+	if node is persistent add it.
+	walk down tainted list, 
+	if we have volatil pionters mark them all.
+}
+
+/* Used for form edge A -> B. */
+struct edge {
+	struct sec *a;
+	LIST_ENTRY(edge)	out_next;	/* List of out edges. */
+
+	struct sec *b;
+	LIST_ENTRY(edge)	in_next;	/* List of in edges. */
+};
+
+struct sec {
+	unsigned epoch;
+	sec_t	sector;
+
+	unsigned state;
+	unsigned locked:1;
+	unsigned dirty:1;
+
+	struct edgel	dependencies;
+	struct edgel	tainted;
+
+	unsigned ins;	/* Count of incoming edges. */
+	unsigned outs;	/* Count of outgoing edges. */ 
+
+	LIST_HEAD(elist, edge)	in, out;
+};
+
+/* Routines to track active nodes. */
+static Table_T sec_table;	/* Hold dependency entries. */
+
+static int insert(sec_t sec, struct sec *s)
+        { return Table_put(sec_table, (void *)sec, s) != (void *)-1; }
+static struct sec *delete(sec_t sec)
+        { return Table_remove(sec_table, (void *)sec); }
+static inline struct sec *lookup(sec_t sec) 
+	{ return Table_get(sec_table, (void*)sec); }
+
+/*
+ * Support routines for manipulating dependency graphs. 
+ */
+
+/* Does d have any connections to the outside world? */
+static int sec_can_free(struct sec *d) {
+	return !d->ins && !d->outs;
+}
+
+/* Can A be written? */
+xn_err_t sec_can_write(sec_t A, struct sec **a) {
+	struct sec *s;
+
+	if((s = lookup(A)) && s->outs)
+		return 0;
+	if(a)
+		*a = s;
+	return 1;
+}
+
+/* Install sector in table if it does not already exist. */
+static inline struct sec *sec_install(sec_t sec) { 
+	struct sec *s;
+
+	if((s = Table_get(sec_table, (void*)sec)))
+		return s;
+
+	if(!(s = MALLOC(sizeof *s)))
+		return 0;
+	LIST_INIT(&s->in);
+	LIST_INIT(&s->out);
+	s->sector = sec;
+	s->epoch = s->ins = s->outs = 0;
+
+	if(insert(sec, s))
+		return s;
+	FREE(s);
+	return 0;
+}
+
+/* Remove sector from our universe if there are no references to it. */
+static inline void sec_remove(struct sec *s) {
+	if(!sec_can_free(s))
+		return;
+	demand(!l_first(s->in) && !l_first(s->out), Should be nil!);
+	demand(s->sector, Bogus sector);
+	delete(s->sector);
+	FREE(s);
+}
+
+/* Add edge a-> b (assumes they have been installed). */
+static struct edge *add_edge(struct sec *a, struct sec *b, int *found) {
+	struct edge *e;
+	struct edge *p, *l;
+
+        /* Find sorted place for it. */
+        for(p = 0, l = l_first(a->out); l; p = l, l = l_next(l, out_next)) {
+		if(l->b > b)
+			break;
+		if(l->b == b) {
+                       *found = 1;
+			return l;
+		}
+	}
+
+	*found = 0;
+	if(!(e = MALLOC(sizeof *e)))
+		return 0;
+
+	e->a = a;
+	a->outs++;
+        if(!p) 	l_enq(a->out, e, out_next);
+        else 	l_enq_after(p, e, out_next);
+
+	e->b = b;
+	b->ins++;
+	l_enq(b->in, e, in_next);
+
+	return e;
+}
+
+/* Remove edge a -> b. */
+static void remove_edge(struct sec *a, struct sec *b, struct edge *e) {
+	demand(e->a == a, Bogus A);
+	demand(e->b == b, Bogus B);
+
+	l_remove(e, out_next);
+	l_remove(e, in_next);
+
+	a->outs--;
+	b->ins--;
+	FREE(e);
+	sec_remove(a);
+	sec_remove(b);
+}
+
+/*
+ * Detection of cycles using mark and sweep. 
+ */
+static unsigned epoch;		/* [0 to +inf) used to detect cycles. */
+static int no_cycle(struct sec *a, int visited) {
+	int res, cum;
+	struct edge *e;
+
+	if(a->epoch == epoch)
+		return 0;
+	if(visited >= MAX_VISIT) {
+		fatal(Too many nodes were visited);
+		return 0;
+	}
+
+	a->epoch = epoch;
+	cum = visited;
+	for(e = l_first(a->out); e; e = l_next(e, out_next)) {
+		if(!(res = no_cycle(e->b, visited)))
+			return 0;	
+		cum += res;
+	}
+	return cum + 1;
+}
+
+static int has_cycle(struct sec *a) {
+	epoch++;
+	return !no_cycle(a, 0);	
+}
+
+/*
+ *  External interface.
+ */
+
+/* Make A depend on B. */
+xn_err_t sys_sec_depend(sec_t A, sec_t B) {
+	struct sec *a, *b;
+	struct edge *e;
+	int found;
+
+	/* Make sure we have space for edge. */
+	if(!(a = sec_install(A)))
+		return XN_CANNOT_ALLOC;
+	if(!(b = sec_install(B))) {
+		sec_remove(a);
+		return XN_CANNOT_ALLOC;
+	}
+
+	/* The real work: see if adding edge creates a cycle. */
+	if(!(e = add_edge(a, b, &found)))
+		return XN_CANNOT_ALLOC;
+	if(found || !has_cycle(a))
+		return XN_SUCCESS;
+	remove_edge(a, b, e);	/* Remove cycle. */
+	return XN_CYCLE;
+}
+
+
+xn_err_t sys_sec_can_write(sec_t A) {
+	return sec_can_write(A, 0) ? 
+		XN_SUCCESS : XN_TAINTED;
+}
+
+/* Remove all dependencies on B. */
+xn_err_t sec_write(sec_t B) {
+	struct sec *b;
+
+	/* no dependencies at all. */
+	if(!sec_can_write(B, &b))
+		return XN_TAINTED;
+	else if(b) {
+		struct edge *l, *p;
+
+		/* Remove all edges to b and (free is implicit). */
+		for(l = l_first(b->in); l; l = p) {
+			p = l_next(l, in_next);
+			remove_edge(l->a, b, l);
+		}
+	}
+	demand(!lookup(B), Should have been removed);
+	return XN_SUCCESS;
+}
+
+#ifdef TEST
+
+#define EDGES	10
+
+static void make_edges(int n, int step) {
+	int i, j;
+
+	printf("Testing simple linear dependencies.\n");
+	for(i = 1; i <= n; i += step) {
+		printf("i = %d\n", i);
+		demand(sys_sec_depend(i, i + step) == XN_SUCCESS, sec failed!);
+		demand(sys_sec_can_write(i + step) == XN_SUCCESS, cannot fail); 
+	}
+
+	printf("Exhaustive circularity test.\n");
+	for(j = 1; j < n; j++)
+		for(i = j; i > 0; i--) {
+			printf("(i, j) = (%d, %d)\n", i, j);
+			demand(sys_sec_depend(j, i) == XN_CYCLE, Must fail);
+			demand(sys_sec_can_write(n+step) == XN_SUCCESS, cannot fail); 
+		}
+
+
+	for(i = 1; i < n; i += step)
+		demand(sec_write(i) == XN_TAINTED, Must fail);
+	for(i = n+1; i > 0; i -= step) {
+		printf("(i) = %d\n", i);
+		demand(sec_write(i) == XN_SUCCESS, Must succeed);
+	}
+	demand(!k_memcheck(), memcheck failed!);
+
+	printf("Many to one test.\n");
+	for(i = 1; i < n; i++)
+		assert(sys_sec_depend(i, n + 1) == XN_SUCCESS);
+	for(i = 1; i < n; i++)
+		assert(sys_sec_depend( n + 1, i) != XN_SUCCESS);
+	demand(sec_write(n + 1) == XN_SUCCESS, Must succeed);
+	demand(!k_memcheck(), Should have removed all dependencies);
+	
+	printf("One to many test.\n");
+	for(i = 1; i < n; i++) {
+		printf("i = %d\n", i);
+		assert(sys_sec_depend(n+1, i) == XN_SUCCESS);
+		assert(sys_sec_depend(n+1, i) == XN_SUCCESS);
+	}
+
+	for(i = 1; i < n; i++) {
+		assert(sys_sec_depend(i, n+1) == XN_CYCLE);
+		assert(sys_sec_can_write(n+1) == XN_TAINTED);
+		assert(sys_sec_depend(n+1, i) == XN_SUCCESS);
+	}
+
+	for(i = 1; i < n; i++) {
+		assert(sys_sec_can_write(n+1) == XN_TAINTED);
+		assert(sys_sec_depend(i, n+1) == XN_CYCLE);
+	}
+	for(i = 1; i < n; i++) 
+		demand(sec_write(i) == XN_SUCCESS, Must succeed);
+	demand(sys_sec_can_write(n+1) == XN_SUCCESS, Must succeed);
+	demand(!k_memcheck(), Should have removed all dependencies);
+
+	/* Now all schedules should succeed. */
+	for(i = n; i > 1; i -= step)
+		demand(sys_sec_depend(i, i - 1) == XN_SUCCESS, Must succeed);
+}
+
+int main() {
+	sec_table = Table_new(128, 0, 0);	
+	make_edges(EDGES, 1);
+	printf("Success!\n");
+	return 0;
+}
+#endif
+
+#if 0
+/* Make A depend on [B, B + nsecs) */
+int add_edges(sec_t A, sec_t B, size_t nsecs) {
+	int i, res;
+
+	for(i = 0; i < nsecs; i++)
+		if((res = add_edge(A, sec + i)) < 0) {
+			clear_sectors(A, sec, i);
+			return res;
+		}
+	return XN_SUCCESS;
+}
+
+/* 
+ * Cycle detection is expensive.  Probably want to do it all at once,
+ * right? 
+ */
+
+int add_sectorv(struct sec_vec *v, size_t nelem) {
+	int i;
+
+	for(i = 0; i < nelem; i++, v++)
+		if((res = add_edgev(v->A, v->B, v->nsecs)) < 0) {
+			delete_edgev(v, i);
+			return res;
+		}
+
+	return XN_SUCCESS;
+}
+#endif
+
+static int istainted(struct xr *n) 
+	{ return sec_tainted(return LIST_INLIST(n, tnext); }
+
+/* Recursively free all kids on children's willfree lists. */
+static void free_unrooted(struct xr *n) {
+	struct xr *p, *o;
+
+	/* Free volatile kids. */
+	for(p = l_first(n->v_kids); p; p = o) {
+		if(istainted(p))
+			l_remove(p, tnext);
+		free_unrooted(p);
+		o = l_next(p, sib);
+		l_remove(p, sib);
+		xr_del(p, 1);
+	}
+
+	/* Release all nodes on willfree list. */
+	for(p = l_first(n->willfree); p; p = o) {
+
+		/* If we are on a tainted list, remove. */
+		if(istainted(p))
+			l_remove(p, tnext);
+		free_unrooted(p);
+		o = l_next(p, sib);
+		l_remove(p, sib);
+		xr_del(p, 1);
+	}
+}
+
+/* Recursively update the state of all in core kids of db. */
+static void update_kids(struct xr *n, state_t state) {
+	struct xr *e;
+
+	if(n->state == state)
+		return; 	/* All kids must be the same as well. */
+	else
+		n->state = state;
+
+	/* update all of in core kids. */
+	for(e = l_first(n->s_kids); e; e = l_next(e, sib))
+		update_kids(e, state);
+}
+
+/* Put all tainted elements in src into dst. */
+static void t_merge(struct xr *dst, struct xr *src) {
+	struct xr *e, *succ;
+
+	for(e = l_first(src->tainted); e; e = succ) {
+		succ = l_next(e, tnext);
+		l_remove(e, tnext);
+		l_enq(dst->tainted, e, tnext);
+	}
+}
+
+/* 
+ * Walk up the tree, looking for a proxy for the the current set of
+ * tainted nodes. 
+ */
+static struct xr *find_proxy(struct xr *n) {
+	struct xr *p;
+
+	for(p = n; p; p = xr_lookup(da_to_db(p->p))) 
+		if(p->state != XN_VOLATILE)
+			return p;
+	fatal(Cannot be nil);
+	return 0;
+}
+
+/* Called when n is allocated to node p. */
+xn_err_t xr_allocate(struct xr *n, sec_t p) {
+	size_t nsecs;
+	sec_t sec;
+
+	nsecs = bytes_to_sectors(n->nbytes);
+	sec = db_to_sec(n->db);
+
+	try(sec_alloc(p, sec, nsecs));
+}
+
+/* 
+ * Called when n is a new xr entry, before reading its on disk mem.  
+ *
+ * NOTE: We know n is non-volatile, since it is locked
+ * in core otherwise (a nice sideeffect of this feature is that
+ * we don't have to update our kids here).
+ */
+void xr_create_entry(struct xr *n, struct xr *p) {
+	l_enq(p->s_kids, n, sib);
+	n->initialized = 1;
+	n->state = (p->state != XN_PERSISTENT) ?
+			/* volatile p can have reachable n. */
+			XN_REACHABLE : 
+			XN_PERSISTENT;
+}
+
+/* Make sure sector is in core. */
+int xr_can_write(sec_t sec) {
+	ensure(xr_incore(sec_to_db(sec)) XN_NOT_IN_CORE);
+	try(sec_can_write(sec));
+}
+
+/* Sectors have to track dirty, etc, right? */
+/* pointers to nodes cannot cross sector boundaries? */
+
+
+xn_err_t xr_written(sec_t sec) {
+	demand(sec_can_write(sec), Should not happen!);
+
+	/* What to do with dependent information? */
+	n = lookup(db_to_sec(sec));
+
+	/* find a proxy */
+	if(sec_tainted(sec)) {
+		while(n = n->parent)
+			if(!sec_tainted(n->sec))
+				move_taint(n->sec);
+	}
+
+Types = multiples of pages.
+db -> type; these entries live seperately.
+sec -> value;
+
+	Changing sector state, not that of the nodes themselves, right?
+
+	sec_written(sec);
+
+	/* 
+	 * Walk down all volatile nodes, changing their state to 
+	 * reachable/persistent and moving them to the stable list.
+	 */
+	for(e = l_first(n->v_kids); e; e = succ) {
+		update_kids(e, n->state);
+		succ = l_next(e, sib);
+		l_remove(e, sib);
+		l_enq(n->s_kids, e, sib);
+	}
+
+	free_unrooted(n);		/* Free db's on persistent list. */
+	t_merge(proxy, n); 		/* Give tainted list to proxy. */
+
+
+	return XN_SUCCESS;
+}
+
+/* 
+ * Remove entry from registry (doesn't free disk blocks). 
+ */
+xn_err_t xr_flush_entry(struct xr *n) {
+	/* Must be reachable or persistent. */
+	if(n->state != XN_REACHABLE && n->state != XN_PERSISTENT) 	
+		return XN_CANNOT_DELETE;
+
+	/* Must be a leaf. */
+	if(!l_nil(n->v_kids) || !l_nil(n->s_kids) || !l_nil(n->tainted))
+		return XN_CANNOT_DELETE;
+
+	/* Anything else? */
+	l_remove(n, sib);	
+	xr_del(n, 0); 	
+
+	return XN_SUCCESS;
+}
+
+/* 
+ * If there is a on disk pointer to n, put it on parent's willfree list.  
+ * Otherwise, physically free n and all nodes on its (and
+ * its children's) willfree list.
+ *
+ * Caller must:
+ *	+ ensure there are no pointers in xr. 
+ *	+ delete the pointers in p to [db, db+n). 
+ *	+ frees db.
+ */
+void xr_free(struct xr *p, struct xr *n) {
+	/* If not volatile, put on list for later free. */
+	if(n->state != XN_VOLATILE) {
+		l_enq(p->willfree, n, sib);
+		n->state = XN_FREE;
+		/* if on tainted list, remove. */
+		if(istainted(n))
+			l_remove(n, tnext);
+		
+	/* Otherwise recursively free us and all of our children. */
+	} else {
+		l_remove(n, sib);
+		if(istainted(n))
+			l_remove(n, tnext);
+		free_unrooted(n);
+		demand(l_nil(n->v_kids) && l_nil(n->s_kids), 
+					cannot have in core kids!);
+		xr_del(n, 1);
+
+	}
+}
+
+void xr_read(struct xr *xr, struct xr *p) {
+	demand(xr->initialized, should be initialized);
+	xr->dirty = 0;
+	xr->incore = 1;
+}
+
+/*******************************************************************
+ * The public interfaces.
+ */
+
+xn_err_t xr_flush(db_t db, size_t nblocks, cap_t cap) {
+        struct xr *xr;
+	int i;
+
+        /* Should we fail if block can't be deleted? */
+        for(i = 0; i < nblocks; i++)
+                if((xr = xr_lookup(db + i)))
+                        try(xr_flush_entry(xr));
+
+	return XN_SUCCESS;
+}
+
+xn_err_t xr_insert(db_t db, struct xr_td td, da_t parent) {
+	struct xr *xr;
+	
+	if((xr = xr_lookup(db))) {
+		ensure(xr->p == parent, XN_BOGUS_ENTRY);
+		return XN_REGISTRY_HIT;
+	}
+	ensure(xr = xr_new(db, td, parent), XN_OUT_OF_MEMORY);
+	ensure_s(insert(db, xr), { free(xr); return XN_OUT_OF_MEMORY; });
+
+	return XN_SUCCESS;
+}
+
+/* Insert an entry without a parent into the registry.  XXX. */
+xn_err_t
+xr_backdoor_install(da_t p, void *page, xn_elem_t t, size_t tsize, db_t db, int nb)
+{
+        struct xr_td td;
+        struct xr *xr;
+
+        td = xr_type_desc(t, tsize, db, nb);
+
+        try(xr_insert(db, td, p));
+
+        if(!(xr = xr_raw_lookup(db)))
+                fatal(Cannot fail);
+        xr->page = page;
+        xr->incore = 1;
+        xr->initialized = 1;
+        xr->state = XN_PERSISTENT;
+	xr->dirty = 1;
+
+	return XN_SUCCESS;
+}
+
+/* Bit of a problem: have to go through erase all dependencies. */
+void xr_flushall(db_t db, int free_p) {
+}
+
+void xr_reset(void) {
+	if(registry)
+		Table_free(&registry);	
+	registry = Table_new(128, 0, 0);
+}
+
+xn_err_t xr_alloc(db_t db, size_t n, struct xr_td td, da_t parent, int alloc) {
+        int i, res;
+	struct xr *xr, *p;
+
+        for(i = 0; i < n; i++) {
+                res = xr_insert(db + i, td, parent);
+
+		if(res == XN_SUCCESS || (res == XN_REGISTRY_HIT && !alloc))
+			continue;
+                /* free all allocated entries XXX bug: over frees entries. */
+                if(xr_delete(db, db + i - 1, 1) != XN_SUCCESS)
+                	fatal(Should not fail!);
+                return res;
+        }
+
+	/* Special case the bootstrap node. */
+	if(parent == XN_NO_PARENT) 
+		return XN_SUCCESS;
+
+	/* Now go through and run bootstrapping code. */
+	p = xr_lookup(da_to_db(parent));
+	demand(p, should not fail);
+
+	for(i = 0; i < n; i++) {
+		xr = xr_raw_lookup(db + i);
+		if(alloc)
+			xr_allocate(xr, p);
+		else
+			xr_create_entry(xr, p);
+	}
+        return XN_SUCCESS;
+}
+
+xn_err_t xr_incore(db_t db, size_t nblocks) {
+	int i;
+	struct xr *xr;
+
+        for(i = 0; i < nblocks; i++)
+		if(!(xr = xr_lookup(db+i)) || !xr->incore)
+			return XN_NOT_IN_CORE;
+	return XN_SUCCESS;
+}
+
+xn_err_t xr_contig(db_t db, size_t nblocks) {
+	int i;
+	struct xr *xr;
+	void *expected, *page;
+
+        for(expected = 0, i = 0; i < nblocks; i++) {
+		if(!(xr = xr_lookup(db+i)) || !(page = xr_backing(xr)))
+			return XN_NOT_CONTIG;
+
+		if(expected && page != expected)
+			return XN_NOT_CONTIG;
+		expected = (char *)page + PAGESIZ;
+	}
+
+	return XN_SUCCESS;
+}
+
+xn_err_t xr_mark_dirty(db_t db, size_t nblocks) {
+	int i;
+	struct xr *xr;
+
+	demand(nblocks, bogus number of blocks);
+        for(i = 0; i < nblocks; i++) {
+		ensure(xr = xr_lookup(db+i), XN_REGISTRY_MISS);
+		xr->dirty = 1;
+	}
+	return XN_SUCCESS;
+}
+
+xn_err_t xr_no_pages(db_t db, size_t nblocks) {
+	int i;
+	struct xr *xr;
+
+        for(i = 0; i < nblocks; i++)
+		if((xr = xr_lookup(db+i)) || xr->page)
+			return XN_IN_CORE;
+	return XN_SUCCESS;
+}
+
+xn_err_t xr_copyout(void * dst, da_t da, size_t nbytes, cap_t cap) {
+	fatal(Implement);
+}
+
+xn_err_t xr_delete(db_t db, size_t nblocks, int mustfree) {
+	int i;
+	struct xr *xr;
+
+	for(i = 0; i < nblocks; i++) {
+		if(!(xr = xr_lookup(db + i)))
+			ensure(!mustfree, XN_REGISTRY_MISS);
+		else {
+			if(xr->page) {
+				pfree(phys_to_ppn(xr->page), 1);
+				xr->page = 0;
+			}
+			xr_free(xr_lookup(da_to_db(xr->p)), xr);
+		}
+	}
+	return XN_SUCCESS;
+}
+
+
+/* Walk down the list, unlocking them and checking. */
+
+static void req_finished(struct xn_iov *iov, void *addr) {
+	unsigned i, j, nreq, n, op;
+	struct xn_ioe *io;
+	struct xr *xr;
+
+	op = (unsigned)addr;
+
+	for(nreq = i = 0; i < iov->n_io; i++) {
+		io = &iov->iov[i]; 
+		n = io->nblocks;
+		nreq += n;
+		for(j = 0; j < n; j++) {
+			xr = xr_raw_lookup(io->db+j);
+			demand(xr && xr->locked, 
+				Should have been locked in core!);
+
+			xr->locked = 0;
+
+			if(op == XN_READ)
+				xr_read(xr, xr_raw_lookup(da_to_db(xr->p)));
+			else
+				xr_written(xr);
+		}
+	}
+	free(iov);	/* Probably a better way to allocate. */
+}
+
+/* Called for each block, in preperation of an io. */
+xn_err_t xr_io(struct xr *xr, int writep) {
+	if(writep)
+		ensure(xr_can_write(xr),      XN_TAINTED);
+	return XN_SUCCESS;
+}
+
+/* Called for each block, if the io aborted. */
+static inline xn_err_t xr_io_lock(db_t db, void *nil) {
+	struct xr *xr;
+
+	xr = xr_lookup(db);
+	if(!xr) {
+		printf("%ld = %p\n", db, xr_raw_lookup(db));
+		fatal(Impossible);
+	}
+
+	if(xr->locked)
+		return XN_CANNOT_LOCK;
+	else
+		xr->locked = 1;
+	
+	return XN_SUCCESS;
+}
+
+typedef xn_err_t (*io_m_fp)(db_t db, void *state);
+
+static inline xn_err_t io_map(io_m_fp fp, struct xn_iov *iov, void *state) {
+	int i, j, n_io, nb;
+	struct xn_ioe *io;
+
+	io = &iov->iov[0];
+	for(i = 0, n_io = iov->n_io; i < n_io; i++, io++) 
+		for(j = 0, nb = io->nblocks; j < nb; j++) {
+			assert(io->addr);
+			try(fp(io->db + j, state));
+		}
+	return XN_SUCCESS;
+}
+
+static inline xn_err_t xr_bop(struct xn_iov **iov, int op) {
+        try(iov_filter(iov, op == XN_WRITE));
+	try(io_map(xr_io_lock, *iov, &op));
+	return XN_SUCCESS;
+}
+
+xn_err_t xr_bwrite(struct xn_iov *iov) {
+	try(xr_bop(&iov, XN_WRITE));
+
+	if(bwritev(iov, req_finished, (void *)XN_WRITE))
+		return XN_SUCCESS;
+	else
+		return XN_WRITE_FAILED;
+}
+
+xn_err_t xr_bread(struct xn_iov *iov) {
+	try(xr_bop(&iov, XN_READ));
+
+	if(breadv(iov, req_finished, (void *)XN_READ))
+		return XN_SUCCESS;
+	else
+		return XN_READ_FAILED;
+}

@@ -1,0 +1,213 @@
+diff -ruw oskit-0.97/config.guess oskit-0.97.new/config.guess
+--- oskit-0.97/config.guess	Thu Feb 22 18:15:57 1996
++++ oskit-0.97.new/config.guess	Mon Jan 25 13:21:58 1999
+@@ -472,6 +472,10 @@
+   printf ("i386-unknown-bsd\n"); exit (0);
+ #endif
+ 
++#if defined (__OpenBSD__)
++  printf ("i386-unknown-openbsd2\n"); exit (0);
++#endif
++
+ #if defined (sequent)
+ #if defined (i386)
+   printf ("i386-sequent-dynix\n"); exit (0);
+diff -ruw oskit-0.97/linux/dev/GNUmakerules oskit-0.97.new/linux/dev/GNUmakerules
+--- oskit-0.97/linux/dev/GNUmakerules	Mon Dec  7 06:14:40 1998
++++ oskit-0.97.new/linux/dev/GNUmakerules	Tue Jan 26 15:16:07 1999
+@@ -26,7 +26,7 @@
+ MOSTLY_SRCDIRS += $(OSKIT_SRCDIR)/linux/src/drivers/net		\
+ 		  $(OSKIT_SRCDIR)/linux/src/drivers/scsi
+ 
+-DEFINES += -DOSKIT_DEV
++DEFINES += -DOSKIT_DEV -DEXO_KERNEL
+ 
+ # Implicitly include the dev global.h header file at the top of _all_ sources.
+ # This header #defines a bunch of global Linux symbols
+diff -ruw oskit-0.97/linux/dev/glue.h oskit-0.97.new/linux/dev/glue.h
+--- oskit-0.97/linux/dev/glue.h	Mon Dec  7 06:14:44 1998
++++ oskit-0.97.new/linux/dev/glue.h	Mon Jan 25 18:12:02 1999
+@@ -23,6 +23,10 @@
+ #include <oskit/dev/driver.h>
+ #include <oskit/dev/isa.h>
+ 
++#ifdef  EXO_KERNEL
++/*#include <driver_table.h>*/
++#endif
++
+ 
+ /*
+  * One of these structures is statically created for each device driver.
+@@ -64,5 +68,16 @@
+ 		if (rc) osenv_log(OSENV_LOG_ERR,				\
+ 				 "error initializing "name": %d", rc);	\
+ 	})
++
++#ifdef EXO_KERNEL
++#define INIT_DRIVER_EXO(func, name, filename)                   \
++   ({ \
++          if(!driver_is_present(filename)) {    \
++             oskit_error_t rc = oskit_linux_init_##func();              \
++                   if (rc) osenv_log(OSENV_LOG_ERR,                             \
++                                 "error initializing "name": %d", rc);  \
++                } \
++        })
++#endif /* EXO_KERNEL */
+ 
+ #endif /* _LINUX_DEV_GLUE_H_ */
+diff -ruw oskit-0.97/linux/dev/init_ethernet.c oskit-0.97.new/linux/dev/init_ethernet.c
+--- oskit-0.97/linux/dev/init_ethernet.c	Mon Dec  7 06:14:45 1998
++++ oskit-0.97.new/linux/dev/init_ethernet.c	Mon Jan 25 18:14:04 1999
+@@ -19,8 +19,13 @@
+ 
+ void oskit_linux_init_ethernet(void)
+ {
++#if EXO_KERNEL
++#define driver(name, description, vendor, author, filename, probe) \
++        INIT_DRIVER_EXO(ethernet_##name, description " Ethernet driver", filename);
++#else
+ #define driver(name, description, vendor, author, filename, probe) \
+ 	INIT_DRIVER(ethernet_##name, description " Ethernet driver");
++#endif /* EXO_KERNEL */
+ #include <oskit/dev/linux_ethernet.h>
+ }
+ 
+diff -ruw oskit-0.97/linux/dev/timer.c oskit-0.97.new/linux/dev/timer.c
+--- oskit-0.97/linux/dev/timer.c	Mon Dec  7 06:14:53 1998
++++ oskit-0.97.new/linux/dev/timer.c	Tue Jan 26 12:32:48 1999
+@@ -47,6 +47,7 @@
+ };
+ 
+ #define SLOW_BUT_DEBUGGING_TIMERS 0
++extern void delay(int);
+ 
+ void
+ add_timer(struct timer_list *timer)
+@@ -169,10 +170,15 @@
+ 			continue;
+ 		mark_bh(TIMER_BH);
+ 	}
+-#if 0
++#if 1
++/* I'm changing this so that it is active */
+ 	if (timer_head.next->expires <= jiffies)
+-		mark_bh(TIMER_BH);
+-	if (tq_timer != &tq_last)
++          {
++                /*              mark_bh(TIMER_BH);*/
++                timer_bh();
++          }
++        /*      if (tq_timer != &tq_last) */
++        if (tq_timer)
+ 		mark_bh(TQUEUE_BH);
+ #else
+ 	if (tq_timer)
+diff -ruw oskit-0.97/linux/shared/libc/panic.c oskit-0.97.new/linux/shared/libc/panic.c
+--- oskit-0.97/linux/shared/libc/panic.c	Mon Dec  7 06:15:08 1998
++++ oskit-0.97.new/linux/shared/libc/panic.c	Tue Jan 26 14:49:01 1999
+@@ -30,6 +30,6 @@
+         va_start(args, fmt);
+         osenv_vpanic(fmt, args);
+         va_end(vl);
+-	exit(1);
++	return(1);
+ }
+ 
+diff -ruw oskit-0.97/linux/shared/s_init.c oskit-0.97.new/linux/shared/s_init.c
+--- oskit-0.97/linux/shared/s_init.c	Mon Dec  7 06:15:05 1998
++++ oskit-0.97.new/linux/shared/s_init.c	Tue Jan 26 15:59:10 1999
+@@ -20,6 +20,17 @@
+ 
+ #include "shared.h"
+ 
++
++#ifdef EXO_KERNEL
++
++/*
++ * this is to set jiffies.
++ */
++extern u_long exokern_get_jiffies_start();;
++extern int pentium_mhz;
++
++#endif /* EXO_KERNEL */
++
+ unsigned long volatile jiffies = 0;
+ 
+ /*
+@@ -40,8 +51,11 @@
+  */
+ struct task_struct *current;
+ 
+-
++#ifdef EXO_KERNEL
++void
++#else
+ static void
++#endif /* EXO_KERNEL */
+ bump_jiffies()
+ {
+ 	jiffies++;
+@@ -96,9 +110,18 @@
+ 	inited = 1;
+ 	
+ 	high_memory = osenv_mem_phys_max();
++	#ifdef EXO_KERNEL
++	
++	jiffies = exokern_get_jiffies_start();
++	/* i'm going to do a rough guess for this */
++        loops_per_sec = ((pentium_mhz + 1) * 3000000);
++	
++	#else
+ 	osenv_timer_register(bump_jiffies, HZ);
+ 	
+ 	/* Set loop count. */
++	
+ 	calibrate_delay();
++	#endif
+ }
+ 
+diff -ruw oskit-0.97/oskit/dev/linux_ethernet.h oskit-0.97.new/oskit/dev/linux_ethernet.h
+--- oskit-0.97/oskit/dev/linux_ethernet.h	Wed Apr  8 18:47:09 1998
++++ oskit-0.97.new/oskit/dev/linux_ethernet.h	Tue Jan 26 12:53:47 1999
+@@ -41,18 +41,23 @@
+  * probe order in new kernels.
+  *
+  */
+-driver(lance, "LANCE", "AMD", "Donald Becker", "lance", lance_init)
++
+ driver(vortex, "3Com 3c590/3c595 \"Vortex\"", "3Com", "Donald Becker", "3c59x", tc59x_probe)
+-driver(seeq8005, "SEEQ 8005", NULL, "Donald Becker", "seeq8005", seeq8005_probe)
+-driver(tulip, "DEC 21040", "Digital Equipment Corporation", "Donald Becker", "tulip", tulip_probe)
+ driver(eepro100, "Intel i82557", "Intel", "Donald Becker", "eepro100", eepro100_probe)
++driver(eexpress, "Intel EtherExpress", "Intel", "John Sullivan", "eexpress", express_probe)
++driver(eepro, "Intel EtherExpress Pro/10", "Intel", "Bao C. Ha", "eepro", eepro_probe)
+ driver(hp100, "Hewlett Packard HP10/100VG ANY LAN", "Hewlett Packard", "Jaroslav Kysela", "hp100", hp100_probe)
++driver(hpplus, "HP PC-LAN/plus", "Hewlett Packard", "Donald Becker", "hp-plus", hp_plus_probe)
++
++#if 0
++driver(lance, "LANCE", "AMD", "Donald Becker", "lance", lance_init)
++driver(seeq8005, "SEEQ 8005", NULL, "Donald Becker", "seeq8005", seeq8005_probe)
++driver(tulip, "DEC 21040", "Digital Equipment Corporation", "Donald Becker", "tulip", tulip_probe)
+ driver(ultra, "SMC Ultra and SMC EtherEZ ISA", "SMC", "Donald Becker", "smc-ultra", ultra_probe)
+ driver(smc9194, "SMC 9000 series", "SMC", "Erik Stahlman", "smc9194", smc_init)
+ driver(wd, "WD80x3", NULL, "Donald Becker", "wd", wd_probe)
+ driver(etherlink2, "3Com Etherlink 2", "3Com", "Donald Becker", "3c503", el2_probe)
+ driver(hp, "HP LAN", "Hewlett Packard", "Donald Becker", "hp", hp_probe)
+-driver(hpplus, "HP PC-LAN/plus", "Hewlett Packard", "Donald Becker", "hp-plus", hp_plus_probe)
+ driver(ac3200, "Ansel Communications EISA", "Ansel Communications", "Donald Becker", "ac3200", ac3200_probe)
+ driver(ne, "NE1000, NE2000", NULL, "Donald Becker", "ne", ne_probe)
+ /* XXX: This probe crashes our NE2000 cards, hanging the machine. */
+@@ -63,8 +68,6 @@
+ driver(eth16i, "ICL EtherTeam 16i and 32 EISA", "ICL", "Mika Kuoppala", "eth16i", eth16i_probe)
+ driver(etherlink3, "3Com EtherLink III", "3Com", "Donald Becker", "3c509", el3_probe)
+ driver(znet, "Zenith Z-Note", "Zenith", "Donald Becker", "znet", znet_probe)
+-driver(eexpress, "Intel EtherExpress", "Intel", "John Sullivan", "eexpress", express_probe)
+-driver(eepro, "Intel EtherExpress Pro/10", "Intel", "Bao C. Ha", "eepro", eepro_probe)
+ driver(depca, "DIGITAL DEPCA & EtherWORKS", "Digital Equipment Corporation", "David C. Davies, Digital Equipment Corporation", "depca", depca_probe)
+ driver(ewrk3, "DIGITAL EtherWORKS 3", "Digital Equipment Corporation", "David C. Davies, Digital Equipment Corporation", "ewrk3", ewrk3_probe)
+ driver(de4x5, "DIGITAL DE425/DE434/DE435/DE450/DE500", "Digital Equipment Corporation", "David C. Davies, Digital Equipment Corporation", "de4x5", de4x5_probe)
+@@ -75,3 +78,4 @@
+ driver(sk_g16, "SK G16", "Schneider & Koch", "Patrick J.D. Weichmann", "sk_g16", SK_init)
+ driver(ni52, "NI5210", NULL, "Michael Hipp", "ni52", ni52_probe)
+ driver(ni65, "NI6510", NULL, "Michael Hipp", "ni65", ni65_probe)
++#endif

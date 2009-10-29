@@ -1,0 +1,66 @@
+#!/bin/csh
+
+# NSD MUST BE THE FIRST PROGRAM RUN!!!
+
+nsd &
+echo "IPC nameserver started..."
+
+# so nsd has time to startup
+sleep 1
+
+kill 2
+/usr/local/bin/vinit &
+
+# let vinit start
+sleep 1
+
+/usr/local/bin/vifconfig ed0 up ip 18.26.4.98 mask 255.255.255.0 mtu 1500 &
+/usr/local/bin/vifconfig de0 up ip 18.26.4.92 mask 255.255.255.0 mtu 1500 &
+/usr/local/bin/vportsd &
+/sbin/arpd &
+
+# let arpd start
+sleep 1
+
+# for some odd reason things go really bad if this gets started
+# too late...
+
+echo -n "Setting system time..."
+/usr/bin/gettime &
+
+echo -n "Disk write-back daemon started..."
+syncer &
+
+echo "INETD starting..."
+/usr/sbin/inetd /etc/inetd.conf
+
+# start this once dpf is fixed
+echo -n "ICMP daemon started..."
+/usr/local/bin/vicmpd &
+
+#echo -n "CFFS protected method server started..."
+#cffsd &
+
+sleep 5
+
+# comment out or adjust this if you don't want a filesystem mounted/created
+# everytime you boot
+
+#if ({ /sbin/mount DISK0 /mnt }) then
+#    echo "Disk 0 mounted successfully"
+#else
+#    echo "Running fsck..."
+#    /usr/cffs/fsck DISK0
+#    echo "Attempting to mount again"
+#    if ({ /sbin/mount DISK0 /mnt }) then
+#	echo "Disk 0 mounted successfully"
+#    else
+#	echo "Mounting failure: User should try running newfs..."
+#    endif
+#endif
+
+echo "Console daemon starting..."
+/bin/consoled
+
+setenv TERM=vt100
+

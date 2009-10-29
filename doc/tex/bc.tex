@@ -1,0 +1,29 @@
+
+\label{sec:bc}
+
+The kernel provides a simple buffer cache that applications control.
+Each physical page of memory in the system is in one of several states
+depending on whether it is mapped into any env's or not and whether it
+contains a disk block or not. The possible states are all possible
+combinations of those two variables: empty/allocated, empty/free,
+full/allocated, and full/free.
+
+All the kernel buffer cache does is to remember what pages contain
+disk blocks (whether they are free or not) and expose this mapping to
+applications.  Apps can then probe the buffer cache to find which ppn
+holds a given disk block and use the normal page mapping calls to then
+map this page. When a page that contains a block is freed it is still
+kept in the buffer cache, if the page is not dirty (if an app free's a
+dirty page that means the app doesn't want its changes hanging around
+so we dump the page).
+
+Blocks can be inserted into the buffer cache in one of two
+ways. Either an application can insert arbitrary pages or the app can
+request the disk to read a set of blocks into the cache.
+
+Protection is done via proxy exonodes. Before an application can
+insert an arbitrary page into the cache the app must present an
+exonode that says that the app has write access to the file. Only read
+access is required to have the disk read a set of blocks into the
+cache.
+

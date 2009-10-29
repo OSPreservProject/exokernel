@@ -1,0 +1,26 @@
+/.cvsignore/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/COPYRIGHT/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/GNUmakefile/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/Makefile.dist/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/README/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/agrep.1/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/agrep.algorithms/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/agrep.chronicle/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/agrep.h/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/asearch.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/asearch1.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/bitap.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/checkfile.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/checkfile.h/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/compat.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/contribution.list/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/follow.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/main.c/1.1.1.1/Mon Jun 15 21:07:40 1998/-ko/
+/maskgen.c/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+/mgrep.c/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+/parse.c/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+/preprocess.c/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+/re.h/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+/sgrep.c/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+/utilities.c/1.1.1.1/Mon Jun 15 21:07:41 1998/-ko/
+D

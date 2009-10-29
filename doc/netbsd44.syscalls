@@ -1,0 +1,159 @@
+This is information taken from /usr/src/sys/kern/syscalls.c.  I have
+filter out all the system calls that are too random or not usefull
+like: all the compat_43 calls, obsolete ones, vtrace, nfssvc, getfh,
+ntp_*, lfs_*.
+
+So this is what we have in xok so far.  Some of the ones we have are
+dummy stubs in the case that a system call is only used for
+informative purposes (like getrlimit) and in other cases they only
+support some of the arguments (like ioctl).  Please update this file
+if you add another netbsd system call  (library call for us).
+
+-Hector
+
+PS: sometime later I will add a rating on how close we are to the full specs
+(we have 79/140)
+Netbsd4.4 System calls
+		(not necessarily fully compliant)
+Missing		We have 	Filaname
+                *exit		os/process.c
+                *fork		os/fork.c
+                *read		fd/proc.c
+                *write		fd/proc.c
+                *open		fd/open.c
+                *close		fd/proc.c
+                *wait4		os/process.c
+                *link		fd/proc.c
+                *unlink		fd/proc.c
+                *chdir		fd/proc.c
+                *fchdir		fd/proc.c
+mknod
+                *chmod		fd/proc.c
+                *chown		fd/proc.c
+break
+getfsstat
+                *getpid		fd/userids.c
+mount
+unmount
+                *setuid		fd/userids.c
+                *getuid		fd/userids.c
+                *geteuid	fd/userids.c
+ptrace
+recvmsg
+sendmsg
+                *recvfrom	fd/proc.c
+                *accept		fd/proc.c
+		*getpeername	fd/proc.c
+                *getsockname	fd/proc.c
+                *access		fd/proc.c
+chflags
+fchflags
+sync
+                *kill
+                *getppid	fd/userids.c
+                *dup		fd/proc.c
+                *pipe		fd/pipe.c
+                *getegid	fd/userids.c
+profil
+                *sigaction
+                *getgid		fd/userids.c
+                *sigprocmask
+		*getlogin	os/getlogin.c
+		*setlogin	os/getlogin.c
+acct
+sigpending
+sigaltstack
+                *ioctl		fd/proc.c
+reboot
+		*revoke		os/revoke.c (stub)
+                *symlink	fd/proc.c
+                *readlink	fd/proc.c
+                *execve		os/exec.c
+                *umask		os/userids.c
+                *chroot		fd/proc.c
+msync
+		*vfork		os/fork.c (calls fork now)
+                *sbrk
+sstk
+vadvise
+munmap
+mprotect
+madvise
+mincore
+                *getgroups	fd/userids.c
+		*setgroups	fd/userids.c
+                *getpgrp	fd/userids.c
+                *setpgid	fd/userids.c
+setitimer
+swapon
+getitimer
+                *dup2		fd/proc.c
+                *fcntl		fd/proc.c
+                *select		fd/proc.c
+fsync
+setpriority
+                *socket		fd/proc.c
+                *connect	fd/proc.c
+getpriority
+sigreturn
+                *bind		fd/proc.c
+		*setsockopt	fd/proc.c
+                *listen		fd/proc.c
+                *sigsuspend
+                *gettimeofday	os/gettimeofday.c
+                *getrusage	os/getrusage.c
+		*getsockopt	fd/proc.c
+		*readv		fd/proc.c
+		*writev		fd/proc.c
+		*settimeofday	os/gettimeofday.c
+                *fchown		fd/proc.c
+                *fchmod		fd/proc.c
+                *rename		fd/proc.c
+		*flock		fd/flock.c
+mkfifo
+                *sendto		fd/proc.c
+shutdown	
+socketpair
+                *mkdir		fd/proc.c
+                *rmdir		fd/proc.c
+		*utimes		fd/utime.c
+adjtime
+		*setsid		os/setsid.c (stub)
+quotactl
+statfs
+fstatfs
+                *setgid		fd/userids.c
+                *setegid	fd/userids.c
+                *seteuid	fd/userids.c
+                *stat		fd/proc.c
+                *fstat		fd/proc.c
+                *lstat		fd/proc.c
+pathconf	
+fpathconf
+                *getrlimit	os/getrlimit.c
+                *setrlimit	os/getrlimit.c
+		*getdirentries  fd/proc.c fd/nfs/nfs_getdirentries.c
+mmap
+                *lseek		fd/proc.c
+                *truncate	fd/proc.c
+                *ftruncate	fd/proc.c
+__sysctl
+mlock
+munlock
+undelete
+		*futimes	fd/utime.c
+minherit
+poll
+issetugid
+                *shmat		os/shared.c
+                *shmctl		os/shared.c
+                *shmdt		os/shared.c
+                *shmget		os/shared.c
+msgctl
+msgget
+msgsnd
+msgrcv
+__semctl
+semget
+semop
+semconfig

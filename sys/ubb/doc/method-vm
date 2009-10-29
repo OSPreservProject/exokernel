@@ -1,0 +1,47 @@
+How to let methods address random pieces of memory?  Can, for instance,
+require that remote loads and stores specify which place they are from.
+
+Problem with interp in general is that we need it to come with a registry
+entry that gives us our fucking parent.
+
+        Problem: read and write set will not work.  We will have to
+        get different ones.  And, in fact, for efficiency we really want
+        to perform the binding of segment to register once.
+
+        How to read the right data?  In general, can call a method
+        with the da, and number.  Type checking will be done dynamically
+
+        It starts as zero; we don't let it be modified except using
+        a seg_reg operation.
+
+        This is *gross*; it's only redeeming feature is that it is
+        efficient.  To get a compiler to generete this code we will
+        need pointers to be segmented, right?  Problem there is that
+        we need an efficient way to make sure that pointers contain
+        valid data.  I think we can do this by ensuring that (1) they
+        start initialized and (2) they only get modified by valid
+        operations (need to make increment and decrement work correctly).
+        Well, I suppose the way to do this is not modify the segment
+        portion of an address --- can perhaps do this by consuming
+        two registers instead of one, right?   Generating this code
+        from a compiler will be interesting.
+
+        Each segment is associated with a read and write set; udf's
+        happen to have only one.
+
+        Offsets can only have segment registers as their base?  This
+        will require modification of ffs code, certainly.
+
+        Arg.  This is a total pain in the fucking ass.   Segment table:
+        they load it, we check that the registers they use fall within
+        it.  Why?  The only problem we are trying to solve is that they
+        are allowed to touch specific pieces of memory.  One thing we
+        could do instead would be software virtual memory, which would
+        unify all blocks into a contingious range: we then check that
+        each pointer falls *somewhere* within this range.
+
+        Read/write set can be disconting, right?  This is the problem.
+
+        Essentially we are adding read and write sets to the current
+        ones and letting them do whatever they wish.  Sigh.
+

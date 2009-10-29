@@ -1,0 +1,59 @@
+
+                    L M B E N C H  1 . 0   S U M M A R Y
+                    ------------------------------------
+
+            Processor, Processes - times in microseconds
+            --------------------------------------------
+Host                 OS  Mhz    Null    Null  Simple /bin/sh Mmap 2-proc 8-proc
+                             Syscall Process Process Process  lat  ctxsw  ctxsw
+--------- ------------- ---- ------- ------- ------- ------- ---- ------ ------
+rs6000            AIX 2   62      23    2.0K    7.3K     23K 3817     20     32
+seahorse  HP-UX A.09.03   99      14    3.6K   10.1K     18K  116     25     29
+snake     HP-UX A.09.01   66      21    2.6K    5.7K     17K  156     47     55
+IP22           IRIX 5.3  198      11    3.1K    8.0K     19K  260     40     38
+pentium    Linux 1.1.54   91       3    3.3K   15.4K     49K   33     66     94
+alpha         OSF1 V2.1  182      13    4.8K   16.1K     43K  172     25     42
+ss20.50       SunOS 5.4   50       9   10.7K   57.5K    113K  130     54     85
+ss20.61       SunOS 5.4   61       7    8.0K   45.8K     87K  104     37     52
+
+            *Local* Communication latencies in microseconds
+            -----------------------------------------------
+Host                 OS  Pipe       UDP    RPC/     TCP    RPC/
+                                            UDP             TCP
+--------- ------------- ------- ------- ------- ------- -------
+rs6000            AIX 2     143     385     820     498    1054
+seahorse  HP-UX A.09.03     193     244     832     262     812
+snake     HP-UX A.09.01     296     403    1195     367    1142
+IP22           IRIX 5.3     131     313     671     278     641
+pentium    Linux 1.1.54     157     658    1030    1164    1591
+alpha         OSF1 V2.1     185     404     718     428     851
+ss20.50       SunOS 5.4     194     590     935     560    1196
+ss20.61       SunOS 5.4     150     414     622     335     784
+
+            *Local* Communication bandwidths in megabytes/second
+            ----------------------------------------------------
+Host                 OS Pipe  TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+                                  reread reread (libc) (hand) read write
+--------- ------------- ---- ---- ------ ------ ------ ------ ---- -----
+rs6000            AIX 2   34  6.0   76.1   63.0     81    120   99   169
+seahorse  HP-UX A.09.03   38 35.2   44.7   32.1     25     31   49    52
+snake     HP-UX A.09.01   19 17.8   34.4   22.3     22     24   45    39
+IP22           IRIX 5.3   34 22.1   32.3   43.7     32     31   69    66
+pentium    Linux 1.1.54   13  2.4    9.8    4.7     18     18   48    32
+alpha         OSF1 V2.1   32 12.1   39.4   22.7     39     41   76    78
+ss20.50       SunOS 5.4   11 11.0   22.9   30.0     26     31   80    62
+ss20.61       SunOS 5.4   24 19.5   31.0   30.7     23     24   59    40
+
+	    Memory latencies in nanoseconds
+            (WARNING - may not be correct, check graphs)
+            --------------------------------------------
+Host                 OS   Mhz  L1 $   L2 $    Main mem    TLB    Guesses
+--------- -------------   ---  ----   ----    --------    ---    -------
+rs6000            AIX 2    61    15    229         247    776    No L2 cache?
+seahorse  HP-UX A.09.03    98    10     10         393    481    No L1 cache?
+snake     HP-UX A.09.01    65    15     15         378   1051    No L1 cache?
+IP22           IRIX 5.3   197    10     76        1018   1129
+pentium    Linux 1.1.54    90    11    294         439   1254
+alpha         OSF1 V2.1   182    10     56         321    452
+ss20.50       SunOS 5.4    49    20    284         291    575    No L2 cache?
+ss20.61       SunOS 5.4    60    16    115         816    961

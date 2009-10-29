@@ -1,0 +1,22 @@
+There are currently 3 implementations of terminals:
+
+Old terminals:
+/oev/[pt]ty[a-g] used by rconsoled.  Very simple, follow line semantics for read.
+	Support only a handful of ioctl.
+
+Nterminals:
+/dev/[pt]typ[0-7] this were the first real pseudo terminals.  Allows us to run
+	telnetd, vi.  Supports most ioctl.  Does not support process groups.
+	select predicates based on polling every 50ms.
+
+New Terminals:
+Overlap the same namespace as nterminals.  Only one of these two can
+be active at a time.  To use the New terminals, define NEWPTY on your
+environment (setenv NEWPTY) and look at the comments in
+libexos/GNUmakefile.inc
+
+/dev/[pt]typ[0-7] Eventually it will be a full implemetation of pseudo terminals
+	supporting process groups, and properly handling signals.
+
+
+Right now nterminals are used by default

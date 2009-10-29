@@ -1,0 +1,2 @@
+#!/bin/sh
+rm -rf lcc-3.6.tar lcc-3.6 lcc-copy lcc.tar.gz lcc-copy.tar lcc.tar.gz lcc.targ *.i *.s *.o

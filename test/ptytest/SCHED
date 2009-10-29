@@ -1,0 +1,82 @@
+understading scheduling...
+
+/*
+ * General sleep call.  Suspends the current process until a wakeup is
+ * performed on the specified identifier.  The process will then be made
+ * runnable with the specified priority.  Sleeps at most timo/hz seconds
+ * (0 means no timeout).  If pri includes PCATCH flag, signals are checked
+ * before and after sleeping, else signals are not checked.  Returns 0 if
+ * awakened, EWOULDBLOCK if the timeout expires.  If PCATCH is set and a
+ * signal needs to be delivered, ERESTART is returned if the current system
+ * call should be restarted if possible, and EINTR is returned if the system
+ * call should be interrupted by the signal (return EINTR).
+ */
+Kernel
+int
+tsleep(ident, priority, wmesg, timo)
+        void *ident;
+        int priority, timo;
+        char *wmesg;
+
+int
+timeout(func,arg,time);
+
+
+int
+ttysleep(tp, chan, pri, wmesg, timo)
+	struct tty *tp;
+	void *chan;
+	int pri, timo;
+	char *wmesg;
+{
+	int error;
+	short gen;
+
+	gen = tp->t_gen;
+	if ((error = tsleep(chan, pri, wmesg, timo)) != 0)
+		return (error);
+	/* this could be EWOULDBLOCK */
+	return (tp->t_gen == gen ? 0 : ERESTART);
+}
+
+
+
+/* WAKEUP */
+/*
+ * Make all processes sleeping on the specified identifier runnable.
+ */
+void
+wakeup(ident)
+        register void *ident;
+
+
+/*
+ * Wake up any readers on a tty.
+ */
+void
+ttwakeup(tp)
+	register struct tty *tp;
+{
+
+	selwakeup(&tp->t_rsel);
+	if (ISSET(tp->t_state, TS_ASYNC))
+		pgsignal(tp->t_pgrp, SIGIO, 1);
+	wakeup((caddr_t)&tp->t_rawq);
+}
+
+void
+ptcwakeup(tp, flag)
+	struct tty *tp;
+	int flag;
+{
+	struct pt_softc *pti = &pt_softc[minor(tp->t_dev)];
+
+	if (flag & FREAD) {
+		selwakeup(&pti->pt_selr);
+		wakeup((caddr_t)&tp->t_outq.c_cf);
+	}
+	if (flag & FWRITE) {
+		selwakeup(&pti->pt_selw);
+		wakeup((caddr_t)&tp->t_rawq.c_cf);
+	}
+}

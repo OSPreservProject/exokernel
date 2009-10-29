@@ -1,0 +1,112 @@
+\section{Introduction}
+
+This guides attempts to present a high-level view of the XOK/ExOS
+source code. The idea is that this guide should make understanding the
+existing source code easier. However, this guide does not attempt to
+replace the source code as the prime source of information as to how the
+system works.
+
+Each of the following sections describes one sub-system such as memory
+management or disk-multiplexing. Sections about a hardware resource,
+such as memory management, contain a section on how XOK abstracts this
+resource and then how ExOS manages it. Other sections are purely about
+ExOS's emulation of some Unix feature such as processes. This document
+is still a very rough draft and so significant pieces of what we
+would like to ultimately be here are not here yet.
+
+\subsection {Implementation Notes}
+
+This section contains misc notes about the system as a whole. First, 
+don't even try to use anything other than GCC. While almost all
+of the code is in C, there is still a good amount of inline
+asm sprinkled throughout as well as some other GCC-isms such
+as \_\_attribute\_\_ etc.
+
+Second, many of the kernel data structures have been mapped read-only
+into each process. This avoids having to decide what information
+to expose to applications and which to hide. This is done by allocating
+such kernel data structures in a set of pages that are mapped by a single
+page directory entry (PDE).  This PDE can then be inserted into
+each application's page directory and marked read-only. 
+
+Third, each system call usually takes an explicit argument of
+which environment to operate on and a capability(s) proving
+access to the resources being manipulated. To save programmer
+effort and speed system calls, each system call usually has
+an abbreviated form that defaults to operating on the caller's
+environment. Thus, there are typically two variants of each
+system call: {\tt sys\_foo} and {\tt sys\_self\_foo}.
+
+\subsection {Source Tree Organization}
+
+The source tree for the exokernel has grown large and somewhat disorganized
+over time.  It includes the xok kernel, the libraries (ExOS and others),
+and most ported applications.
+
+The main subtrees are:
+
+\begin{itemize}
+
+\item {\bf bin/} : most of the applications that have been ported to the
+exokernel appear here.  Each gets its own subdirectory (which is listed
+in bin/GNUmakefile).  Adding a new application is fairly straightforward,
+but does require understanding the basic aspects of the makefiles used
+in the exokernel source tree.  The best approach is to look at an example
+or two (good ones are: diff and csh).  Some high bits include:
+(1) bin/GNUmakefile should be kept in alphabetical order, except that
+"shlib" must remain first since the others depend on it,
+(2) only one real target (e.g., an application program) can be made
+in a directory, so extra subdirectories should be added to bin/newapp/
+to support extras.
+
+\item {\bf test/} : some other applications, usually short-term test programs,
+are located here.  The structure matches that of bin/.
+
+\item {\bf benchmarks/} : some benchmark programs that have been used for
+various papers and regression tests are located here.  The structure
+macthes that of bin/.
+
+\item {\bf doc/} : documentation on a number of specific topics related to
+working with the exokernel source tree and system.  Under doc/tex/, there
+are latex sources for two useful get-started documents: this one
+(internals.tex) on the internal/source structure and one (guide.tex)
+that discusses configuring, making and booting.
+
+\item {\bf ebin/} : applications that can be linked into the kernel as
+the first program run at boot time appear here.  The guide.tex
+documentation discusses the options further.
+
+\item {\bf include/} : most of the system-wide include files appear here.
+Most of them are taken from (and match) the corresponding OpenBSD files.
+The ExOS-specific header files are in include/exos/, and the xok-specific
+header files are in sys/xok/.
+
+\item {\bf lib/} : the libraries (ExOS and otherwise) appear here.  Most
+of them are taken directly from OpenBSD.  The main exceptions are: alfs,
+xio, and libexos.  alfs is an old version of an application-level file
+system, which is only used by the Cheetah web server at this point.  The
+main file system, C-FFS, appears at lib/libexos/fd/cffs/.  xio is where
+the TCP/IP code (up to TCP sockets) lives.  It is organized in such a way
+that specializing it to application-specific purposes is strightforward.
+libexos is where the bulk of the ExOS code lives.  libwafer is an example
+of the minimal things a library OS must do.
+
+\item {\bf sys/} : the xok kernel lives here.  It is broken into the following
+main subdirectories: conf/ (autoconfiguration of syscall, interrupt and
+exception dispatch tables), dev/ (device drivers), dpf/ (the dynamic packet
+filter; see networking section), kern/ (core kernel stuff), machine/
+(xok-specific, xok-internal, machine-specific header files),
+ubb/ (the XN code; see disk section), vcode/ (dynamic code generation
+support needed for dpf, xn and wk predicates), xok/ (header files that are
+both system-wide and xok-specific), xok\_include/ (header files that are
+xok-specific and internal), xoklibc/ (libc-style functions, like string
+manipulation, for inside the xok kernel).
+
+\item {\bf tools/} : a variety of tools related to the exokernel system.
+
+\item {\bf tree/} : base files and directory structure that gets installed
+into the NFS-mounted root partition during a "gmake install".  Prime
+examples include /etc/* files and /home directores (and their contents).
+
+\end{itemize}
+

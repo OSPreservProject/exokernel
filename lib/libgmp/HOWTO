@@ -1,0 +1,19 @@
+
+libgmp can be compiled under xok
+
+just get the source from OpenBSD (/usr/src/gnu/lib/libgmp) and replace
+the Makefile.bsd-wrapper file with the one provided here and then type:
+
+make -f Makefile.bsd-wrapper
+
+and
+
+make -f Makefile.bsd-wrapper install
+
+
+The only change is to the lines which run the configure program such
+that it is forced to assume the host is i386-unknown-openbsd2.3 instead
+of having to guess (and then failing since xok is unknown).
+
+Rusty
+October 9, 1998

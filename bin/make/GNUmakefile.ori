@@ -1,0 +1,31 @@
+
+TOP = ../..
+EXTRAINC = -I. -I$(TOP)/lib/libc -I../glob
+EXTRAOBJ = glob/libglob.a ../../lib/libc/obj/libc.a
+
+SUBDIRS = glob
+PROG = ~/exobin/make
+
+DEFS =  -DINCLUDEDIR=\"/usr/local/include\" -DHAVE_CONFIG_H -DLIBDIR=\"/usr/local/lib\"
+
+UNUSEDOK =
+
+
+SRCFILES=	commands.c job.c dir.c		\
+       file.c getloadavg.c misc.c		\
+       main.c read.c remake.c			\
+       rule.c implicit.c default.c		\
+       variable.c expand.c function.c		\
+       vpath.c version.c			\
+       remote-stub.c				\
+       ar.c arscan.c				\
+       signame.c				\
+       getopt.c getopt1.c			\
+       alloca.c 
+
+UNINITOK = $(SRCFILES)
+
+include $(TOP)/GNUmakefile.global
+
+#glob/libglob.a:
+#	gmake -C glob

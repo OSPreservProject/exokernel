@@ -1,0 +1,10 @@
+#!/bin/sh
+
+RDEVICE=/dev/rsd1c
+DEVICE=/dev/sd1c
+MOUNT_POINT=/disk/riesling1
+
+umount $MOUNT_POINT
+newfs -a 7 -d 0 -b 8192 -i 2048 -f 1024 -c 16 -t 22 -u 118 -r 90 -s 1095512 $RDEVICE
+mount $DEVICE $MOUNT_POINT
+./playback -f master -s 816 -i 9728 -n 27 -d $MOUNT_POINT

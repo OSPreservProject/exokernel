@@ -1,0 +1,49 @@
+#!/bin/csh
+
+set noglob
+
+if ($#argv != 1 || ($1 < 1) || ($1 > 9)) then
+	echo "Usage: run <num times to run benchmark>"
+	exit 1
+endif
+
+if (! -e m.tar.gz) then
+	echo Copying archive
+	cp mab.tar.gz m.tar.gz
+endif
+
+if (! -e m.tar) then
+	echo Unzipping archive
+	gzip -d m.tar.gz
+endif
+
+if (! -e mab) then
+	echo Untarring archive
+	tar -xf m.tar
+endif
+
+echo Compiling benchmark programs
+cd mab/itc.new.open
+echo Cleaning...
+make clean
+echo Building...
+make
+echo Compiling done
+
+
+
+set A = $1
+while ($A > 0)
+    echo Running modified andrew benchmark\($A\) 
+    rm -rf itc/tmp
+    mkdir itc/tmp
+    cd itc/tmp
+    make -f ../Makefile >& ../logfile.$$.$A
+    cd ../..
+    @ A--
+end
+
+
+cd itc
+unset noglob
+perl ../../../proclog.pl logfile.$$.*

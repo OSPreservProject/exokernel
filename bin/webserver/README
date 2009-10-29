@@ -1,0 +1,68 @@
+Mr Ganger says:
+
+step 1: boot the intended server under xok, with a disk that you have
+nothing useful on (keep in mind that cheetah's file system will not even
+co-exist with cffs yet).
+
+step 2: run "webfs-init <diskno>" to create a clean webfs file system on
+disk number <diskno>.
+
+step 3: cd to /etc and run "webfs-dumbdaemon <diskno>" to start the
+"receiver" process, to which you will send the documents to be served.
+
+step 4: on another machine (BSD, linux, whatever) that has access to
+the desired stuff, run "senddocs webdocs <servername>".  senddocs is the
+program that I'll be sending you.  webdocs is a file that lists the
+directories that should be loaded onto the server.  Each line describes
+one subdirectory (and, yes, it recurses automatically).  I usually ran this
+from amsterdam, because the server will export the loaded files with
+exactly the same pathnames as senddocs uses to find them.  When you run
+senddocs, you should see info about each file (e.g., lengths and checksums)
+being sent scroll by on both the sender and receiver windows.  senddocs will
+terminate the receiver when the transfer is done (by sending a "shutdown"
+message).
+
+step 5: staying in /etc, run "cheetah httpd.conf <diskno>".  To make this
+work properly, you'll want to set up the "DocumentRoot" and "Alias" fields
+of httpd.conf to match what you loaded.  The right way to do this is to
+modify the copy in the source directory (bin/webserver/httpd/httpd.conf)
+and gmake install -- otherwise, the next gmake install will overwrite it.
+
+step 6: point netscape at it and smile ;)
+
+
+
+-------
+
+Webserver test programs
+
+webblast is obsolete
+webpoke just grabs one file
+
+webswamp works as follows (only on xok boxes):
+% webswamp <server> <filename> [ <client> <portno> <concurrency> <totalreqs> ]
+
+<server> = the machine name of the server
+<filename> = the name of the document being grabbed from the server's root
+<client> = the machine name of the source (particularly important if you
+           give different names to different cards on the box).  You pretty
+           much have to provide this parameter -- it defaults to something
+           stupid, as I recall.
+<portno> = port number of server (defaults to 80)
+<concurrency> = number of requests outstanding at a time (defaults to 1)
+<totalreqs> = number of requests to complete before termination (defaults to 100
+)
+
+This benchmark will repeatedly request the same document, and print out
+information about the observed responsiveness:
+
+bytes: 41520000, usecs     4860, bytes/sec: 8543000, pages/sec 823.045267
+Done (webpages 4000, inpackets 40068, outpackets 36068)
+
+About every 16th run, you'll get (instead of what you normally get):
+        webswamp: pid 16, first TCP port 0
+        PID-based initial port selection chose 0, re-run process
+When this happens, just re-run.  It cycles thru port numbers based on the
+process ID, and simply doesn't use certain ones.  This is a hack to avoid
+having the next benchmark run wait 2-4 minutes for previous connections
+in the TIME_WAIT state on the server.

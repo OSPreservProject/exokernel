@@ -1,0 +1,113 @@
+README for the OS-kit device driver kit.
+
+Cards tested so far:
+works with:
+tulip - DEC 21040, - defers to the Exokernel's device driver because the Exokernel steals the IRQ.
+vortex - 3c59x,
+eepro100 - intel card.
+
+Note: OS-kit currently only supports PCI cards.
+
+----------------------------------------------------
+Directions for using the OS-kit drivers.  These directions assume you have the Exokernel
+ cross-compilation tools installed on your system and all of your PATH variables set correctly
+
+Part I, getting the OS-kit to compile on your system.
+
+1. Set up the OS-kit so it will do a cross compile to open BSD.
+
+	a. cvs checout oskit
+	b. go to the oskit root directory.
+	c. cd to the linux/dev directory
+	d. check for the CROSS variable and make sure it is set to 
+	   you location for the openbsd cross compiler tools.
+	   This should be correct.
+
+2. go back to the OS-kit root directory.
+3. The next step we must take is to compile the machine directory.
+   type 'gmake machine' from the OS-kit root directory.
+4. cd to the linux/dev directory again.
+5. type 'gmake'
+
+6. once that build finishes, the linux driver library is ready to be compiled into the Exokernel
+
+Part II compiling the OS-kit device drivers into the Exokernel.
+
+1. cd to the sys directory.
+2. edit the GNUmakefile and set the variable OSKIT to the location of the oskit source tree
+3. change the MY_INTERFACE variable in site-conf.h to oskit_de0
+4. compile the Exokernel from the exopc directory
+
+
+-----------------------------------------------
+
+Notes for when the OS-kit library changes.
+There are some changes that need to be made to the OS-kit library itself.
+1. Certain Ethernet cards will not initialize under the exokernels virtual
+  memory.  From the looks of it, they just aren't mapped properly by the
+  OS-kit library.  These should be fixed or commented out.
+  These comments are in oskit/oskit/dev/linux_Ethernets.h
+
+
+Modifications to the OS-kit:
+1. I changed glue.h in linux/dev to check the OS-kit driver
+   table before it initializes a device driver.  This relies on driver_table.c.
+
+2. I'm also changing init_ethernet.c so that it will pass a useful
+   name string to the INIT_DRIVER macro, which I modified in glue.h
+
+4. changed makefile to use bsd cross compiler for exokernel.
+
+5. to make the timer work properly so that 3c59x.c can properly guess
+   the media type.  To do this I modified timer.c slightly so that
+   the callback mechanism actually found its way to the vortex_timer_handler
+	function.  The only problem that remains is that detection can't be done 
+	during boot up... it must be done just after bootup completes.  This hasn't been a problem
+
+6. going to attempt to fix the mapping problems... both the mapping of high addresses out of the
+   exokernel's range and the strange unmapped regions in two of the device driver probing routines.
+
+-----------------------------------
+ExoKernel modifications
+1. Valid Exokernel drivers should be listed in driver_table.c...
+   driver_table.c and driver_table.h were both added to the makefile.
+	driver_table.c in the kern directory
+   driver_table.h in the xok dir.
+
+2. the device infrastructure is being modified by Greg Ganger.
+
+3. updated makefile so it will either include or leave out the OS-kit stuff.
+4. added oskit dir to sys directory tree.
+5. added the driver_table.c and driver_table.h files for arbitrating who controls what driver.
+6. changed kern/init.c to init the exokernel, this depends on the OSKIT_PRESENT being defined in
+   the makefile.
+7. bump_jiffies now called in sched.c.  This again relies on OSKIT_PRESENT...
+   its probably the ugliest part and should be removed at some point. changed sched_intr
+8. added strncmp.c to the kernel files
+
+
+--------------------------------------
+
+Things the Exokernel does that we should fix
+
+1. Instead of passing an ae_recv to the xmitfunc  in the network structure,
+	we should pass the whole xokpkt structure so it can be properly freed...
+
+	The hack that's being used now is that since the ae_recv is the first element
+	of the xokpkt structure, a pointer to the ae_recv can be cast as an xokpkt !
+
+-------------------------------------
+Exokernel compilation problems.  
+
+	For some reason, the latest version of the Exokernel source tree has some
+compilation troubles.  Here are the files that don't get compiled.  find the directory
+they are in and type 'gmake'. Sometimes a 'gmake install' is needed.  Once that is done compilation
+proceeds normally.
+
+1. Doesn't make syscallno.h before something needs it.
+2. doesn't make mkspec
+3. doesn't make bintoc
+4. can find env0.b.o?
+5. /libalfsemb.a
+6. libalfssep.a
+7. `ubb/obj/libudf.a

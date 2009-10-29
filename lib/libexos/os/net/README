@@ -1,0 +1,18 @@
+udp,tcp are simplistic UDP and TCP libraries.  Very small and should
+be easier to understand than other implementations/libraries.
+
+They should be fully functional except for 2 differences:
+
+1) they use the ASH interface to the network, which requires enabling
+ASHes (see lib/libexos/GNUmakefile.inc for some more information).
+The other implementations (like the ones used: lib/libexos/fd/udp,
+lib/xio (for TCP)) use the packet ring interface to the network
+hardware.
+
+2) they use hardcoded name/ip/ethernet mappings from hosttable files. 
+This hardcoded table is obsoleted by a real card interface and routing
+capabilities of ExOS (<exos/net/{if.h,route.h}>) and DNS from libc.
+
+the hosttable files (netinet/hosttable) can be used independently for
+testing and playing around with the network without having to rely on
+DNS.

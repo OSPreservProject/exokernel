@@ -1,0 +1,51 @@
+
+C-FFS is ExOS's default disk-resident file system.  In addition to the
+fact that it is implemented as a library, ExOS's C-FFS differs from standard
+UNIX file systems in that it employs cute techniques (described in
+\cite{Ganger97}) for improving small file performance.  C-FFS has gone
+thru a number of iterations, and it has departed from the version described
+in the USENIX paper in order to improve performance and reduce complexity.
+In particular, embedded inodes are never moved (allowing them to have
+inode numbers that never change and directly specify their on-disk lcoations),
+which makes several aspects simpler. 
+
+In keeping with the spirit of a library file system, C-FFS tries to minimize
+its use of shared state amongst processes.  By taking advantage of the
+bc registry, it can piggyback file system-level sharing on the sharing of
+underlying disk blocks.  For example, there is no ``in-core'' inode table
+as exists in most UNIX systems.  Instead, processes map the bc pages that
+cache copies of the disk inodes, maintain private tables for finding the
+right disk inode structures in memory, and work with the disk inodes
+directly (either via protected methods or via direct write access).
+Similarly, each process uses its own private logical index
+(i.e., $<$dev,fileno,offset$>$ to memory location) and relies on the
+bc registry for a shared physical index (i.e., $<$dev,blkno$>$ to
+memory page).  Finally, C-FFS makes heavy use of ExOS's
+software (application-level) critical section mechanism to avoid the use
+of locks.  (This last point remains an issue of debate.)
+
+The C-FFS code base is quite a mess at this point, because it is simultaneously
+supporting a number of different design options.  There are flags for
+(1) using XN or using the raw disk,
+(2) using the kernel-resident file system protected methods
+(see sys/xok/fsprot.c) or using direct write access to update metadata
+structures,
+(3) using explicit grouping or not,
+(4) using embedded inodes or not, and
+(5) pretending to use soft updates (i.e., simply using delayed writes for
+everything) or not.
+In addition, insertion of support for XN (which, itself, is only partially
+in place) was rushed and is therefore messy.
+Finally, we have intended to reorganize C-FFS to be more asynchronous and
+flexible, and the code base reflects a partial transition of this type.
+Sorry.
+
+All of that said, ExOS's C-FFS supports most of the POSIX file system
+operations and provides a fairly solid base on which to work.  Most of
+the crucial administrative utilities (e.g., newfs, mount, syncer, fsck)
+work as one would expect.  The three main short-comings are that
+(1) there is no support for partitions,
+(2) only one C-FFS file system can be mounted at a time, and
+(3) XN does not support fsck (and, therefore, C-FFS over XN also does not
+support fsck).  ExOS's C-FFS over a raw disk does support fsck.
+

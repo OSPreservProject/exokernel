@@ -1,0 +1,12 @@
+/Makefile.inc/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/extern.h/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/rec_close.c/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/rec_delete.c/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/rec_get.c/1.2/Sun Aug 30 00:41:20 1998/-ko/
+/rec_open.c/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/rec_put.c/1.2/Sun Aug 30 00:41:20 1998/-ko/
+/rec_search.c/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/rec_seq.c/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/rec_utils.c/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+/recno.h/1.1.1.1/Mon Jun 15 21:10:14 1998/-ko/
+D

@@ -1,0 +1,8 @@
+1) revoke mappings in cffsd
+2) pass (dev/block) pairs, not (eid,vaddr) pairs when referencing blocks
+3) maintain and use types to make sure we're updating what we think we're updating
+4) pass out sub-pxn's of the cffs pxn that give ONLY the access allowed
+5) verify write orderings and figure out how to do 'tainted' handling
+6) switch over to locking instead of EnterCritical/ExitCritical
+7) generally make sure clients can't crash cffsd
+

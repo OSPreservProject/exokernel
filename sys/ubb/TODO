@@ -1,0 +1,136 @@
+Every day come in and first thing write 20 new lines of xn regression
+tests.
+
+There will be a serious pldi paper on using dcg to specialize the interfaces
+in this application.  If you hard coded what was being done (e.g., in FFS)
+many things would be much much more efficient.
+
+design problems:
+	- eliminate type descriptor nonsense, and fix the addressing problems
+	we have of going between disk blocks and type elements.
+
+	jam random stuff through the interpreter --- try to make sure it
+	does the right thing.
+
+interface additions:
+	- add map/unmap calls these would increase reference counts right?
+	need to get with tom first on this.
+
+	- need to make sure you can request a block before its inode is in
+	core (go through buffer cache?).
+
+	- want two sorts of writes: one that writes back cache entries, the
+	other which writes through to disk --- the former should be specified
+	using disk blocks as bases, the latter with virtual addresses.
+
+TODO:
+	- eliminate unused functions.
+
+	- get 100 instruction path on mips.  This should be fast enough
+	for any use.
+
+	- read and insert
+
+	- make a simple checker that verifies that untainted nodes are
+	untainted and tainted ones are.
+
+	- Allow user-specified dependencies
+
+	- Remove iov filtering.  This will simplify code.
+
+	- Free all blocks pointed to by meta data.  Simply assume
+	that anything we point to has been itself freed up.  This
+	will lose blocks for buggy fs's, but for the moment seems
+	the least distasteful of a bunch of bad alternatives.
+
+	- Work out the implications of the current system vis a vis
+	blocks and types.
+
+	- sector != pagesize
+	- sector writes
+	- need to handle multiple types correctly - go through code and
+	make sure we are computing the correct offsets and verifying that
+	pages are contigous.
+	- pretty damn soon: use pointers rather than fixed size allocation
+	  the current situation is getting to be a bit of a mess.
+
+	- call to flush all dependent entires.
+
+	- call to free all blocks associated with a block.
+
+	- setup the registry so that you know what is in it.  want to 
+	allow users to use it to lookup useful things.  Need to ensure
+	that it does not change underneath them
+
+	- *** Regression tests need to be beefed up.  (Waiting for 
+	interface, since otherwise large test suites make interface
+	changes difficult) 
+
+
+	- allow must-write locks - cannot have the block mapped for
+	writing for this to work.
+
+   UDF
+	- have an ordering on UDF output.  Will make it more efficient to
+	compute.
+	- also have a short-circuit of what we are doing.
+	- caps must follow unprotected kids.
+	- must check caps
+	- must provide a split routine that allows you to map in 
+	  differently protected blocks.
+	- must test caps
+	- must do code walk trhought
+	- reconstruction
+	- divide up the header files into smaller chunks.
+	- test grouping.
+	- make typing work.
+	- currently take union of all memory references for udfs.  need
+	to really work out an efficient way to do this.  esp for a popl
+	paper.
+
+	- dcg for speed (yea, easy).
+	- too many functions take too many parameters
+
+	- Need to allow tmp file systems.  Throw them away after read or
+	write, don't insert their dependencies in the depend deal, right?
+	Should be completely trivial, except we force writes of blocks
+	that contain freed pointers (cannot toss away the dirty block).
+
+Disk:
+        1. Do move.
+        3. Do access control methods.
+        4. Design a general method framework.
+
+----------------------------------------------------------------------------
+Done:
+	- on top of the buffer cache: if we don't know about a block
+	check there first, before returning not-in-core.
+	- add unions (variant) keyed on a type field.
+	- flatten structures in type catalogue.
+	- type function is only put in the union
+	- better error checking (prints out why things failed if verbose
+	not off).
+	- add type composition (structures) 
+        - shrink methods.
+	- have UDF's describe their own layout: space much less. 
+	- boot strap type system.
+	- type function only in the union.
+
+-magik hack: ensure that the arena is called before we exit.
+
+downloading code is impareative (more powerful), specifying what you
+want is declarative (less powerful). 
+
+	- free all blocks pointed to by meta data.  We probably want
+	them to tell us how many blocks they own (for speed), however
+	this will allow storage leaks.  One way to catch these is to
+	probabilistically record who allocated what.  When storage
+	is low and we gc the disk can see who owns unclaimed blocks.
+
+	speed hack is to go read sets and find those that contain
+	non-nil bytes - we can then just run these sets associated UDF's.
+
+	This is going to be a pain in the ass.  Scanning an entire page
+	is not cheap.  (Neither is any of the other shit we are doing.)
+	Fuck.  Need to start profiling and tuning.
+

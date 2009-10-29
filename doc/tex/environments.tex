@@ -1,0 +1,16 @@
+
+XOK's idea of a process is called an environment\footnote{see
+sys/kern/env.c and sys/xok/env.h for details}. An environment is
+fairly minimal: it is simply a key-ring of capabilities, a list of
+up-call entry points where control should be diverted when interesting
+events occur, a page table, and a collection of accounting info about
+the process.  Further, each library operating system is allowed to
+store whatever data it finds convenient into the environment's
+``u-area''.
+
+The primary calls for manipulating environments are {\tt
+sys\_env\_alloc} and {\tt sys\_env\_free}.
+
+An environment's page tables must be filled in explicitly and CPU time
+must be allocated before it will be run. See the sections on memory
+and scheduling for information on how to do this.

@@ -1,0 +1,973 @@
+\documentstyle[timessyn,times,epsf,psfig]{acmconf}
+
+\pagestyle{myheadings}
+\thispagestyle{myheadings}
+\newcommand{\xxx}[0]{{\sc XN}}
+
+\title{Overview of the exokernel disk subsystem}
+\author{Hi}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+	This paper is intended to describe the \xxx\ disk subsystem in
+	enough detail to write an efficient file system on top of it.
+	It focuses on two aspects: the specific system call interfaces
+	(and their associated semantics) used to interact with
+	\xxx\ and the important policy decisions \xxx\ uses to
+	guarentee disk integrity.  The former provide a fair degree of
+	flexibility in terms of what data gets moved between core and
+	disk, as well how it is represented, stored, and protected.
+	Care has been taken so that the inflexibility required by the
+	latter is contained.
+
+\end{abstract}
+
+\section{Introduction}
+
+The goal of the \xxx\ interface is to be that of the disk itself.
+Any movement away from this idealized interface are driven by the
+need for protection.  In particular there are two requirements
+of protection that prevent us from giving unlimited disk access
+to applications (and, importantly, from using this access to implement
+any abstraction in any way):
+\begin{enumerate}
+	\item The kernel must be able to do access checks for each
+	block.  Currently, we just represent where the in a disk
+	block are so that it can check them.  A more flexibile
+	approach (that we will pursue) is to allow {\em methods}
+	to be associated with each type of meta data.  These methods
+	can be run to test whether a given principle has access
+	to the block.  (As usual, we give security short shift
+	for expedience.)
+	
+	\item The kernel must know what disk blocks are owned by an
+	application.  To allow sharing of files between untrusting
+	entities, we allow these blocks to be grouped.
+
+	This requires either that the kernel tracks this information.
+	essentially duplicating whatever file system the application is
+	using and leaving little control for library file systems or
+	that untrusted file systems can express what disk blocks their
+	meta data controls. 
+
+	Operationally, then, what we want is that given a piece of meta
+	data the kernel knows what integers in it correspond to what
+	disk blocks so that it can both prevent bogus modification and
+	know what disk blocks a piece of meta data grants access to.
+	This knowlege can be derived in two ways.  First, by building
+	meta data from components that the kernel understands (disk
+	block extents, byte arrays, etc.) thereby allowing it to guard
+	them how it wishes.  The problem with components are that there
+	are never enough of them.  Therefore we use a second approach:
+	applications interpret their own meta data.
+
+	This control lets them represent the data however they wish,
+	unconstrained by preconcieved kernel notions.  To guard against
+	malice and stupidity we force these interpretations to be
+	representated using {\em UDFs} (Untrusted Deterministic
+	Functions) that are tested for correctness using {\em ad hoc
+	induction}.  This paper largely ignores UDFs.  The important
+	intuition to keep in mind is that if a deterministic turing
+	machine is started in the same initial state it will always
+	compute the same output.  Therefore, but running UDFs before
+	and after each modification to their state we can ensure that
+	(1) the transistion was valid and (2) when we rerun the UDF the
+	output of the latter run will be the same.
+
+\end{enumerate}
+
+\section{Implementation Goals}
+
+There are three goals of the xn:
+\begin{enumerate}
+        \item Perform access control on the disk:  The single property xd
+        must guarentee is that all disk block names in the meta-data
+        are valid (or nil).  To do this the used to denote disk blocks
+        always hold valid values (or nil).
+
+        Key: ordered writes of meta-data.  We distinguish xn from db by
+        reachability --- if a block can be reached by an xn then we assume
+        it is one.  If we tagged using a value that could not appear in
+        a disk block (or tied it with massive redundancy) then the ordering
+        could be eliminated.
+
+        \item Provide a cache coherence mechanism for disk: we do so
+        via a cache registry.
+
+        \item Allow applications to share meta data in a well-formed way.
+        We do this using a notion of templates: operations on these
+        templates are  guarded by the kernel, ensuring that no
+        disk pointer or extent is set to garbage.  We may extend
+        these protections to include a mechanism for constructing
+        and binding methods to different portions of an xn.
+
+        To provide strong atomicity guarentees we allow xn calls
+        to be batched (these calls are automatically generated,
+        and are in a different file).
+
+\end{enumerate}
+
+\section{Design Methodology}
+
+The design philosophy is succinct: remove limists of ULFS freedom.  Ensuring
+that unanticipated uses of \xxx\ are possible and efficient is most
+easily solved by placing the machinery required for these uses in
+untrusted code.  There are three concrete heuristics we use:
+\begin{enumerate}
+
+	\item Allocation, deallocation, and I/O operations are
+	application initiated.  In some sense these are GOXP (``good
+	old fashioned exokernel principles''); however, their
+	realization has enough novelty to warrent mention.  In
+	particular, \xxx\ {\em never} initiates an I/O request:  for
+	any operation it is up to the application to make sure that the
+	required data is in core and which data it is.  So, for
+	example, when adding a disk block pointer to a piece of meta
+	data if the meta data is not in core, the kernel returns an
+	error code.  It is up to the application to refetch an try
+	again.  Naively, this methodology seems to be misguided sloth;
+	in reality, these operations are those that determine file
+	system performance, therefore, having the application in
+	complete control allows it to do what is required (rather than
+	concentrate on tricking \xxx\ into {\em not} doing something
+	that it wants).    
+	
+	For example, it may want to search through all blocks of 
+	a file, but only those that are in core (e.g., if the file
+	is for backing store and it is performing garbage collection).
+	If \xxx\ initiates disk reads for any miss, then this operation
+	will be tricky.  More prosaically, directory searches follow
+	a similar pattern: scan all incore blocks for a name and if it
+	is not there, fetch it from disk.  A large amount of this
+	effect can be had using the exokernel principle of exposing
+	data structures (since applications can check).  
+
+	However forcing it, forces us to give applications the contorl
+	they need and keep the implementation small and fast.   Adding
+	default actions later may be done for conveneince.
+
+	\item For a given function decompose it so that applications
+	can tell \xxx\ what to do and how to do it, and it can check
+	that the operations are legal.  Determining what and how 
+	are where most of the action for file systems are; this 
+	structuring places that action squarely in the applications
+	provence.  (In a sense this method can be viewed as a
+	case of Lampson's ``hints'' in that an expensive operation
+	is performed by an untrusted entity, and \xxx\ merely check
+	s it.)
+
+	Concrete examples: \xxx\ guarentees that no persistent pointer
+	gives access to uninitialized data.  Rather than determining
+	what, when and which data to write to disk it merely records
+	dependencies.  Applications then control how data is written
+	and each write is checked to ensure it does not violate a 
+	dependency.
+
+	\item Applications can specify what they expect.  For instance,
+	if they wish to free the backing store associated with a given
+	disk block they may specify which page they anticipate it being
+	associated with.  Using this control they are then able to 
+	detect a variety of race conditions.
+\end{enumerate}
+
+\section{Architecture}
+
+Artitecturally, \xxx\ is made of four main pieces.
+\begin{enumerate}
+	\item Template description table.  File systems describe their
+	meta data (or reuse an existing description) using a template
+	and store this template in the TDT.  Each type is named by an
+	integer (its position in this table).
+
+	Seperating the description of meta data from the meta data
+	itself we obtain three main benefits.  First, since the
+	description of meta data is seperated from the meta data
+	itself, meta data can to be identical to that of a traditional
+	file system running on the raw disk (e.g., traditional Unix
+	systems).  Second, it allows meta data to be fairly rich, since
+	self descriptive data structures impose harsh limits on what
+	can be described concisely.  Finally, it allows us to associate
+	pieces of code (methods) that are used to manipulate each
+	type.  For instance, methods can be used to update modification
+	time on inode modifications.  Similarly, methods can prevent
+	applications from directly modifying the name field in inodes,
+	allowing them to preserve uniqueness and name cache coherence.
+	We make limited use of methods currently, in the future we will
+	investigate using a combination of files and methods to replace
+	servers with passive objects.
+
+	\item  The root catalogue.  This tracks all roots file systems
+	on \xxx .  To make a file system presistent, register its root
+	in the catalogue and write that value of the catalogue out.  On
+	reboot, the kernel can (logically) traverse file systems from
+	these roots, garbage collecting and performing consistency
+	checks.
+
+	\item Buffer cache registry.    The registry tracks what disk
+	blocks are in core, what types they contain, and the
+	dependencies between them.  (Discussed more below.)
+
+	\item UDF machinery.  UDF's are written in a deterministic
+	pseudo-assembly language, interpreted in the kernel to detmine
+	what disk blocks a piece of meta data guards.  UDF's return a
+	set consisting of tuples of extents and types.  Before any
+	modification of a piece of meta data, \xxx\ looks up its type
+	in the buffer cache and finds its assocaited UDF.  It then runs
+	the UDF, records the result, performs the requested
+	modification, and then reruns the UDF, checking that the final
+	state was a valid transition.
+
+\end{enumerate}
+
+\section{The Rules}
+
+Ganger and Pratt summarize three rules for strict file system integrity:
+\begin{enumerate}
+      	\item Never point to a structure before it has been initialized.
+
+        \item Never reuse a resource before nullifying all previous
+        pointers to it.
+
+	\item Never reset the old pointer to a resource before a new
+	pointer has been set (when moving).
+
+\end{enumerate}
+
+Our interpretation of these rules is weakened in that we allow pointers
+to uninitialized blocks that themselves contain no pointers.  This cuts
+down dramatically on the amount and type of bookkeeping \xxx\ must do.
+Additionally, file systems that are marked  as ``temporary'' (i.e., not
+persistent across reboots) need not adhere to any of these precepts
+since they will be wiped at reboot.  (\xxx\ tracks enough state so that
+reboot is the only vulnerability.)
+
+We consider each rule in turn below.
+
+\begin{itemize}
+	\item Rule 1.  In the current implementation this only applies
+	to xn's marked as \v{XN\_PERSISTENT}.  Disk blocks and xn's marked
+	as \v{XN\_TEMPORARY} can be read after a crash even if they are
+	uninitialized (the xn's will not, however, be treated as truth.)  This
+	weaker condition was provided (1) for simplicity and (2) because it
+	seems to allow more sophisticated recovery techniques than otherwise.
+	Note you can ensure no one can read your data by first overwriting it
+	with zeroes (of course, offering the choice of fast or secure is
+	inviting trouble.)
+
+	Initialization is not a minor concern.  For example, weakly
+	consistent file systems may want to avoid going to disk for
+	most file creation and deletion operations.  A simplistic
+	approach to uninitialized data will make this infeasible.
+	
+	At a high level, we allow non-persistent nodes to be written
+	to disk in any order.  We only prevent the single write that
+	would grant a tainted subtree persistence.
+
+       	\item Rule 2. We guarentee the strong notion of this.
+
+	\item Rule 3.  We guarentee this.  Duplicate pointers are
+	eliminated at reboot by duplicating the data they point to.
+	(We should either (1) allow the user to provide code that
+	determines which block to keep or (2) mark trees as
+	``unreconstructed'' so that applications can fix them.  The
+	latter is easiest.)
+
+\end{itemize}
+
+Operations:
+\begin{enumerate} 
+	\item Volatile blocks are freed immediately.  If there are no
+	persistent pointers to a block then it can be freed
+	immediately.  If there are persistent pointers to it then we
+	enqueue the block on the parent's  ``will free'' list  and,
+	when the parent is written, walk this list freeing each block.
+	If we did not have this guarentee then a file system that
+	retained a persistent pointer to a freed disk block could
+	access it after reboot.
+
+	\item An xn can be written to disk iff there is no
+	uninitialized xn that can be reached from it.  Implications:
+	if an xn is ``unrooted'' (i.e., not reachable from a root in
+	the root catalogue) then it can always be written.  If it is
+	reachable, then we prevent any writes to it that will point to
+	unititialized xns.  A file system can exploit this feature to
+	perform any order of operations to an unattached subtree and,
+	when done, attach it.  (Alternatively, could mark xn's as
+	untrusted and in need of reconstruction...)
+
+\end{enumerate}
+
+{\em Expand on implementatation}
+
+\section{Future tests}
+
+	An interface is proven with use, not theory.  The following
+are challenging implementations to place on top of \xxx :
+\begin{enumerate}
+      	\item A log structured file system
+
+	\item Logging in general.
+
+        \item A file system that inlines files in meta data.
+
+        \item An xFS-like file system that uses bitvectors to
+        determine allocation.
+
+        \item A log-based file system that does not need our atomicity
+        guarentees.
+
+        \item A server-less name cache.
+\end{enumerate}
+
+\section{Architecture Restrictions}
+
+There are three restrictions of the current implementation:
+\begin{enumerate}
+        \item Disk blocks can only be pointed to by a single entry.
+                (will be able to eliminate with mm's.)
+
+        \item Xn's can only be pointed to by a single entry (this
+        shouldn't be all that bad to modify.  will be an attribute.)
+                (will be able to eliminate with mm's.)
+
+        \item We probably should add states to the registry to allow
+        locking of various flavors.
+\end{enumerate}
+
+
+\section{UDF Overview}
+
+
+As stated in the introduction, file system meta data is interpreted 
+using UDF's.  UDF's are written in a pseudo-assembly language, and
+imported into the kernel.  They can perform most machine operations
+(with the exception of floating-point) and can access the given xn
+using a set of stlylized instructions.  xn accesses are checked
+Each UDF has a read and write set associated
+with it that specify the byte ranges in the xn that it is allowed
+to access.  Accesses not contained in these sets are errors and force
+an error code.  The use of stylized instructions give the UDF system
+enough semantic information to which makes checking these accesses simple.
+
+
+In a fully general implementation, UDF's would be allowed to have
+non-empty intersection in their read sets.  In this world, when a xn
+update modified a byte in an xn all associated UDF's would be run.  In
+the current implementation, UDF's must have non-overlapping read and
+write sets.
+
+Since the UDF system itself is not completely trivial, it is important
+to keep in mind that it has a single, simple goal:  ensure that the
+output of UDF's (i.e., the disk blocks and their types owned by an xn)
+is trustworthy.  There are three requirements to implementing this goal
+usefully:  (1) UDF execution is deterministic, (2) UDF are rechecked
+iff state they depend on is modified.  (this seems obvious, but adds
+constraints to multi-disk block uses of UDFs) and (3) there is only a
+constant time overhead added from the use of UDFs.  This latter
+constraint leads us to the use of {\em sub-partitioning}, which
+essentially divides the xn into disjoint read and write sets (in a
+sense, an xn is partitioned into multiple xn's that happen to reside in
+the same disk block(s)).
+
+Each UDF takes as input a pointer to an xn, and an index.  Indices
+correspond to partitions formed during sub-partitioning and range
+from $0$ to $n-1$ (where $n$ is the number of partitions).  Their
+output is the set of typed disk blocks owned by this partition of
+the xn.
+
+UDFs are used as follows:
+\begin{enumerate}
+	\item Before a modification (e.g., allocation or deallocation
+	of a disk block in an xn) the kernel runs the associated UDF.
+	Its output is recorded.
+
+	\item The given modification is then performed.  Modifications
+	are expressed as a vector of $(offset, addr, nbytes)$ tuples
+	that instruction where to write data in the xn.  Each tuple
+	essientially corresponds to \v{memcpy(xn + offset, addr,
+	nbytes)}.
+
+	\item The UDF is then rerun.  The new set is compared to the
+	old to ensure that the expected transition was performed.  On
+	error the state modifications are rolled back.
+\end{enumerate}
+
+Actual code is given in Figure~\ref{Figure:UDF}.
+
+\begin{figure*}
+
+%%%grind -l c++
+/* Specify modification. */
+typedef struct xn_m_vec {
+        size_t  offset;
+        void    *addr;
+        size_t  nbytes;
+} xn_m_vec;
+
+/* Unit of update. */
+xn_update {
+        db_t db;                /* base - all objects sector are aligned. */
+        size_t nelem;           /* number of elements of t. */
+        xn_elem_t type;         /* type of extent. */
+};
+
+/* Make a copy of the values to be modified by m. */
+static void mv_checkpt(xn_m_vec *o, void *xn, xn_m_vec *m, int n) {
+     int i;
+
+     for(i = 0; i < n; i++)
+           memcpy(o[i].addr, (char *)xn + m[i].offset, m[i].nbytes);
+}
+
+/* Write the modifications specifed by m into xn. */
+static void mv_write(void *xn, xn_m_vec *m, int n) {
+     int i;
+
+     for(i = 0; i < n; i++)
+          memcpy((char *)xn + m[i].offset, m[i].addr, m[i].nbytes);
+}
+
+/* 
+ * Modify meta data xn using the modification vector m to give xn
+ * control over the typed extent (db, n, type) specified in u.
+ */
+int alloc(void *xn, udf_fun *udf, int index, xn_m_vec *m, int n, xn_update *u) {
+     Set old_s, new_s;
+     xn_m_vec *om;
+
+     mv_checkpt(om, xn, m, n);              /* Store initial state. */
+
+     old_s = udf_run(xn, udf, index);       /* Get initial set. */
+     mv_write(xn, m, n);                    /* Do mod */
+     new_s = udf_run(xn, udf, index);       /* Get new set */
+
+     /* old U (db, n, t) = new */
+     ifset_eq(set_union(old_s, set_single(u)), new_s)) {
+          return XN_SUCCESS;
+     } else {
+          mv_write(xn, om, n); 		/* roll back */
+          return XN_ERROR;
+     }
+}
+%%%end
+\caption{Code to allocate disk blocks using UDF's.}
+\label{Figure:UDF}
+\end{figure*}
+
+\section{Interface}
+
+This section presents the current \xxx\ interfaces and some sample
+uses, both correct (showing how to get something done) and not (showing
+what invariants \xxx\ enforces).
+
+At a high level a file system intializes the disk as:
+\begin{enumerate}
+	\item Its types are described using templates and stored in the
+	type catalogue.
+
+	\item  Its root (there may be several, but singular is
+	easier) is stored in the root catalogue.  
+
+\end{enumerate}
+
+It can then use the system:
+\begin{enumerate}
+	\item It loads the types and root into memory (usually both
+	will be cached).
+
+	\item It can then allocate and deallocate blocks.  Allocation
+	is done using a freemap (bit is on if block is free, off if
+	allocated), which is reconstructed after a reboot.
+
+	\item Its data is cached in a buffer cache registry.  The
+	registry contains both meta data and disk blocks.  The registry
+	is disk block based (i.e., each disk block produces a single
+	entry, no matter how many types are contained in it).  Registry
+	entries are used to track the state of each block (dirty, out
+	of core, tainted, locked).  Importantly, an entry can be placed
+	in the registry without requiring that the object it describes
+	be in core (or have memory allocated for it).
+
+	\item Each registry entry has an on disk location.  The
+	contract with the kernel is that dirty blocks will be written
+	to disk even if the application is not responsive.  This allows
+	a simpler programming model than ensuring that an application
+	is never swapped out when a revocation request arrives and also
+	eliminates the need for a flurry of writes on process exit.
+\end{enumerate}
+
+The following subsections looks at (1) describing meta data using the
+\xxx\ type system, (2) bootstrapping a file system, (3) building a file
+system from the pieces provided.  Caveats, restrictions and wishes are 
+strewn throughout.
+
+\subsection{Describing xnodes}
+Each type in a file system must be described to \xxx\ using the
+\v{ubb\_type} structure.  For this paper, I will assume your meta data
+has been already been expressed (since I'll do it).
+
+The one function involved with the kernel is \v{sys\_xn\_import} which
+checks the type for validity (primarily the code used for UDF's and
+methods and any given offsets into an xn), and then writes the type
+into its type catalogue.  Each type includes an application-specified
+non-unique, non-guarded, character string that can be used to name
+types.  This string could, for instance, be a secure hash of the fields
+contained in the type.
+
+To do:
+\begin{enumerate}
+	\item Making types be described in files that anyone can read and
+	super-users can create.
+
+	\item Ensure that multiple copies of types are not not around.
+	
+	\item Make type importantion more efficient (e.g., indirect
+	blocks are very expensive to describe, since we create	
+	a UDF for each of the 1024 entries).
+\end{enumerate}
+
+Applications must ensure that the disk blocks containing a type are
+kept in core.  The kernel will return an error if the blocks are
+paged out.  (The ``file system'' that implements the type catalogue
+is rudimentary enough that applications should have no trouble 
+traversing it.)  
+
+The expectation with types is that there are only a few per file system
+implementation.  For instance, an FFS file system would have five types:
+directories, inodes, indirect blocks, double indirect blocks and triple
+indirect blocks.  Obviously this assumption can be breathtakingly poor
+if file systems require a a type per object; though even here,
+if the type description is small compared object size then it doesn't
+matter too much (e.g., as in a log structured file system).
+
+Future work will focus on eliminating duplicate information between
+types.  The main (current) restriction on types is that they must
+evenly divide or be multiples of the disk block size.
+
+The system call \v{sys\_xn\_import} imports a type into \xxx :
+%%%grind -l c++
+xn_err_t sys_xn_import(struct ubb_type *t);
+%%%end
+On success it returns the type name.  
+
+(Unresolved issues: should you
+have to specify the index into the type catalogue?  How to deal with
+growth etc.?  Soln: unify into a ``catalogue'' file system that uses
+methods, etc. to guarentee invariants.)
+
+\subsection{Bootstrapping a file system}
+
+File system trees are rooted in the root catalogue, which corresponds
+roughly to the ``/'' directory of Unix.  Thus, boostrapping a file
+system reduces to finding its root's index into the
+catalogue.~\footnote{Should we provide space for file system specific
+data here or just rely on implementations to store any that is needed
+in the file pointed to by the root?.}
+
+Since the catalogue is limited only by the size of the disk systems
+must be prepared to page it in.  To make this simple, its structure,
+layout and type names are codified in a well-known header file,
+allowing file systems to perform the usual ``shouting down the hall''
+needed to bootstrap any naming system.
+
+Additionally, before a piece of meta data can be used the type template
+for that meta data must be in core (otherwise \xxx\ cannot run its UDF's,
+etc.).  Thus, the file system must be able to load these from disk into
+the buffer cache.  Here too the structures, layout, and location of
+the type catalogue are stored in a well known header file.
+
+The disk blocks holding pieces of the root catalogue, the type
+catalogue, and type templates are cached in the buffer cache.  We
+expect that use will make bringing these pieces from disk infrequent,
+usually following a system boot.
+
+The following two calls can be used for bootstrapping:
+%%%grind -l c++
+/*
+ * Allocate space for the root of an application-level file system.
+ * Installs the type and pointer to the root in a ``well-known''
+ * location on disk.  After allocation, applications can then alloc,
+ * read, write, etc as normal.  On reboot, the kernel can (logically)
+ * traverse file systems from these roots, garbage collecting and performing
+ * consistency checks.  Fails if:
+ *      - root is an invalid disk block or is already allocated.
+ *      - type is an invalid type.
+ */
+xn_err_t sys_install_mount(da_t slot, db_t db, size_t nelem, xn_elem_t t);
+
+/*
+ * Return the disk block of the root catalogue.  Clients use this for
+ * bootstrapping.
+ */
+db_t sys_root(void);
+%%%end
+
+{\em The biggest ``to do'' is that I need to actually store this information
+on disk.  Currently, I keep it in main memory.  Uch.}
+
+\subsection{Allocation and deallocation of disk blocks}
+
+
+Allocation and deallocation have identical type signatures:  they
+require the disk address of the parent (disk addresses are the byte
+offset of the object), the update that is expected, and the
+modification vector to use:  
+%%%grind -l c++
+/* Allocate the tuple specified in u. */
+xn_err_t sys_xn_alloc(da_t da, xn_update *u, xn_modify *m);
+/* Deallocate the tuple specified in u. */
+xn_err_t sys_xn_free(da_t da, xn_update *u, xn_modify *m);
+%%%end
+
+The update and modify structures are as follows:
+%%%grind -l c++
+/* Specifies how to modify xn. */
+struct xn_modify {
+        cap_t   cap;
+        size_t own_id;          /* id of the udf to run. */
+        size_t n;               /* number of elements in mv */
+        struct xn_m_vec *mv;    /* base, len, ptr pairs */
+};
+
+/* A unit of update. */
+struct xn_update {
+        db_t db;                /* base - all objects sector are aligned. */
+        size_t nelem;           /* number of elements of t. */
+        xn_elem_t type;            /* type */
+};
+%%%end
+
+Error conditions for all of these call are:
+\begin{enumerate}
+ 	\item The capability does not work.
+ 	\item The blocks are not free or allocated.
+	\item The parent is not in core.
+	\item The UDF does not exist.
+	\item The modification vector contains bogus data.
+	\item The UDF returned the wrong data or referenced values
+	outside of its read or write set.
+	\item The disk blocks deallocated do not match those given
+	in the update structure.
+\end{enumerate}
+
+In addition we provide both move and swap operations, these take
+structures identical to those used for allocation and deallocation,
+but for both source and destination:
+%%%grind -l c++
+/* Swap v1:u1 with v2:u2. */
+xn_err_t sys_xn_swap(da_t v1, xn_update *u1, xn_modify *m1, 
+			da_t v2, xn_update *u2, xn_modify *m2); 
+
+/* Write the value in v2:u2 into v1:u1 */
+xn_err_t sys_xn_move(da_t v1, xn_update *u1, xn_modify *m1, 
+			da_t v2, xn_update *u2, xn_modify *m2); 
+%%%end
+
+The only difference between swap and move is that move expects
+that source will be nil after the modification.
+
+See the ``rules'' section for a description of the restraints on
+writing files to and from disk.
+
+
+Given the following piece of meta data:
+%%%grind -l c++
+/* User-level sort-of-unix inode. */
+struct inode {
+	da_t		da;	/* disk address of the inode. */
+        /* permissions. */
+        unsigned short uid;
+        unsigned short gid;
+
+        /* important times: when last read, written and created. */
+        unsigned mod;
+        unsigned read;
+        unsigned creat;
+
+        /* pointers. */
+#       define DIRECT_BLOCKS 15
+        db_t db[DIRECT_BLOCKS];
+        struct s_indir *s_indir;
+        struct d_indir *d_indir;
+        struct t_indir *t_indir;
+};
+%%%end
+A sample use of the above routines is in Figure~\ref{Figure:Alloc}.
+
+\begin{figure*}
+
+%%%grind -l c++
+/* Example of how to allocate and deallocate disk blocks.  */
+
+/* Sugar for initializing the various data structures. */
+void up_new(xn_update *up, db_t db, size_t n, xn_elem_t t)
+    { up->db = db;  up->nelem = n; up->type = t; }
+
+void mv_new(xn_m_vec *mv, size_t offset, void *addr, xn_elem_t type)
+    { mv->offset = offset;  mv->addr = addr; mv->type = type; } 
+
+void mod_new(xn_modify *m, cap_t cap, int udf_id, xn_m_vec *mv, size_t n) 
+	{ m->cap = cap; m->own_id = udf_id; m->n = n; m->mv = mv; }
+
+/* Used by dealloc and alloc. */
+xn_err_t xn_realloc(xn_err_t (*op)(), struct inode *in, int n, db_t db, int t) {
+	xn_update up;
+	xn_modify m;
+	xn_m_vec mv;
+
+	/* Specify what to free/allocate. */
+	up_new(&up, db, 1, t);
+
+	/* Where to modify. */
+	mv_new(&mv,offsetof(struct inode, db[n]), &db, sizeof db);
+
+ 	/* What cap and UDF to use to perform modification. */
+	mod_new(&m, i->uid, n, &mv, 1);
+
+	return op(in->da, &up, &m);
+}
+
+/* 
+ * Routines to allocate/free direct blocks.  the UDF interpreting this
+ * slot is named n.  ``in'' is a read-only copy of this value in the
+ * kernel's buffer cache.
+ */
+int ffs_dalloc(struct inode *in, int n, db_t db) 
+	{ return x_realloc(sys_xn_allocate, in, n, db, XN_DB); }
+
+int ffs_dfree(struct inode *in, int n) 
+	{ return x_realloc(sys_xn_free, in, n, in->db[n], XN_DB); }
+%%%end
+
+\caption{Example use of \xxx\ allocation and deallocation routines.}
+\label{Figure:Alloc}
+\end{figure*}
+
+Using the \xxx\ interface is wordy since not only must you specify what
+to allocate, you must specify how to do so, and what UDF is reponsible
+for that portion of memory.  It may be worthwhile to use methods for
+these modifications so that specifying an update is simpler.  Note,
+however, that at some level this level of low-level modification must
+be expressed since \xxx\ by design has not the first clue as to how
+meta data is represented, modified, or interpreted.
+
+Todo:
+\begin{enumerate}
+	\item Add reference counts and hard links.
+
+	\item Test swap and move.  Currently not much has
+	been done.
+
+	\item Install methods for deleting two pointers to the
+	same disk block.  (If move must be distinguished from 
+	swap at reboot then we need to enforce an ordering.)
+
+\end{enumerate}
+
+\subsection{In core management}
+
+Data manipulation includes: paging disk blocks in and out of the
+registry, reading and writing data that is in the registry,
+and creating and deleting registry entries.
+
+Reading in a disk block requires reading in all blocks from
+the root down to it.  These registry entries (though not the
+disk blocks they correspond too) must remain in core for the
+duration of the block's usage.  Assuming its parent is incore
+reading a disk block consists of the following operations:
+\begin{enumerate}
+	\item Allocate backing store using \v{sys\_xn\_bind}.
+	\item Allocate a registry entry using \v{sys\_inster\_attr}.
+	\item Read in the block using \v{sys\_xn\_readin}.
+\end{enumerate}
+To write the block and then flush its storage:
+\begin{enumerate}
+	\item Write the bytes in the block using \v{sys\_xn\_writeb}.
+	\item Write the block to storage using \v{sys\_xn\_writeback}.
+	\item Deallocate the backing store and registry entry 
+	using \v{sys\_xn\_unbind}.
+\end{enumerate}
+
+
+The interface for reading and writing unmapped bytes of data:
+%%%grind -l c++
+/* Copy [src, src + nbytes) to [da, da + nbytes).  */
+xn_err_t sys_xn_writeb(da_t da, void * src, size_t nbytes, cap_t cap);
+
+/* Copy [da, da + nbytes) to [dst, dst + nbytes).  */
+xn_err_t sys_xn_readb(void * dst, da_t da, size_t nbytes, cap_t cap);
+%%%end
+(\v{da} is the disk address of the parent xn.)
+
+These two routines fail if:
+\begin{enumerate}
+ 	\item The capability is insufficient for any block $[db, db + nbytes)$.
+ 	\item Any block is out of core.
+ 	\item A page in the range is invalid.
+ 	\item $[dst, dst + nbytes)$ is not writable.
+\end{enumerate}
+
+
+The four routines for paging disk blocks between memory and disk:
+%%%grind -l c++
+/* Write [db, db + nblocks) back to disk.  */
+xn_err_t sys_xn_writeback(db_t db, size_t nblocks, xn_cnt_t *cnt);
+xn_err_t sys_xn_writebackv(struct xn_iov *iov);
+
+/* Read the range [db, db+nblocks) from disk.  Fails if: */
+xn_err_t sys_xn_readin(db_t db, size_t nblocks, xn_cnt_t *cnt);
+xn_err_t sys_xn_readinv(struct xn_iov *iov);
+%%%end
+
+Note that these routines do not require permission checks; neither do
+they require that any particular node is in core before the
+read can happen.  This allows unauthenticated prefetching, which
+can be handy.
+
+These routines fail if:
+\begin{enumerate}
+ 	\item Any db is invalid.
+	\item (Read) There is no physical page to read the values into.
+\end{enumerate}
+
+Binding and unbinding pages to disk blocks is done using the following two
+routines:
+%%%grind -l c++
+typedef enum { 
+	XN_BIND_CONTENTS, 
+	XN_FORCE_READIN, 
+	XN_ZERO_FILL, 
+	XN_ALLOC_ZERO, 
+	XN_PREFETCH
+} xn_bind_t;
+
+/* Associate ppn with db. */
+xn_err_t sys_xn_bind(db_t db, ppn_t ppn, cap_t cap, xn_bind_t flag, int alloc);
+
+/*
+ * Free page associated with db.  If ppn > 0 then it checks to
+ * ensure that the given page is associated with the registry
+ * entry.
+ */
+xn_err_t sys_xn_unbind(db_t db, ppn_t h_ppn, cap_t cap);
+%%%end
+If the \v{alloc} boolean is set, then we attempt to allocate page
+\v{ppn} ($ppn < 0$ is interpreted as allocation of a random page).
+
+There are five possible ways to bind a page to a disk block (using \v{flag}):
+\begin{enumerate}
+	\item Using the current page contents
+	(\v{XN\_BIND\_CONTENTS}).  This requires write permissions.
+
+	\item Using the given page, but require a ``readin'' from disk
+	to initialize it (\v{XN\_FORCE\_READIN}).  Only requires read
+	permissions.
+
+	\item Bind and zero fill page (\v{XN\_ZERO\_FILL}).  Requires
+	write permissions if the page has an on disk copy, otherwise
+	only needs read permissions.
+
+	\item If page is uninitialized, bind zeros, else bind using
+	readin (\v{XN\_ALLOC\_ZERO}).  This combines the read case of
+	(2) and (3).
+
+	\item (Unsupported) \v{XN\_PREFETCH} : allocate backing
+	store for an untyped disk block.  While the block can
+	be paged in from disk, before it can be used it must
+	be associated with a parent.
+\end{enumerate}
+
+Todo:
+\begin{enumerate}
+	\item Allow for mapping into address space (needed).
+
+        \item Split nodes to allow for non-page aligned access.
+
+	\item Provide batching to make these operations more efficient.
+
+	\item Allow for some number of blocks to be pinned in memory
+	or, alternatively, that code is called before a block is
+	flushed to disk.
+
+
+	\item Need to percolate disk block capabilities from the parent down.
+\end{enumerate}
+
+Creation and deletion of registry attributes us the following
+routines:
+%%%grind -l c++
+/* Create an entry for the page described in op. */
+xn_err_t sys_xn_insert_attr(da_t da, struct xn_op *op);
+/* Delete a registry entry. */
+xn_err_t sys_xn_delete_attr(db_t db, size_t nblocks, cap_t cap);
+%%%end
+
+These routines fail if:
+\begin{enumerate}
+ 	\item The entry is guarding a violated constraint.
+ 	\item The entry is in use.
+\end{enumerate}
+
+\section{Shared state}
+
+We intend to use methods to eliminate servers.  Servers are a
+heavy-weight abstraction that prevent (invitably) application
+freedom and are clumsy to use (e.g., most applications use
+libraries rather than servers).
+
+What do you need for well formed updates to shared state:
+
+\begin{enumerate}
+	\item Well-formed updates - don't want state to become
+	meaningless.
+
+	\item Persistence - want an object to live across process
+	invocations (e.g. a name cache)
+
+	\item Paging - don't want to have to pin the entire object in
+	memory, since this makes shared data structures very expensive
+	(again, think a large name cache)
+
+	\item Logical segmentation - want to protect byte-ranges that
+	may not, necessarily, be page granularities.  (e.g., a process
+	table entry).
+
+\end{enumerate}
+Methods provide a way to do transparent operations in the presence
+of software that doesn't understand.
+
+xn is single threaded, which makes it way simple.
+
+(Note the use of consensus instead of privilege: we agree to 
+use a piece of authenticated code.)
+
+\section{Todo}
+\begin{enumerate}
+	\item Go through the various comments and notes of the previous
+	implementations and include them.
+
+	\item Implement a simple, correct, file system that illustrates
+	uses and concepts.  Main challenge will have handling shared state
+	cleanly and concisely.
+\end{enumerate}
+
+For registry:
+\begin{enumerate}
+      	\item Add extent support
+        \item Allow for dags - simple use of refcnts should do it.
+        \item Need to add LRU machinery.
+        \item See if we actually need states.  reachable seems redundant.
+        \item Add \v{NO\_INTERNAL\_PTR} to each xr.
+
+	\item Self descriptive UDFs.  The partitioning should
+	not be done using partitioned sets.
+	\item Test handling of non disk block sized types.
+
+\end{enumerate}
+
+% \section{A simple file system}
+% \bibliography{biblio}
+% \bibliographystyle{plain}
+\end{document}

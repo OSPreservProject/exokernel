@@ -1,0 +1,3 @@
+#!/bin/csh
+cp rccs scripts >& /dev/null
+make build

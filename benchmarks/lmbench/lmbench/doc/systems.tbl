@@ -1,0 +1,23 @@
+.TS
+center expand doublebox;
+l l l l l l l l l
+l l l r l r r r r
+l l l l l r r r r.
+Name	Vender	Multi	Operating				SPEC	List
+used	& model	or Uni	System	CPU	Mhz	Year	Int92	price
+_
+IBM PowerPC	IBM 43P	Uni	AIX	PowerPC	133	'95	?	?
+IBM Power2	IBM 990	Uni	AIX	Power2	71	'93	126	110k
+FreeBSD/i586	Clone	Uni	FreeBSD	Pentium	133	'95	155	6k
+HP 9000/819	HP 9000/819	MP	HP-UX	PA	100	'95	139	33k
+SGI Challenge	SGI Challenge	MP	IRIX	R4400	200	'94	140	80k
+SGI Indigo2	SGI Indigo	Uni	IRIX	R4400	200	'94	135	15k
+Linux/Alpha	DEC AlphaPC	Uni	Linux	Alpha	275	'94	189	8k
+Linux/i586	Clone	Linux	Uni	Pentium	120	'95	140	5k
+Linux/i686	Intel	Linux	Uni	PentiumPro	166	'95	270?	7k
+DEC Alpha@150	DEC 3000/500	Uni	OSF1	Alpha	150	'93	84	?
+DEC Alpha@300	DEC 8400	MP	OSF1	Alpha	300	'95	341	50k
+Sun SC1000	Sun SC1000	MP	SunOS-5.5	SuperSPARC	50	'92	65	35k
+Sun Ultra1	Sun Ultra1	Uni	SunOS-5.5	UltraSPARC	167	'95	250	21k
+Unixware/i686	Intel	Uni	Unixware	PentiumPro	165	'95	270?	7k
+.TE

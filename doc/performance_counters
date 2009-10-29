@@ -1,0 +1,55 @@
+Using Performance Counters on XOK
+---------------------------------
+
+First, read the pctr man page on OpenBSD.  Note that the method of
+access is different for XOK and not all the same options are
+available.
+
+Second, know the idle counter is not currently initialized or
+incremented.
+
+Example 1: Telling the CPU which counters you want to use
+
+This example starts the recording of user level events on a Pentium
+(P5CTR_U) as opposed to kernel (P5CTR_K).  It records "Instructions
+executed" (0x16) on one counter and "Data read miss or data write
+miss" (0x29) on the other.  And it resets the counters (P5CTR_C).  The
+second argument to sys_pctr is not currently used.  See the man page
+and include file for info on other flags.
+
+#include <sys/pctr.h>
+
+{
+  u_int flags;
+      
+  kprintf("settting pctrs\n");
+
+  flags = (P5CTR_U | 0x16 | P5CTR_C);
+  if (sys_pctr(PCIOCS0, PCIOCS0, (void *)&flags) < 0)
+    kprintf("sys_pctr_problem\n");
+
+  flags = (P5CTR_U | 0x29 | P5CTR_C);
+  if (sys_pctr(PCIOCS1, PCIOCS1, (void *)&flags) < 0)
+    kprintf("sys_pctr_problem\n");
+}
+
+
+Example 2: Reading the counters
+
+#include <sys/pctr.h>
+
+{
+  struct pctrst pctr_st;
+
+  if (sys_pctr(PCIOCRD, PCIOCRD, &pctr_st) < 0)
+    kprintf("problem getting pctrs\n");
+  else
+    {
+      kprintf("hwc[0]: %lu:%lu\n", pctr_st.pctr_hwc[0]); /* pctr_hwc is quad */
+      kprintf("hwc[1]: %lu:%lu\n", pctr_st.pctr_hwc[1]);
+    }
+}
+
+
+Rusty Hunt
+June 19, 1997

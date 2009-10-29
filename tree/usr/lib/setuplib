@@ -1,0 +1,3 @@
+#!/bin/csh 
+# makes libexos.so_stub.o look like libc.a
+ln -f libexos.so_stub.o libc.a

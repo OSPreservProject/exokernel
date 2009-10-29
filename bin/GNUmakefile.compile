@@ -1,0 +1,43 @@
+
+TOP = ..
+SUBDIRS = shlib
+SUBDIRS += csh sh gettime ls
+SUBDIRS += uname cp pwd kill cat mkdir rm rmdir
+SUBDIRS += sh
+SUBDIRS += hsh ps gettime
+SUBDIRS += mount unmount
+SUBDIRS += ln mv du less touch chroot chmod chown
+SUBDIRS += echo printenv sleep
+SUBDIRS += diff
+SUBDIRS += cksum
+SUBDIRS += gas ld make ranlib ar lorder bsdsort tsort join nm sed wc expr xinstall
+SUBDIRS += pax gzip
+SUBDIRS += find grep
+SUBDIRS += cvs
+SUBDIRS += rcs
+SUBDIRS += cffs
+SUBDIRS += bsdmake 
+SUBDIRS += test tee
+SUBDIRS += date time
+SUBDIRS += printstats
+SUBDIRS += perl4 awk
+SUBDIRS += tr basename strip true
+SUBDIRS += hostname xargs
+SUBDIRS += syncer
+SUBDIRS += yacc lex
+SUBDIRS += ../../gcc
+#SUBDIRS += login passwd
+#SUBDIRS += telnetd
+#SUBDIRS += tty stty
+#SUBDIRS += echocon
+#SUBDIRS += emu run
+#SUBDIRS += ed vi
+#SUBDIRS += wk-test webserver test_pipe
+#SUBDIRS += lcc-3.6
+#SUBDIRS += alfs disk
+#SUBDIRS += ttcp
+
+export DOINSTALL=yes
+export INSTALLPREFIX=bin
+
+include $(TOP)/GNUmakefile.global

@@ -1,0 +1,28 @@
+Make sure your EXODEST variable points to your _private_ tree.  
+Make sure your NFS ROOT (where the first process mounts its file system)
+is logically the same as the directory pointed by EXODEST.  your NFS ROOT
+is controlled by the variables the environment variables
+NFS_ROOT_PATH and NFS_ROOT_HOST, which are used by the GNUmakefile in lib/libc
+
+To use "tree", from the top level just type:
+
+gmake
+
+It will populate the directory pointed by EXODEST with directories like
+etc, var, usr, and their corresponding files.  
+
+ABOUT ACCOUNTS
+The password files right now have a handful of accounts, all with password:
+'exopc'
+to add an account, add an entry in the file etc/master.passwd
+then, from the 'etc' directory run the 'rebuild.passwd' script.
+and if you want you can make sure their home directory always exists by
+adding an entry in directories/GNUmakefile
+
+The setup should be such, that is you compiled "csh, login, inetd, telnetd"
+you should be able to telnet into your xok machine.
+
+-Hector
+
+If there are problems, first verify that the directory mounted by the exokernel
+which is shown in the console, matches the directory pointed by EXODEST.

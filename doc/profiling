@@ -1,0 +1,95 @@
+Intro to profiling:
+----------------------
+Profiling works by random sampling.  Every so often, an interrupt
+occurs and the current %eip is recorded.  When your program exits all
+the recorded samples are written to disk.
+
+Then you run a program that reads the samples as input and maps %eip's to
+functions.  Thereby assigning the samples to functions and giving you
+the execution time of each function.
+
+The above describes the way 'prof' works.  'gprof' extends this by
+building a call graph.
+
+In the prologue of each function a call to a special function _mcount
+is inserted.  _mcount records what the %eip was when the original
+function was called (this info is also written to disk).  gprof uses
+the call graph to propogate execution times in child functions to its
+parent in the call graph.
+
+
+A quick example (for those who are impatient):
+---------------------------------------------
+As an example, let's profile gzip:
+  * add DOPROF=yes to lib/libc/GNUmakefile
+  * recompile libc
+  * add DOPROF=yes to bin/gzip/GNUmakefile
+  * add STATIC=1 to bin/gzip/GNUmakefile
+  * recompile & install gzip
+  * on xok machine: run gzip (the output is put in the file gmon.out)
+  * back on bsd machine type:
+      gprof -Om /path/to/non/stripped/gzip /cwd/when/you/executed/gzip/gmon.out
+    to see the results.
+
+
+xok vs. Unix profiling:
+-----------------------
+Profiling on xok is a bit different than on Unix.  Normally, profiling
+is done by the kernel.  You request the kernel profile you by
+executing system call.  On xok, timer interrupts are propagated to the
+process.  And the process is responsible for recording its own %eip
+samples.
+
+The extended story:
+-------------------
+
+* Makefile stuff
+  To compile your program or library with profiling put the line
+  'DOPROF=yes' at the top of your makefile.  This will compile all c
+  files with three extra flags: '-pg', '-DEXOPROFILE', and
+  -fno-omit-framepointer.  If you do not want a c file to be profiled
+  use NOPROF+=file.c.
+
+  o -pg tells gcc to insert the calls to _mcount in function prologues
+  o -DEXOPROFILE, tells libc to "turn on" profiling:
+      * by allocating a buffer to hold the %eip and call graph information.  
+      * tell the kernel to propogate profiling clock ticks to it
+  o -fno-omit-framepointer, tells gcc to compile code which uses a
+    frame pointer. Profiling uses the frame pointer to construct the call graph.
+
+* Library stuff
+  To do any profiling you MUST link in a libc compiled with profiling
+  support.  This is because the routines that turn profiling on/off
+  are enclosed in 'ifdef EXOPROFILE' in __start [xrt0.c] and ProcessEnd
+  [process.c].
+
+  You can profile parts of your program/library and then NOT link a
+  profiled libc.  The result will be that no profiling information
+  will be generated and your program will run a little slower.
+
+* Only addresses between UTEXT and etext are profiled.  Therefore, you
+  cannot profile a program linked against the shared libc.  You must
+  statically link libc.
+
+* Output
+  The environment variable PROFDIR controls where the profiling output goes.
+    - if PROFDIR=""
+         then no profiling information is output
+    - if PROFDIR contains a legal directory name
+         then profiling is output to "pid.progname" in the directory PROFDIR
+    - if PROFDIR is not set 
+         then profiling is written to gmon.out.  
+
+* You might have to pass gprof the -Om flag otherwise gprof might assume the
+  output file is in a special BSD format.
+
+  
+
+----------------
+TODO:
+----------------
+* need some way of profiling shared libs.  
+  - need real dynamically link libs to do this,
+    so we can have both a profiled and a non-profiled libc around.
+  - need to figure out how to profile discontigous code segment
+    regions.

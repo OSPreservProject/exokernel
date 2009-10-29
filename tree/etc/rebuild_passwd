@@ -1,0 +1,6 @@
+#!/bin/csh 
+
+# Run this under OpenBSD
+# make sure you are on the proper */etc directory
+/usr/sbin/pwd_mkdb -p -d `pwd` `pwd`/master.passwd
+chmod 644 passwd pwd.db spwd.db

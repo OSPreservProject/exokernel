@@ -1,0 +1,4 @@
+hector wrote this cool perl script that runs over the bb.out file
+that results from compiling your programs with profiling info (-a -g)
+and produces a code listing with each line annotated with the number
+of times it was executed.

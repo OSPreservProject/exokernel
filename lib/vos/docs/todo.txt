@@ -1,0 +1,47 @@
+
+The following items, in no particular order, are still needed for vos. I am
+sure there are more, these are the ones I can think of right now.
+
+Feature related:
+
+- multithread: before any major feature is added, would probably be good to
+  multithread vos so future updates/additions would just following the same
+  sync/locking convention within the library - take a look at libpwafer for
+  how to get multiple envs to run in the same address space...
+
+- implement ioctl
+- implement signals
+- implement exec
+- need to support entire libc
+- support for ttys, interface with exos tty
+- nfs support
+- libfs
+- virtualization scheme for extensions
+- paging
+
+- cleanup xio, possibly redo how socks and info are created and shared 
+  - see benjie's thesis for example
+
+- real capabilities
+- ELF and ELF shared libraries
+
+- multiprocessor scheduler
+
+
+Bug fix related:
+
+- recovery from bad fork (e.g. dec ref for file descriptors); 
+  need general inverse of before_fork_handlers.
+- make a dpf library - extract useful stuff from xok/dpf dir 
+- add udp frag support for vos
+
+- add page revocation requests to wk predicates
+
+- freelist in mem allocator should be linear in pg number so adj pages 
+  can be coalesed
+
+- mem allocator to return pages to pager
+- sbuf to return pages to pager
+- sbuf allocator should do more coalesing of existing free sbufs
+- each sbuf only up to 4k right now
+

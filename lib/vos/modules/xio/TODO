@@ -1,0 +1,18 @@
+
+Things that are broken now that needs to be fixed:
+
+  1. shared_malloc is used to allocate memory for descriptors, etc.
+     if a parent forks, and closes its descriptor, the only copy left is
+     in child. so when child closes, it does shared_free. But we really
+     want the parent to do shared_free.
+
+     solution: place the shared_malloc-ed memory as resources in the 
+     proc structure for parent to collect on wait() syscall
+
+  2. integration with fd: some xio operations block (for example, in accept
+     we go to wk pred and wait for connection), so the operation hoards the
+     shared lock that is used in the untrusted sync protocol. but since we
+     don't really use that protocol to sync access to socket descriptors 
+     (don't need to), should move these xio operations out of that lock.
+     also see fd.h and fd.c
+

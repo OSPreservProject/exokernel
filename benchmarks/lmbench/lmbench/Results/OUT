@@ -1,0 +1,235 @@
+
+                    L M B E N C H  1 . 0   S U M M A R Y
+                    ------------------------------------
+
+            Processor, Processes - times in microseconds
+            --------------------------------------------
+Host                 OS  Mhz    Null    Null  Simple /bin/sh Mmap 2-proc 8-proc
+                             Syscall Process Process Process  lat  ctxsw  ctxsw
+--------- ------------- ---- ------- ------- ------- ------- ---- ------ ------
+i586      FreeBSD 2.1.0  100       7      3K     14K     23K  135     30     36
+i586.1    FreeBSD 2.1-S  133       9      3K     12K     20K  105     24     28
+i586.2    FreeBSD 2.1-S  100      10      3K     13K     22K  175     28     34
+i586.3    FreeBSD 2.1-S  100       9      3K     14K     22K  176     29     36
+i586.4    FreeBSD 2.1-S  100       7      3K     13K     21K  173     29     35
+6000-990        AIX 3.x   71      16      1K      8K     16K   82     13     18
+powerpc.2       AIX 4.x  134      12      3K      8K     50K   82     16     26
+AViiON    dgux 5.4R3.10   45      75      9K     13K     67K 9370     89    122
+735       HP-UX A.09.05   98      12      1K      3K     17K   91     27     30
+cello     HP-UX A.09.04   93      92      7K     15K     37K   97     20     23
+hamsky2   HP-UX A.09.05   99      11      3K      9K     18K   81     21     21
+k200      HP-UX B.10.01   99      19      4K     67K    118K  136     13     15
+snake     HP-UX A.09.03   99      14      4K     10K     18K  116     25     29
+wk4       HP-UX A.09.01   98      14      4K     10K     19K   98     29     31
+wk4.4     HP-UX A.09.01   98      12      3K     10K     20K   94     29     34
+wk4.5     HP-UX A.09.01   98      13      3K     10K     20K   97     29     30
+IP19      IRIX64 6.2-AL  200      24      4K     14K     24K  128     63     69
+IP19+          IRIX 5.3  250      16      6K     19K     46K  205    141     96
+IP19-5.3    IRIX5.3 5.3  200      20      4K      8K     20K  286    150    102
+IP19-news IRIX64 6.1-lm  200      18      5K     19K     37K  301     59     79
+IP21      IRIX64 6.2-AL   90      25      4K     14K     30K  219     84     87
+IP22        IRIX5.3 5.3  198      11      3K      8K     19K  260     40     38
+IP22+     IRIX 5.3-ALPH  250      10      3K      8K     22K  183     38     42
+IP26      IRIX64-601 6.   75      20      5K     24K     39K  157     72     74
+cedar3    IRIX64 6.2-sp  120      23      3K     12K     24K  131     55     59
+aurora.4   Linux 1.3.37  167       4      1K      5K     17K   44      6      7
+i586        Linux 1.2.8  120       2      2K      9K     26K   74     36     47
+i586.1     Linux 1.3.36  100       5      2K     15K     30K   83     13     20
+i586.120   Linux 1.3.28  120       2      1K      5K     16K   69     10     13
+i586.2     Linux 1.3.36  100       5      2K     15K     30K   82     13     21
+i586.3     Linux 1.3.37  100       3      2K     12K     44K   83     16     22
+i586.4     Linux 1.2.13  100       3      3K     24K     73K   84     66     83
+linux      Linux 1.3.28  100       6      3K     10K    112K  178     11     18
+linux.1    Linux 1.3.28  100       6     -0K     -0K     12K   -1     -1     -1
+pc64       Linux 1.3.38  275       2      1K      3K     12K   15     11     13
+pc64.1     Linux 1.3.38  275       3      1K      2K     16K   15     10     13
+8400-32.p     OSF1 V3.2  303       9      2K      6K     43K  199     14     22
+alpha         OSF1 V2.1  182      13      5K     16K     64K  172     25     42
+alpha.1       OSF1 V3.2  189      15      5K     15K     89K  261     40     46
+alpha.2       OSF1 V2.0  146      17     13K     33K     39K  244     59    115
+alpha.3       OSF1 V3.0  147      11      5K     13K     42K  228     53     59
+alpha.4       OSF1 V3.0  157      17      3K     11K     44K  201     53     56
+gauss         OSF1 V3.0  275      12      5K     14K     27K  204     39     46
+nobozo        OSF1 V3.2  196       9      3K     10K    281K  180     43     45
+sc1000        SunOS 5.5   50       9     14K     69K    175K  156    107    104
+sc2000        SunOS 5.4   60      12     21K     93K    136K  245    137    164
+sc2000.1      SunOS 5.4   40      26     14K     75K    113K  146    224    245
+ss20.50       SunOS 5.4   50       9     11K     57K     87K  130     54     85
+ss20.61       SunOS 5.4   61       7      8K     46K    237K  104     37     52
+sun4m         SunOS 5.4   66      13     18K     83K     37K  207     75    110
+ultraspar     SunOS 5.5  167       5      4K     20K     10K  212     14     20
+alder.2   UNIX_SV 4.2MP  165       5      1K      6K     10K  182     21     22
+
+            *Local* Communication latencies in microseconds
+            -----------------------------------------------
+Host                 OS  Pipe       UDP    RPC/     TCP    RPC/
+                                            UDP             TCP
+--------- ------------- ------- ------- ------- ------- -------
+i586      FreeBSD 2.1.0     127     265     459     312     548
+i586.1    FreeBSD 2.1-S     104     213     387     264     450
+i586.2    FreeBSD 2.1-S     111     240     420     295     535
+i586.3    FreeBSD 2.1-S     115      -1     426     290     532
+i586.4    FreeBSD 2.1-S     115     249     408     297     510
+6000-990        AIX 3.x      91     254     531     332     649
+powerpc.2       AIX 4.x      65     206     536     299     698
+AViiON    dgux 5.4R3.10     474    1373    2175    1381    1851
+735       HP-UX A.09.05     181     244     742     222     707
+cello     HP-UX A.09.04     118     289     673     286     854
+hamsky2   HP-UX A.09.05     148     185     657     186     712
+k200      HP-UX B.10.01     113     413     655     393     668
+snake     HP-UX A.09.03     193     244     832     262     812
+wk4       HP-UX A.09.01     172     246     768     245     800
+wk4.4     HP-UX A.09.01     178     252     786     248     820
+wk4.5     HP-UX A.09.01     169     248     759     257     805
+IP19      IRIX64 6.2-AL     251     678     893     546     900
+IP19+          IRIX 5.3     333     796     903     766     913
+IP19-5.3    IRIX5.3 5.3     366     785     960     815    1006
+IP19-news IRIX64 6.1-lm     187     814     964     886     957
+IP21      IRIX64 6.2-AL     264     660     783     643     974
+IP22        IRIX5.3 5.3     131     313     671     278     641
+IP22+     IRIX 5.3-ALPH     118     261     562     279     580
+IP26      IRIX64-601 6.     222     474    1008     467    1018
+cedar3    IRIX64 6.2-sp     230     486     740     482     806
+aurora.4   Linux 1.3.37      31     112     217     263     427
+i586        Linux 1.2.8      84      -1     451     477     718
+i586.1     Linux 1.3.36      43     276     538    1196    1506
+i586.120   Linux 1.3.28      33     187     366     467     713
+i586.2     Linux 1.3.36      43     272     553    1291    1668
+i586.3     Linux 1.3.37      42     281     552    1149    1434
+i586.4     Linux 1.2.13     140      -1     806      -1    1249
+linux      Linux 1.3.28      56     351     831    1465    2078
+linux.1    Linux 1.3.28      56     368     770    1592    2147
+pc64       Linux 1.3.38      34     180     317     429     602
+pc64.1     Linux 1.3.38      34     199     330     419     617
+8400-32.p     OSF1 V3.2      71     259     358     267     371
+alpha         OSF1 V2.1     185     404     718     428     851
+alpha.1       OSF1 V3.2     198     709    1109     629     994
+alpha.2       OSF1 V2.0     278      -1    1308     826    1451
+alpha.3       OSF1 V3.0     179     489     834     485     788
+alpha.4       OSF1 V3.0     191     676     765     581     822
+gauss         OSF1 V3.0     162     569     836     526     872
+nobozo        OSF1 V3.2     141     379     717     412     673
+sc1000        SunOS 5.5     278     739    1101     855    1386
+sc2000        SunOS 5.4     519    1084    1430    1006    1584
+sc2000.1      SunOS 5.4     671    1180    1562    1211    1847
+ss20.50       SunOS 5.4     194     590     935     560    1196
+ss20.61       SunOS 5.4     150     414     622     335     784
+sun4m         SunOS 5.4     372     914    1290     826    1631
+ultraspar     SunOS 5.5      62     197     267     162     346
+alder.2   UNIX_SV 4.2MP      86      -1      -1      -1      -1
+
+            *Local* Communication bandwidths in megabytes/second
+            ----------------------------------------------------
+Host                 OS Pipe  TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+                                  reread reread (libc) (hand) read write
+--------- ------------- ---- ---- ------ ------ ------ ------ ---- -----
+i586      FreeBSD 2.1.0   19    0     38     49     42     39   65    83
+i586.1    FreeBSD 2.1-S   21    0     30     54     42     39   73    83
+i586.2    FreeBSD 2.1-S   20    0     28     47     40     36   62    83
+i586.3    FreeBSD 2.1-S   19    0     29     46     41     38   65    83
+i586.4    FreeBSD 2.1-S   18    0     29     50     41     38   65    83
+6000-990        AIX 3.x   84   10    187    106    171    242  205   364
+powerpc.2       AIX 4.x   30   17     40     51     21     21   63    26
+AViiON    dgux 5.4R3.10    8    5     16     13     17     17   37    19
+735       HP-UX A.09.05   37   24     47     36     26     32   55    52
+cello     HP-UX A.09.04   26   17     39     28     19     19   40    37
+hamsky2   HP-UX A.09.05   53   21     43     37     33     31   56    61
+k200      HP-UX B.10.01   37   28     64     41     48     55   97    89
+snake     HP-UX A.09.03   38   35     45     32     25     31   49    52
+wk4       HP-UX A.09.01   39   19     43     35     26     32   54    52
+wk4.4     HP-UX A.09.01   42   18     43     35     26     31   54    51
+wk4.5     HP-UX A.09.01   44   20     44     33     26     32   53    49
+IP19      IRIX64 6.2-AL   17   31     36     56     36     35   65    67
+IP19+          IRIX 5.3   14   16     39     43     34     33   67    73
+IP19-5.3    IRIX5.3 5.3   12   12     36     43     34     32   65    68
+IP19-news IRIX64 6.1-lm   27   19     34     56     34     32   65    67
+IP21      IRIX64 6.2-AL   28   19     62     70     70     68   85    83
+IP22        IRIX5.3 5.3   34   22     32     44     32     31   69    66
+IP22+     IRIX 5.3-ALPH   32    7     37     48     33     32   68    72
+IP26      IRIX64-601 6.   37   22     75     56     32     41   65    61
+cedar3    IRIX64 6.2-sp   40   26     60     76     41     53   87    72
+aurora.4   Linux 1.3.37   73   15     46     34     57     42  205    56
+i586        Linux 1.2.8   22    5     21     13     41     38   74    75
+i586.1     Linux 1.3.36   19    3     14     11     21     20   60    31
+i586.120   Linux 1.3.28   34    7     23      9     42     38   74    75
+i586.2     Linux 1.3.36   18    3     14     10     21     20   58    30
+i586.3     Linux 1.3.37   24    3     17     14     31     30   61    50
+i586.4     Linux 1.2.13   12    3     13      8     21     20   60    31
+linux      Linux 1.3.28   16    6      9     10     17     16   33    41
+linux.1    Linux 1.3.28   -1    6     -1     -1     -1     -1   -1    -1
+pc64       Linux 1.3.38   73    9     24     18     39     39   73    71
+pc64.1     Linux 1.3.38   73    9     25     23     40     40   74    72
+8400-32.p     OSF1 V3.2   46   11     67     78      0      0  120   123
+alpha         OSF1 V2.1   32   12     39     23     39     41   76    78
+alpha.1       OSF1 V3.2   23    7     37     12     38     38   64    79
+alpha.2       OSF1 V2.0   17    4     20     14     15     15   46    20
+alpha.3       OSF1 V3.0   35    9     40     50     45     46   79    91
+alpha.4       OSF1 V3.0   32    9     36     19     36     36   55    72
+gauss         OSF1 V3.0   24    6     45     16     40     38   69    82
+nobozo        OSF1 V3.2   54   11     49     25     46     46   88    90
+sc1000        SunOS 5.5    9   11     20     28     15     17   38    31
+sc2000        SunOS 5.4    8    9     23     17     21     22   47    38
+sc2000.1      SunOS 5.4    7    8     23     25     14     16   36    29
+ss20.50       SunOS 5.4   11   11     23     30     26     31   80    62
+ss20.61       SunOS 5.4   24   19     31     31     23     24   59    40
+sun4m         SunOS 5.4    7    9     21     39     23     25   64    51
+ultraspar     SunOS 5.5   61   51     85    101    167     85  129   152
+alder.2   UNIX_SV 4.2MP   63   -1     53    198     55     65  214    86
+
+	    Memory latencies in nanoseconds
+            (WARNING - may not be correct, check graphs)
+            --------------------------------------------
+Host                 OS   Mhz  L1 $   L2 $    Main mem    Guesses
+--------- -------------   ---  ----   ----    --------    -------
+i586      FreeBSD 2.1.0    99    10    115         179
+i586.1    FreeBSD 2.1-S   133     7    111         181
+i586.2    FreeBSD 2.1-S    99    10    106         181
+i586.3    FreeBSD 2.1-S    99    10    118         180
+i586.4    FreeBSD 2.1-S    99    10    101         180
+6000-990        AIX 3.x    70    13     13         141    No L1 cache?
+powerpc.2       AIX 4.x   133     6    164         394
+AViiON    dgux 5.4R3.10    44    22    319         753
+735       HP-UX A.09.05    98    10     10         347    No L1 cache?
+cello     HP-UX A.09.04    92    10     11         424    No L1 cache?
+hamsky2   HP-UX A.09.05    99     9      9         376    No L1 cache?
+k200      HP-UX B.10.01    99    10     10         430    No L1 cache?
+snake     HP-UX A.09.03    98    10     10         393    No L1 cache?
+wk4       HP-UX A.09.01    98    10     10         348    No L1 cache?
+wk4.4     HP-UX A.09.01    98    10     10         347    No L1 cache?
+wk4.5     HP-UX A.09.01    98    10     10         348    No L1 cache?
+IP19      IRIX64 6.2-AL   200    10     70        1152
+IP19+          IRIX 5.3   250     8     64        1189
+IP19-5.3    IRIX5.3 5.3   200    10     75        1149
+IP19-news IRIX64 6.1-lm   200    10     75        1150
+IP21      IRIX64 6.2-AL    90    11    100         709
+IP22        IRIX5.3 5.3   197    10     76        1018
+IP22+     IRIX 5.3-ALPH   250     8     64        1170
+IP26      IRIX64-601 6.    75    13    120        1244
+cedar3    IRIX64 6.2-sp   120     8     58        1134
+aurora.4   Linux 1.3.37   166    12     90         194
+i586        Linux 1.2.8   120     8    103         151
+i586.1     Linux 1.3.36    99    10    190         320
+i586.120   Linux 1.3.28   120     8    107         150
+i586.2     Linux 1.3.36    99    10    148         320
+i586.3     Linux 1.3.37    99    10    198         321
+i586.4     Linux 1.2.13    99    10    222         321
+linux      Linux 1.3.28    99    12    234         336
+linux.1    Linux 1.3.28    99     -      -           -    Bad mhz?
+pc64       Linux 1.3.38   275     3     83         354
+pc64.1     Linux 1.3.38   275     3     43         361
+8400-32.p     OSF1 V3.2   302     3     42         396
+alpha         OSF1 V2.1   182    10     56         321
+alpha.1       OSF1 V3.2   188    10     53         477
+alpha.2       OSF1 V2.0   146    13    104         957
+alpha.3       OSF1 V3.0   147    12     67         291
+alpha.4       OSF1 V3.0   157    12     57         468
+gauss         OSF1 V3.0   274     7     47         458
+nobozo        OSF1 V3.2   196     9     51         288
+sc1000        SunOS 5.5    50    20    140        1236
+sc2000        SunOS 5.4    60    16    116         995
+sc2000.1      SunOS 5.4    40    24    173        1246
+ss20.50       SunOS 5.4    49    20    284         291    No L2 cache?
+ss20.61       SunOS 5.4    60    16    115         816
+sun4m         SunOS 5.4    66    13    168         180    No L2 cache?
+ultraspar     SunOS 5.5   166     6     42         270
+alder.2   UNIX_SV 4.2MP   165    14     34         196

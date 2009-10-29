@@ -1,0 +1,20 @@
+exit [process.c]
+   __cleanup if defined (set to _cleanup [findfp.c] by stdio.)
+   _osexit (which is an alias for _exit);
+      ExecuteAtExitHandlers(); [oncalls.c]
+      ProcessEnd (W_EXITCODE (ret, 0), 0); [process.c]
+         ExecuteExosExitHandlers (); [oncalls.c]
+         FDEndProcess(); [procaux.c]
+            releases cwd,rootd
+            closes fds 3-NR_OPEN
+            print fd statistics if necessary
+            closes fds 0-2
+         cffs_exithandler (); [cffs_proc.c]
+         ProcTableExit (ret, 0); [process.c]
+         CleanupSysVShm (); [shared.c]
+         sys_quantum_free (0, __curenv->env_quantum);
+         sys_env_free (0, geteid ()); (at this point we are history)
+no more.
+
+As of 12/2/96
+Hector

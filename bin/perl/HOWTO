@@ -1,0 +1,33 @@
+How to get perl5 to run on xok
+------------------------------
+
+To prevent unnecessary bloating and tweaking of makefiles perl5 is not
+checked into the xok tree.  Instead, get perl5 from OpenBSD directory
+/usr/src/gnu/usr.bin/perl and replace 'config.sh.OpenBSD' with the one
+provided here.  Then, compile on an xok machine - it probably won't work
+with CFFS until the "move-a-file-between-directories" capability is
+provided by CFFS.  When compiling over NFS the times on the server and
+client must be close enough for proper make file execution.  Also, for
+the make to go at a decent pace, be sure you've replaced /usr/lib/libc.a
+with /usr/lib/libexos.so_stub.o.
+
+The proper commands are:
+make -f Makefile.bsd-wrapper
+make -f Makefile.bsd-wrapper install
+
+Dont forget to remove the old perl4 binary (the perl5 binary is placed
+in /usr/bin):
+rm /usr/local/bin/perl
+
+The differences in the 'config.sh.OpenBSD' file result from missing
+functionality in xok: compatible shm, msg, and sem support mostly, plus
+the poll system call, dynamic loading of shared objects, safe setuid,
+indirect system calls, and SDBM.
+
+The test suite (make -f Makefile.bsd-wrapper test) will fail on some
+tests and then get stuck on some tests.  Executing the "get stuck" tests
+individually yields success.  The failed tests don't appear to be
+serious enough to worry about now.
+
+Rusty Hunt
+August 16, 1998

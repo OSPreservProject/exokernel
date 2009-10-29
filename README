@@ -1,0 +1,8 @@
+
+Compile options (gmake variable=1, or set variable to be 1 in your env):
+
+EXO_SMP   - compile for SMP machines
+EXO_ASH   - compile with -DASH_ENABLE flag
+EXO_PAM   - compile with PAM
+EXO_ENCAP - force data encapsulation at compile time
+

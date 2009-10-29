@@ -1,0 +1,215 @@
+/*
+ * New interface:
+ *	% return highest defined id. read/write set defined in base:rw:set
+ *	size_t udf_n_id(void *meta);	
+ *
+ *	udf_coverage(size_t n, meta) : returns set of data that is 
+ *
+ *	% calls function to return read/write sets for id.
+ *	set of ext udf_get_set(size_t id);
+ *		- currently an algebraic function, to bottom out.
+ *
+ * 		- could extend to actually read/write if can simply
+ *		guarentee that the space is disjoint.  May be able to
+ *		since it is a special case.
+ *
+ *	% returns set of disk blocks guarded by id.
+ *	set of ext udf_read(size_t id, void *meta);
+ *
+ *
+ * Add a new integer: write to given set, then check that
+ *	udf_n_id(void *meta) == id, and that 
+ *	udf_read(id, meta) is nil.
+ *	udf_get_set(id) is unique?  Uch.
+ *	udf_coverage(size_t n, meta) : returns set of data that is 
+ * 		covered by udfs.  This should not be hard, right?  
+ *		Can be cached.   Then we rerun.
+ *	
+ *		Can also be parameterized.
+ * work out later.
+ *
+ * Biggest todo: need to allow a richer description of sub-partitions.
+ * First thing: ***add sequences***
+ *
+ * Ideally, turtles all the way down, without much cost.  How?
+ * 	- we must know read-set the describer depends on so that we
+ * 	can test it when this data changes.  For many data structs,
+ * 	there is no data. (e.g., describing a static inode).  We need
+ * 	to ask what your read set is, so there is a one-time calculation
+ *	that indeed you tell us all the things to recompute.  
+ *
+ * Type signature is: SEQ of ReadSet SubPartition(i : Int)
+ * i is the name of the subpartition (0..n-1).  We test
+ * that each of these is non-overlapping (do we - do we just
+ * have you spit out dependencies?)  In the fully general
+ * case n can depend on data in the inode and the SubPartition
+ * function does as well.  SEQ Domain (i) spits out the domain
+ * of Subpartition.  If subpartition does not look at it,
+ * then we are done, right?  
+ *
+ * It feels like the above is ad hoc and it also feels like we
+ * can still get fucked in the general case.  Hierarchical functions
+ * should get us by to some degree, but there is a question of speed.
+ *
+ * How to prove that we can represent everything? (or, what can
+ * we not represent?)  Seems like everything, but then there
+ * is the efficiency question - so what is the incremental cost
+ * of this approach?
+ */
+#ifndef __UBB_H__
+#define __UBB_H__
+
+#include "xn.h"
+#include "mv.h"
+#include "types.h"
+#include "ubb-inst.h"
+
+struct ubb_inst;
+
+struct xr;
+typedef struct xn_op xn_op;
+typedef struct xn_update xn_update;
+typedef struct xn_modify xn_modify;
+typedef struct xn_m_vec xn_m_vec;
+
+/* Random restrictions. */
+#define UDF_EXT_MAX	1
+#define UDF_INST_MAX	64
+#define UDF_FUN_MAX	(4096 / 4)
+
+/* [lb, ub) implies access. */
+struct ubb_ext {
+	size_t n;
+	/* Should be in bits, right? */
+	struct ubb_bl { size_t lb, ub; } v[UDF_EXT_MAX];
+};
+
+struct ubb_fun { 
+	/* Vector of instructions. */
+	struct ubb_inst insts[UDF_INST_MAX];
+	size_t 		ninst;
+
+	/* type signature. */
+	size_t 					nargs;
+	enum { UBB_CAP = 1, UBB_INT, UBB_SET } 	result_t;
+};
+
+/* 
+ * Methods used to interrogate user data.  Only the first two
+ * are UDF's (Untrusted Deterministic Functions).  
+ */
+struct ubb_lib {
+	/* Procedure used read blocks owned by the user. */
+	struct ubb_fun  owns;
+	size_t		nowns;
+
+	/* Given an index, what byte range does it own. */
+	struct ubb_fun 	read_f;
+
+	/* Raw acess. */
+
+	struct ubb_ext		raw_write;
+	struct ubb_ext		raw_read;
+
+
+#if 0
+	/* (*DANGER*) The following have not been implemented. */
+	/* 
+	 * Compute type xn: can override the parent's notion of type. 
+	 * (useful for inheritence, etc.)
+	 */
+	struct ubb_fun		type;	
+
+	/* Checks capability associated with byte-range [meta:lb, meta:ub) */
+	struct ubb_fun		access;
+#endif
+};
+
+typedef void (*ubb_p)(void * meta, size_t index);
+void ubb_add(db_t db, size_t n, int type);
+
+struct udf_ckpt {
+        struct xn_m_vec *m;
+        int n;
+};
+
+int udf_interp(struct ubb_fun *f, void *xn, unsigned *params, int narg, struct ubb_ext *r_access, struct ubb_ext *w_access);
+int ubb_check(struct ubb_fun *f);
+int ubb_lib_check(struct ubb_lib *l, size_t nbytes);
+int u_in_set(struct ubb_ext *s, size_t lb, size_t len);
+void ubb_dis(struct ubb_inst *ip, int n);
+
+
+/*********************************************************************
+ * Type and access control interface. 
+ *
+ * Dirt simple at the momemt.  Finite set of capabilities per type.
+ * they correspond to the *entire* type.  THIS WILL BE FIXED. 
+ * for the moment I'm just trying to put enough in for Unix.
+ *
+ * (For access control: allow for a method to be run to see if
+ * the capability grants sufficient access?  E.g. by interpreting
+ * a set of bits to see if things are ok?)
+ *
+ *
+    Rules:
+   	rule 1: 
+		If a ubb is associated with a byte range, you can only
+		modify it through the kernel.
+
+  	rule 2: 
+		Before any byte range can be read or written you must have
+		the associated capability.
+
+  	rule 3:
+		Each *entire* type is protected by a capability.
+
+  	rule 4:
+		If methods are associated with a byte range, can only
+		access that range through the method itself (able to
+		disable?).
+
+     How to say can only be read by the parent? U_PARENT
+     How to say can only be read by methods? 	U_EXEC only
+
+     Restriction: methods cannot span access control boundaries
+	since we only hand off a single capability.  Argh.  Need
+	to be more sensible about this.
+
+    Todo: significantly expand what the client can do.  This should
+	make us simple and fast.
+ */
+#include "ubb.h"
+
+/* Different operations capabilities can protect. */
+typedef enum { 
+	U_READ = (1<<0), 	/* read in xn pt'd to by ptr. */
+	U_WRITE = (1<<1), 	/* write "	"	" */
+	U_EXEC = (1<<4),	/* run a method on this region. */
+	U_PARENT = (1<<5),	/* only allow access if parent has it. */
+	U_ALL = (U_READ | U_WRITE | U_EXEC)
+} u_op_t;
+
+#define UDF_MAX_ACL	2
+
+/* hard code caps... */
+#define U_CAP_MAX	8
+
+struct ubb_type {
+	/* human readable string; no guarentees about contents. */
+	char type_name[80];	
+
+	size_t 	type;		/* Integer name. */
+	size_t  active;		/* Has this been finished? */
+	size_t 	nbytes;		/* size of the object. */
+	struct ubb_lib l;	/* methods for this type. */
+	
+	size_t  ncaps;
+	struct ubb_ce {
+		unsigned flags;
+		size_t offset;
+	} caps[U_CAP_MAX]; /* offset for each cap. */
+};
+
+int ubb_type_check(struct ubb_type *t);
+#endif

@@ -1,0 +1,22 @@
+gmake -f Makefile TOP=/home/gg2k/exopc all
+gmake[1]: Entering directory `/home/gg2k/tmp/flex-2.5.4'
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  ccl.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  dfa.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  ecs.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  gen.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  main.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  misc.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  nfa.c
+bison -y -d ./parse.y
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  parse.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  scan.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  skel.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  sym.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  tblcmp.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  yylex.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  libmain.c
+/usr/local/openbsd-cross/bin/gcc -c -I. -I. -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  libyywrap.c
+/usr/local/openbsd-cross/bin/ar cru libfl.a libmain.o libyywrap.o
+/usr/local/openbsd-cross/bin/ranlib libfl.a
+/usr/local/openbsd-cross/bin/gcc -g -O6 -nostdinc -I/home/gg2k/exopc/include -I/home/gg2k/exopc/sys  -DHAVE_CONFIG_H -DEXOPC  -o flex -g -O6 -static -N -Ttext 800020 -nostdlib -e ___start /home/gg2k/exopc/lib/csu/crt0.o ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o scan.o skel.o sym.o tblcmp.o yylex.o   /home/gg2k/exopc/lib/libc/obj/libc.a -lgcc  libfl.a 
+gmake[1]: Leaving directory `/home/gg2k/tmp/flex-2.5.4'

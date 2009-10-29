@@ -1,0 +1,126 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:652: gcc -E conftest.c
+configure:769: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:857: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:853: minix/config.h: No such file or directory
+configure:905: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:931: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:996: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1033: gcc -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC  conftest.c 1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1076: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -ldir   1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -ldir
+ld: -ldir: no match
+configure:1221: gcc -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC  conftest.c 1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1252: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1248: sys/timeb.h: No such file or directory
+configure:1291: gcc -c conftest.c -o conftest.o 1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -c conftest.c -o conftest.o
+configure:1292: gcc -c conftest.c -o conftest.o 1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -c conftest.c -o conftest.o
+configure:1297: cc -c conftest.c 1>&5
+configure:1299: cc -c conftest.c -o conftest.o 1>&5
+configure:1300: cc -c conftest.c -o conftest.o 1>&5
+configure:1381: gcc -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC  conftest.c 1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1474: conflicting types for `setlinebuf'
+/home/am5/hbriceno/test/exopc/include/stdio.h:287: previous declaration of `setlinebuf'
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+/tmp/cc0101601.o: warning: this program uses setreuid(), which is deprecated.
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+/tmp/cc0101791.o: warning: this program uses setregid(), which is deprecated.
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1491: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1526: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1560: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1553: alloca.h: No such file or directory
+configure:1608: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure:1775: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1771: vfork.h: No such file or directory
+configure:1943: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+/tmp/cc0102991.o: Undefined symbol `___vfork_happened' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_jmp_buf' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_ret' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_setup' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_ret' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_happened' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_jmp_buf' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_ret' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_setup' referenced from text segment
+/tmp/cc0102991.o: Undefined symbol `___vfork_ret' referenced from text segment
+configure:1983: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+configure: In function `main':
+configure:1976: warning: passing arg 2 of `setvbuf' makes pointer from integer without a cast
+configure:1976: warning: passing arg 3 of `setvbuf' makes integer from pointer without a cast
+configure:2027: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lelf   1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lelf
+ld: -lelf: no match
+configure:2065: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lkvm   1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lkvm
+configure:2104: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lutil  -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lutil -lkvm
+configure:2200: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lutil -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lutil -lkvm
+configure:2573: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lutil -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lutil -lkvm
+configure:2606: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2660: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lutil -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lutil -lkvm
+configure:2660: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lutil -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lutil -lkvm
+configure:2711: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lutil -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lutil -lkvm
+configure: In function `t':
+configure:2692: storage size of `status' isn't known
+configure:2700: `blow' undeclared (first use this function)
+configure:2700: (Each undeclared identifier is reported only once
+configure:2700: for each function it appears in.)
+configure:2700: syntax error before `chunks'
+configure:2748: gcc -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC  conftest.c 1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -c -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c
+In file included from configure:2740:
+/home/am5/hbriceno/test/exopc/include/unistd.h:190: warning: `vfork' redefined
+confdefs.h:25: warning: this is the location of the previous definition
+configure: In function `t':
+configure:2744: warning: initialization discards `const' from pointer target type
+configure:2790: gcc -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC   conftest.c -lsun  -lutil -lkvm  1>&5
+cc -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC -o conftest -nostdinc -I/home/am5/hbriceno/test/exopc/include -I/home/am5/hbriceno/test/exopc/sys -I/home/am5/hbriceno/test/exopc/lib/libc -DEXOPC conftest.c -lsun -lutil -lkvm
+ld: -lsun: no match

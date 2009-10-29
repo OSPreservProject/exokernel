@@ -1,0 +1,7 @@
+gmake LDFLAGS="-static -N -T 400000 -nostdlib -e start /home/am5/hbriceno/test/exopc/lib/csu/crt0.o" LOADLIBES+="/home/am5/hbriceno/test/exopc/lib/libc/obj/libc.a -lgcc"
+
+
+
+
+make LDFLAGS="-static -N -T 400000 -nostdlib -e start ../../lib/csu/crt0.o" LOADLIBES+="../../lib/libc/obj/libc.a -lgcc"
+

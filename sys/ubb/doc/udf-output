@@ -1,0 +1,248 @@
+Instead of going to type composition, go instead to output ordering.
+	- is faster
+	- allows weird compositions without wasting a type catalogue
+	entry.
+	
+	problem is how to let them do this:
+		1. give a base, then (ty, n) tuples.  this makes
+		things less tedious (i think) since they don't have
+		to compute disk addresses
+		
+		2. give 3-tuples (da, ty, n) this allows holes, which
+		is maybe useful, problem is you have to specify disk
+		addresses, which may be a pain.
+		
+	A key restriction is that you can have pointers to the middle
+	of disk blocks, but only within a single entry.  eh?  is this
+	too restrictive?
+
+The problem:
+		types are not multiples of pages nor of sectors.
+		sectors are not multiples of page sizes.
+	 	  implied:
+		  	- protection has no natural page mapping
+			- holding types on a page is a bit of a pain.
+		
+	registry entry for each type (indexed by disk address).
+
+		It must track what sector it is mapped too; this is
+	      	implicit in the disk address.
+		
+		It must track what page it is mapped too; it has
+		a pointer for this.  We also, I believe, need a 
+		linked list of random shit since otherwise we have
+		no idea how to get to our parent or how to get ahead.
+		
+		Do we prevent people from being *larger* than 4096
+		bytes?  This might solve some problems.  In particular
+		it would allow us to always go to our da mod 8 for
+		the type in front of us.
+		
+		For now, we force them to give us the first type
+		on the page.  We then work our way down via disk
+		block lookups.  (Do we?)
+	
+		For speed we could keep a type description for each
+		page I suppose, otherwise we have to step through each
+		type entry, looking up its size in the fucking registry.
+		This is both lame and expensive.  
+		
+		So: when they page in data they *must* tell us what
+		is on the entire thing, right?  Otherwise we cannot
+		allow them to map it into their address space since
+		there might be sensitive data.  Fuck.
+
+	when you allocate a page, it is at the disk block level.  if
+	there are types within that block that you do not have permission
+	to then you cannot map the page in (currently); the way this
+	would be done In Real Life would be read in, then partition.
+
+	actually, sectors are atomic.  this makes it unclear that should
+	be mapped to what pages.  Each page can be composed of contigious
+	sectors, I suppose.
+
+	Problem: what if the guy on the end of our sector is paged out?
+	How, in fact, can we just have a partial piece of the sector in
+	core?  If we cannot then there is a cascade effect.
+
+	How about this: types are dead if they are not completely in
+	core.  The data on the page is valid, but they themselves are
+	not.  Pages can only be mapped when:
+		1. no types on the page are dead
+		2. you have capabilities for every single type on the
+		page.
+		
+	How do we track what is on the page?  You have to give us
+	the disk block of what is in core.  We look at the next
+	element after this, and if it is the correct size, place
+	it on the page.
+
+		Types can be paged in and marked as ``unknown.''  Any
+		page with an unknown type cannot be mapped in.
+
+	Restrictions:
+		+ All registry entries on a page must be in core.  Otherwise
+		we fault.  
+
+		+ type must be all in core.
+
+		+ the pages that make it up must be contigious
+
+		+ when a binding is performed, it must be to a type
+		  that is sector % 8 aligned (XXX this seems pretty
+		  damn lame).   When types overlap, what to do?  Mark
+		  type as dead?  
+
+		+ can only map a page in if all bytes on that
+		page can be read by the process.
+
+		+ buffer cache assumes each page has 8 sectors: we
+		pull in all sectors on the page.
+		
+		+ there can be no gaps between types.
+		
+		+ if you give us a disk address that is not on a page,
+		do we mark the previous entry pointer?
+
+	Problem:
+		How to know what else is on a page?  Need this
+		for checking permissions.  Soln: since type is
+		% 8 sector aligned, just look at that disk address
+		forward.
+		
+		Rule: if you don't give us the first object on a page	
+		you cannot map it.  Life.  Hard.  Fuck you.
+
+	First major fix: allow types to reside on different pages.
+		Model (for simplicity) is that the home page holds
+		all the contigious sectors, but that you can create
+		a seperate copy that is off in some other space.
+		
+		This introduces the problem of how to track the
+		free space on a page.
+		
+		Going to full discontigous data is a problem since
+		methods use fairly unrestricted byte offsets --- this
+		would require that we do sw vm by remapping offsets
+		as necessary.
+	
+
+	Do we allow the udf's to spit out or should we have composition?
+	Discriminating unions iff they are the same size, I suppose.
+
+	sys_xn_alloc(da_t ta, struct xn_op *op, int nilp);
+
+		The allocated type can be block aligned (1024) or an
+		abutting extension of something else exists.
+
+		XXX: Currently is an all or nothing thing.
+		
+		We allocate, and then allocate type entries in the registry.
+		We also create n-sector enties and make them dependent.
+
+	sys_xn_free(da_t ta, struct xn_op *op, int nilp);
+
+		The residue that is left must be block aligned.  Essentially
+		can only free from the beginning of an extent if the
+		remainder will be block aligned; can always free from the
+		end.  Do we allow freeing from the middle?  Argh.
+
+		XXX currently is an all or nothing thing.
+
+		If the block has pointers to other things, we will
+		step through it, deallocating them all.  (UDFs need to
+		be fast, I guess).  What a fucking pain: if they have
+		pointers to meta data that data must be in core...
+
+		Problem: since we cannot modify the meta data, there is
+		difficulty in partially freeing everything.  I suppose
+		we can just write zero's on the read set that this thing
+		looks at, for the moement (it is discontigious after all).
+
+		Should they instead give us a function to overwrite the
+		value with zeroes?  Uch.  Testing this will be a total
+		pain in the ass.  I guess the write set associated with
+		use must be discontigious.  That would do it.
+	
+	sys_xn_swap(da_t v1, struct xn_op *op1, da_t v2, struct xn_op *op2)
+
+		XXX: For the moment, must move everything.  Since they
+		are bound in already, they object the requisite rules.
+
+	sys_xn_writeb(da_t ta, size_t off, void *src, size_t nbytes, cap_t cap);
+	sys_xn_readb(void *dst, da_t ta, size_t off, size_t nbytes, cap_t cap);
+		Must have cap for [offset, offset + nbytes)  How to
+		look up the type composed of da?
+
+	sys_xn_writebackv(struct xn_iov *iov);
+	sys_xn_writeback(db_t db, size_t nblocks, xn_cnt_t *cnt);
+	sys_xn_readin(db_t db, size_t nblocks, xn_cnt_t *cnt);
+	sys_xn_readinv(struct xn_iov *iov);
+
+		These take sectors as arguments.  Write them back.
+
+		Given a sector, how to tell if it is dirty?  Do we mark
+		this?
+
+		How to track what page is associated with the entry?
+
+	sys_xn_bind(db_t db, ppn_t ppn, cap_t cap, xn_bind_t flag, int alloc);
+
+		These bind to the type.  If cap is the cap for all of
+		the types (bullshit restriction) you can get write access
+		otherwise it must be filled in.
+
+	sys_xn_unbind(db_t db, ppn_t h_ppn, cap_t cap);
+
+		If the reference count is not zero this call fails.
+		else if the page is clean throw it away
+		else if the cap is write, throw it away
+		else fail.	
+
+		We should really have ref/unref instead (buffer cache
+		tracks this, right?)
+
+	sys_xn_insert_attr(da_t da, struct xn_op *op);
+		Use a UDF to get the types and blocks associated with the
+		type.
+
+	Problem: how to find the other entries on the fucking page.
+	Could annotate page, I suppose.  How to track what sectors
+	are in core?  You must be able to write sectors out.
+
+	sys_xn_delete_attr(db_t db, size_t nblocks, cap_t cap);
+
+		This is allowed in the same places where unbind is,
+		with the modification that all of the entries must
+		not have any depenencies(?)
+
+		If a type spans multiple disk blocks, how to track where
+		the beginning entry is?
+
+	sys_xn_read_attr(void * dst, db_t db, size_t nblocks, cap_t cap);
+		A nop, just check that cap associated with the entry.
+
+	It is a hell of a lot simpler if we do access control.
+
+	--------------------------------------------------------
+		need a call to flush all dependent entries.
+
+What is the methods et all doing?  Currently trading access contorl
+for type richness and simplicity (wholesale marking of things as
+public, private, whatever)
+
+	Problem: have to track what sectors are clean and what are
+	dirty, right?  Otherwise we don't know what to writeback.
+
+	Does the buffer cache filter writes back to the disk?
+
+	Once a sequence of actions is given to the disk, can it
+	ever be the case that it will reorder within sequences?
+
+	machine names:
+		hack, incrementallist, pedant, crackpot, lawyer,
+		has-been, also-ran, ineffectual,  
+		
+		obsessive, fanatic, zealot
+
+	This will be a cool popl paper.

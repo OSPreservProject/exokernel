@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# This is just a little script to help build disk
+# images, BIOS, etc.
+
+#BOOT=freebsd
+#BOOT=bootris
+#BOOT=freedos
+BOOT=vmlinuz
+#BOOT=test
+
+INSTALL=/home/kiowa/exopc/root/root
+ETCINSTALL=/home/kiowa/exopc/root/etc
+
+mkdir -p $INSTALL
+
+# make a boot sector "boot.sector"
+if (test $BOOT = test); then
+    nasm -f bin images/test.asm -o images/test || exit
+    dd if=/dev/zero of=image_sda bs=512 count=2880
+    dd if=images/test of=image_sda conv=notrunc
+    rm images/test
+elif (test $BOOT = bootris); then
+    nasm -o images/bootris.bin images/bootris.asm || exit
+    dd if=/dev/zero of=image_sda bs=512 count=2880
+    dd if=images/bootris.bin of=image_sda conv=notrunc
+    rm bootris.bim
+elif (test $BOOT = freebsd); then
+    cp images/freebsd image_sda
+elif (test $BOOT = vmlinuz); then
+    cp /usr/src/linux/arch/i386/boot/zImage images/vmlinuz
+    dd if=/dev/zero of=image_sda bs=512 count=2880
+    dd if=images/vmlinuz of=image_sda conv=notrunc
+    rm images/vmlinuz
+elif (test $BOOT = freedos); then
+    cp images/freedos image_sda
+elif (test $BOOT = pcdos); then
+    cp images/pcdos70.dsk image_sda
+elif (test $BOOT = msdos); then
+    cp images/msdos image_sda
+else
+    echo no valid boot image defined.
+    exit 1
+fi
+
+gcc -Iinclude -I../../sys -E -P bios.S > bios.asm || exit
+nasm -o bios.bin -f bin bios.asm || exit
+
+make -k
+
+cp obj/monitor image_sda bios.bin $INSTALL
+cp monitor.conf $ETCINSTALL
+rm image_sda

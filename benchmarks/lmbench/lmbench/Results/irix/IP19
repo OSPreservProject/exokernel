@@ -1,0 +1,1136 @@
+[lmbench1.1 results for IRIX64 spanky 6.2-ALPHA-1232460831 10301439 IP19]
+[DISK: ]
+[FILE: /usr/tmp/XXX]
+[FSDIR: /usr/tmp]
+[REMOTE: ]
+[NETWORKS: ]
+[MB: 8]
+[Thu Nov 09 20:31:51 1995]
+[ 8:31pm up 3 days, 59 mins, 3 users, load average: 0.00, 0.00, 0.00]
+[net: Name Mtu   Network     Address            Ipkts Ierrs    Opkts Oerrs  Coll]
+[net: et0  1500  150.166.34  spanky.engr.sgi   397483     4    49616     0  1002]
+[if: et0: flags=c63<UP,BROADCAST,NOTRAILERS,RUNNING,FILTMULTI,MULTICAST>]
+[if: inet 150.166.34.92 netmask 0xffffff00 broadcast 150.166.34.255]
+[net: xpi0 4352  192.82.189.32 ipg0-spanky     185643447     0 180634791     0     0]
+[if: xpi0: flags=1863<UP,BROADCAST,NOTRAILERS,RUNNING,MULTICAST,CKSUM>]
+[if: inet 192.82.189.33 netmask 0xffffffe0 broadcast 192.82.189.63]
+[net: xpi1 4352  192.82.189.64 ipg1-spanky     185401165     0 180383529     0     0]
+[if: xpi1: flags=1863<UP,BROADCAST,NOTRAILERS,RUNNING,MULTICAST,CKSUM>]
+[if: inet 192.82.189.65 netmask 0xffffffe0 broadcast 192.82.189.95]
+[net: xpi2 4352  192.82.189.96 ipg2-spanky     185366720     0 180402778     0     0]
+[if: xpi2: flags=1863<UP,BROADCAST,NOTRAILERS,RUNNING,MULTICAST,CKSUM>]
+[if: inet 192.82.189.97 netmask 0xffffffe0 broadcast 192.82.189.127]
+[net: xpi3 4352  192.82.189.128 ipg3-spanky     187786857     0 182932189     0     0]
+[if: xpi3: flags=1863<UP,BROADCAST,NOTRAILERS,RUNNING,MULTICAST,CKSUM>]
+[if: inet 192.82.189.129 netmask 0xffffffe0 broadcast 192.82.189.159]
+[net: lo0  8304  127         localhost          25548     0    25548     0     0]
+[if: lo0: flags=1849<UP,LOOPBACK,RUNNING,MULTICAST,CKSUM>]
+[if: inet 127.0.0.1 netmask 0xff000000]
+[mount: /dev/root           /                                 xfs  rw,raw=/dev/rroot  0 0]
+[mount: /proc               /proc                             proc rw  0 0]
+[mount: /dev/fd             /dev/fd                           fd   rw  0 0]
+[mount: /dev/dsk/dks1d1s0   /5.3                              efs  ro,raw=/dev/rdsk/dks1d1s0  0 0]
+[mount: /dev/dsk/dks1d2s0   /6.1                              xfs  ro,raw=/dev/rdsk/dks1d2s0  0 0]
+[mount: /dev/dsk/dks5d1s0   /FS5                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d1s0  0 0]
+[mount: /dev/dsk/dks115d1s0 /FS2                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d1s0  0 0]
+[mount: /dev/dsk/dks116d1s0 /FS3                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d1s0  0 0]
+[mount: /dev/dsk/dks117d3s0 /FS34                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d3s0  0 0]
+[mount: /dev/dsk/dks6d1s0   /FS9                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d1s0  0 0]
+[mount: /dev/dsk/dks116d2s0 /FS18                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d2s0  0 0]
+[mount: /dev/dsk/dks117d2s0 /FS19                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d2s0  0 0]
+[mount: /dev/dsk/dks115d2s0 /FS17                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d2s0  0 0]
+[mount: /dev/dsk/dks97d1s0  /FS14                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d1s0  0 0]
+[mount: /dev/dsk/dks113d2s0 /FS15                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d2s0  0 0]
+[mount: /dev/dsk/dks57d2s0  /FS23                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d2s0  0 0]
+[mount: /dev/dsk/dks76d2s0  /FS26                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d2s0  0 0]
+[mount: /dev/dsk/dks113d3s0 /FS30                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d3s0  0 0]
+[mount: /dev/dsk/dks114d1s0 /FS1                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d1s0  0 0]
+[mount: /dev/dsk/dks96d1s0  /FS13                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d1s0  0 0]
+[mount: /dev/dsk/dks7d2s0   /FS25                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d2s0  0 0]
+[mount: /dev/dsk/dks5d2s0   /FS20                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d2s0  0 0]
+[mount: /dev/dsk/dks7d1s0   /FS10                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d1s0  0 0]
+[mount: /dev/dsk/dks114d2s0 /FS16                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d2s0  0 0]
+[mount: /dev/dsk/dks95d1s0  /FS12                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d1s0  0 0]
+[mount: /dev/dsk/dks116d3s0 /FS33                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d3s0  0 0]
+[mount: /dev/dsk/dks115d3s0 /FS32                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d3s0  0 0]
+[mount: /dev/dsk/dks7d3s0   /FS40                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d3s0  0 0]
+[mount: /dev/dsk/dks55d1s0  /FS6                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d1s0  0 0]
+[mount: /dev/dsk/dks97d2s0  /FS29                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d2s0  0 0]
+[mount: /dev/dsk/dks117d1s0 /FS4                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d1s0  0 0]
+[mount: /dev/dsk/dks6d3s0   /FS39                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d3s0  0 0]
+[mount: /dev/dsk/dks6d2s0   /FS24                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d2s0  0 0]
+[mount: /dev/dsk/dks95d3s0  /FS42                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d3s0  0 0]
+[mount: /dev/dsk/dks55d2s0  /FS21                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d2s0  0 0]
+[mount: /dev/dsk/dks96d3s0  /FS43                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d3s0  0 0]
+[mount: /dev/dsk/dks96d2s0  /FS28                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d2s0  0 0]
+[mount: /dev/dsk/dks114d3s0 /FS31                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d3s0  0 0]
+[mount: /dev/dsk/dks116d5s0 /FS63                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d5s0  0 0]
+[mount: /dev/dsk/dks55d3s0  /FS36                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d3s0  0 0]
+[mount: /dev/dsk/dks95d2s0  /FS27                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d2s0  0 0]
+[mount: /dev/dsk/dks114d5s0 /FS61                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d5s0  0 0]
+[mount: /dev/dsk/dks6d5s0   /FS69                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d5s0  0 0]
+[mount: /dev/dsk/dks57d3s0  /FS38                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d3s0  0 0]
+[mount: /dev/dsk/dks113d6s0 /FS75                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d6s0  0 0]
+[mount: /dev/dsk/dks117d4s0 /FS49                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d4s0  0 0]
+[mount: /dev/dsk/dks76d1s0  /FS11                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d1s0  0 0]
+[mount: /dev/dsk/dks76d6s0  /FS86                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d6s0  0 0]
+[mount: /dev/dsk/dks57d5s0  /FS68                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d5s0  0 0]
+[mount: /dev/dsk/dks56d3s0  /FS37                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d3s0  0 0]
+[mount: /dev/dsk/dks115d4s0 /FS47                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d4s0  0 0]
+[mount: /dev/dsk/dks6d4s0   /FS54                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d4s0  0 0]
+[mount: /dev/dsk/dks97d3s0  /FS44                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d3s0  0 0]
+[mount: /dev/dsk/dks113d1s0 /FS0                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d1s0  0 0]
+[mount: /dev/dsk/dks95d5s0  /FS72                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d5s0  0 0]
+[mount: /dev/dsk/dks96d5s0  /FS73                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d5s0  0 0]
+[mount: /dev/dsk/dks96d4s0  /FS58                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d4s0  0 0]
+[mount: /dev/dsk/dks6d6s0   /FS84                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d6s0  0 0]
+[mount: /dev/dsk/dks114d8s0 /FS106                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d8s0  0 0]
+[mount: /dev/dsk/dks55d4s0  /FS51                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d4s0  0 0]
+[mount: /dev/dsk/dks113d5s0 /FS60                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d5s0  0 0]
+[mount: /dev/dsk/dks95d6s0  /FS87                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d6s0  0 0]
+[mount: /dev/dsk/dks7d6s0   /FS85                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d6s0  0 0]
+[mount: /dev/dsk/dks7d5s0   /FS70                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d5s0  0 0]
+[mount: /dev/dsk/dks116d6s0 /FS78                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d6s0  0 0]
+[mount: /dev/dsk/dks97d6s0  /FS89                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d6s0  0 0]
+[mount: /dev/dsk/dks114d4s0 /FS46                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d4s0  0 0]
+[mount: /dev/dsk/dks95d8s0  /FS117                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d8s0  0 0]
+[mount: /dev/dsk/dks56d5s0  /FS67                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d5s0  0 0]
+[mount: /dev/dsk/dks5d8s0   /FS110                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d8s0  0 0]
+[mount: /dev/dsk/dks57d4s0  /FS53                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d4s0  0 0]
+[mount: /dev/dsk/dks97d5s0  /FS74                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d5s0  0 0]
+[mount: /dev/dsk/dks5d6s0   /FS80                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d6s0  0 0]
+[mount: /dev/dsk/dks116d4s0 /FS48                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d4s0  0 0]
+[mount: /dev/dsk/dks116d8s0 /FS108                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d8s0  0 0]
+[mount: /dev/dsk/dks55d8s0  /FS111                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d8s0  0 0]
+[mount: /dev/dsk/dks114d6s0 /FS76                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d6s0  0 0]
+[mount: /dev/dsk/dks55d6s0  /FS81                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d6s0  0 0]
+[mount: /dev/dsk/dks76d3s0  /FS41                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d3s0  0 0]
+[mount: /dev/dsk/dks117d6s0 /FS79                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d6s0  0 0]
+[mount: /dev/dsk/dks6d8s0   /FS114                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d8s0  0 0]
+[mount: /dev/dsk/dks56d4s0  /FS52                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d4s0  0 0]
+[mount: /dev/dsk/dks57d8s0  /FS113                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d8s0  0 0]
+[mount: /dev/dsk/dks76d4s0  /FS56                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d4s0  0 0]
+[mount: /dev/dsk/dks95d4s0  /FS57                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d4s0  0 0]
+[mount: /dev/dsk/dks96d7s0  /FS103                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d7s0  0 0]
+[mount: /dev/dsk/dks97d4s0  /FS59                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d4s0  0 0]
+[mount: /dev/dsk/dks5d3s0   /FS35                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d3s0  0 0]
+[mount: /dev/dsk/dks76d7s0  /FS101                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d7s0  0 0]
+[mount: /dev/dsk/dks114d7s0 /FS91                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks114d7s0  0 0]
+[mount: /dev/dsk/dks57d1s0  /FS8                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d1s0  0 0]
+[mount: /dev/dsk/dks5d5s0   /FS65                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d5s0  0 0]
+[mount: /dev/dsk/dks7d4s0   /FS55                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d4s0  0 0]
+[mount: /dev/dsk/dks56d7s0  /FS97                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d7s0  0 0]
+[mount: /dev/dsk/dks96d6s0  /FS88                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d6s0  0 0]
+[mount: /dev/dsk/dks55d5s0  /FS66                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d5s0  0 0]
+[mount: /dev/dsk/dks76d5s0  /FS71                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d5s0  0 0]
+[mount: /dev/dsk/dks117d5s0 /FS64                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d5s0  0 0]
+[mount: /dev/dsk/dks115d8s0 /FS107                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d8s0  0 0]
+[mount: /dev/dsk/dks57d7s0  /FS98                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d7s0  0 0]
+[mount: /dev/dsk/dks95d7s0  /FS102                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks95d7s0  0 0]
+[mount: /dev/dsk/dks7d7s0   /FS100                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d7s0  0 0]
+[mount: /dev/dsk/dks6d7s0   /FS99                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks6d7s0  0 0]
+[mount: /dev/dsk/dks76d8s0  /FS116                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks76d8s0  0 0]
+[mount: /dev/dsk/dks115d6s0 /FS77                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d6s0  0 0]
+[mount: /dev/dsk/dks96d8s0  /FS118                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks96d8s0  0 0]
+[mount: /dev/dsk/dks115d5s0 /FS62                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d5s0  0 0]
+[mount: /dev/dsk/dks113d7s0 /FS90                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d7s0  0 0]
+[mount: /dev/dsk/dks56d8s0  /FS112                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d8s0  0 0]
+[mount: /dev/dsk/dks116d7s0 /FS93                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks116d7s0  0 0]
+[mount: /dev/dsk/dks55d7s0  /FS96                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks55d7s0  0 0]
+[mount: /dev/dsk/dks7d8s0   /FS115                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks7d8s0  0 0]
+[mount: /dev/dsk/dks97d7s0  /FS104                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d7s0  0 0]
+[mount: /dev/dsk/dks56d1s0  /FS7                              xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d1s0  0 0]
+[mount: /dev/dsk/dks117d7s0 /FS94                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d7s0  0 0]
+[mount: /dev/dsk/dks5d7s0   /FS95                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d7s0  0 0]
+[mount: /dev/dsk/dks117d8s0 /FS109                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks117d8s0  0 0]
+[mount: /dev/dsk/dks56d6s0  /FS82                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d6s0  0 0]
+[mount: /dev/dsk/dks5d4s0   /FS50                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks5d4s0  0 0]
+[mount: /dev/dsk/dks115d7s0 /FS92                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks115d7s0  0 0]
+[mount: /dev/dsk/dks113d4s0 /FS45                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d4s0  0 0]
+[mount: /dev/dsk/dks113d8s0 /FS105                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks113d8s0  0 0]
+[mount: /dev/dsk/dks56d2s0  /FS22                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks56d2s0  0 0]
+[mount: /dev/dsk/dks57d6s0  /FS83                             xfs  rw,wsync,noauto,raw=/dev/rdsk/dks57d6s0  0 0]
+[mount: /dev/dsk/dks97d8s0  /FS119                            xfs  rw,wsync,noauto,raw=/dev/rdsk/dks97d8s0  0 0]
+[mount: slovax:/u           /tmp_mnt/hosts/slovax/u           nfs  nosuid,nodev  0 0]
+[mount: slovax:/space       /tmp_mnt/hosts/slovax/space       nfs  nosuid,nodev  0 0]
+[mount: slovax:/usr/X       /tmp_mnt/hosts/slovax/usr/X       nfs  nosuid,nodev  0 0]
+[mount: slovax:/cdrom       /tmp_mnt/hosts/slovax/cdrom       nfs  nosuid,nodev  0 0]
+[mount: slovax:/rootsd0     /tmp_mnt/hosts/slovax/rootsd0     nfs  nosuid,nodev  0 0]
+[mount: slovax:/rootsd2     /tmp_mnt/hosts/slovax/rootsd2     nfs  nosuid,nodev  0 0]
+[mount: slovax:/dev/sd0g    /tmp_mnt/hosts/slovax/dev/sd0g    nfs  nosuid,nodev  0 0]
+[mount: slovax:/usr/local   /tmp_mnt/hosts/slovax/usr/local   nfs  nosuid,nodev  0 0]
+[mount: slovax:/rootsd0/u   /tmp_mnt/hosts/slovax/rootsd0/u   nfs  nosuid,nodev  0 0]
+[mount: slovax:/rootsd2/u   /tmp_mnt/hosts/slovax/rootsd2/u   nfs  nosuid,nodev  0 0]
+[mount: slovax:/rootsd2/usr /tmp_mnt/hosts/slovax/rootsd2/usr nfs  nosuid,nodev  0 0]
+[df: Filesystem             Type  blocks     use     avail  %use Mounted on]
+[df: /dev/root               xfs  3815296   322600  3492696   8  /]
+[df: /dev/dsk/dks1d1s0       efs  3747705   932492  2815213  25  /5.3]
+[df: /dev/dsk/dks1d2s0       xfs  3839296  2292336  1546960  60  /6.1]
+[df: /dev/dsk/dks5d1s0       xfs  4238520   522872  3715648  12  /FS5]
+[df: /dev/dsk/dks115d1s0     xfs  4238520   523376  3715144  12  /FS2]
+[df: /dev/dsk/dks116d1s0     xfs  4238520   524072  3714448  12  /FS3]
+[df: /dev/dsk/dks117d3s0     xfs  4238520   524648  3713872  12  /FS34]
+[df: /dev/dsk/dks6d1s0       xfs  4238520   524000  3714520  12  /FS9]
+[df: /dev/dsk/dks116d2s0     xfs  4238520   524256  3714264  12  /FS18]
+[df: /dev/dsk/dks117d2s0     xfs  4238520   523368  3715152  12  /FS19]
+[df: /dev/dsk/dks115d2s0     xfs  4238520   524832  3713688  12  /FS17]
+[df: /dev/dsk/dks97d1s0      xfs  4238520   523384  3715136  12  /FS14]
+[df: /dev/dsk/dks113d2s0     xfs  4238520   522944  3715576  12  /FS15]
+[df: /dev/dsk/dks57d2s0      xfs  4238520   524712  3713808  12  /FS23]
+[df: /dev/dsk/dks76d2s0      xfs  4238520   524096  3714424  12  /FS26]
+[df: /dev/dsk/dks113d3s0     xfs  4238520   523008  3715512  12  /FS30]
+[df: /dev/dsk/dks114d1s0     xfs  4238520   524488  3714032  12  /FS1]
+[df: /dev/dsk/dks96d1s0      xfs  4238520   523096  3715424  12  /FS13]
+[df: /dev/dsk/dks7d2s0       xfs  4238520   523768  3714752  12  /FS25]
+[df: /dev/dsk/dks5d2s0       xfs  4238520   524320  3714200  12  /FS20]
+[df: /dev/dsk/dks7d1s0       xfs  4238520   523552  3714968  12  /FS10]
+[df: /dev/dsk/dks114d2s0     xfs  4238520   524944  3713576  12  /FS16]
+[df: /dev/dsk/dks95d1s0      xfs  4238520   525440  3713080  12  /FS12]
+[df: /dev/dsk/dks116d3s0     xfs  4238520   525200  3713320  12  /FS33]
+[df: /dev/dsk/dks115d3s0     xfs  4238520   523752  3714768  12  /FS32]
+[df: /dev/dsk/dks7d3s0       xfs  4238520   524440  3714080  12  /FS40]
+[df: /dev/dsk/dks55d1s0      xfs  4238520   523552  3714968  12  /FS6]
+[df: /dev/dsk/dks97d2s0      xfs  4238520   522976  3715544  12  /FS29]
+[df: /dev/dsk/dks117d1s0     xfs  4238520   524104  3714416  12  /FS4]
+[df: /dev/dsk/dks6d3s0       xfs  4238520   524592  3713928  12  /FS39]
+[df: /dev/dsk/dks6d2s0       xfs  4238520   524712  3713808  12  /FS24]
+[df: /dev/dsk/dks95d3s0      xfs  4238520   524744  3713776  12  /FS42]
+[df: /dev/dsk/dks55d2s0      xfs  4238520   524864  3713656  12  /FS21]
+[df: /dev/dsk/dks96d3s0      xfs  4238520   523960  3714560  12  /FS43]
+[df: /dev/dsk/dks96d2s0      xfs  4238520   523104  3715416  12  /FS28]
+[df: /dev/dsk/dks114d3s0     xfs  4238520   524584  3713936  12  /FS31]
+[df: /dev/dsk/dks116d5s0     xfs  4238520   524120  3714400  12  /FS63]
+[df: /dev/dsk/dks55d3s0      xfs  4238520   524840  3713680  12  /FS36]
+[df: /dev/dsk/dks95d2s0      xfs  4238520   526680  3711840  12  /FS27]
+[df: /dev/dsk/dks114d5s0     xfs  4238520   525120  3713400  12  /FS61]
+[df: /dev/dsk/dks6d5s0       xfs  4238520   524704  3713816  12  /FS69]
+[df: /dev/dsk/dks57d3s0      xfs  4238520   525088  3713432  12  /FS38]
+[df: /dev/dsk/dks113d6s0     xfs  4238520   523232  3715288  12  /FS75]
+[df: /dev/dsk/dks117d4s0     xfs  4238520   524680  3713840  12  /FS49]
+[df: /dev/dsk/dks76d1s0      xfs  4238520   524208  3714312  12  /FS11]
+[df: /dev/dsk/dks76d6s0      xfs  4238520   524648  3713872  12  /FS86]
+[df: /dev/dsk/dks57d5s0      xfs  4238520   525424  3713096  12  /FS68]
+[df: /dev/dsk/dks56d3s0      xfs  4238520   524464  3714056  12  /FS37]
+[df: /dev/dsk/dks115d4s0     xfs  4238520   523600  3714920  12  /FS47]
+[df: /dev/dsk/dks6d4s0       xfs  4238520   524048  3714472  12  /FS54]
+[df: /dev/dsk/dks97d3s0      xfs  4238520   523336  3715184  12  /FS44]
+[df: /dev/dsk/dks113d1s0     xfs  4238520   523584  3714936  12  /FS0]
+[df: /dev/dsk/dks95d5s0      xfs  4238520   525752  3712768  12  /FS72]
+[df: /dev/dsk/dks96d5s0      xfs  4238520   524544  3713976  12  /FS73]
+[df: /dev/dsk/dks96d4s0      xfs  4238520   524064  3714456  12  /FS58]
+[df: /dev/dsk/dks6d6s0       xfs  4238520   524504  3714016  12  /FS84]
+[df: /dev/dsk/dks114d8s0     xfs  4238520   525512  3713008  12  /FS106]
+[df: /dev/dsk/dks55d4s0      xfs  4238520   524552  3713968  12  /FS51]
+[df: /dev/dsk/dks113d5s0     xfs  4238520   523336  3715184  12  /FS60]
+[df: /dev/dsk/dks95d6s0      xfs  4238520   526872  3711648  12  /FS87]
+[df: /dev/dsk/dks7d6s0       xfs  4238520   524408  3714112  12  /FS85]
+[df: /dev/dsk/dks7d5s0       xfs  4238520   523336  3715184  12  /FS70]
+[df: /dev/dsk/dks116d6s0     xfs  4238520   523744  3714776  12  /FS78]
+[df: /dev/dsk/dks97d6s0      xfs  4238520   523360  3715160  12  /FS89]
+[df: /dev/dsk/dks114d4s0     xfs  4238520   523816  3714704  12  /FS46]
+[df: /dev/dsk/dks95d8s0      xfs  4238520   525648  3712872  12  /FS117]
+[df: /dev/dsk/dks56d5s0      xfs  4238520   523720  3714800  12  /FS67]
+[df: /dev/dsk/dks5d8s0       xfs  4238520   523776  3714744  12  /FS110]
+[df: /dev/dsk/dks57d4s0      xfs  4238520   525488  3713032  12  /FS53]
+[df: /dev/dsk/dks97d5s0      xfs  4238520   524176  3714344  12  /FS74]
+[df: /dev/dsk/dks5d6s0       xfs  4238520   524456  3714064  12  /FS80]
+[df: /dev/dsk/dks116d4s0     xfs  4238520   524976  3713544  12  /FS48]
+[df: /dev/dsk/dks116d8s0     xfs  4238520   524136  3714384  12  /FS108]
+[df: /dev/dsk/dks55d8s0      xfs  4238520   524752  3713768  12  /FS111]
+[df: /dev/dsk/dks114d6s0     xfs  4238520   524240  3714280  12  /FS76]
+[df: /dev/dsk/dks55d6s0      xfs  4238520   525288  3713232  12  /FS81]
+[df: /dev/dsk/dks76d3s0      xfs  4238520   524168  3714352  12  /FS41]
+[df: /dev/dsk/dks117d6s0     xfs  4238520   524536  3713984  12  /FS79]
+[df: /dev/dsk/dks6d8s0       xfs  4238520   524992  3713528  12  /FS114]
+[df: /dev/dsk/dks56d4s0      xfs  4238520   523776  3714744  12  /FS52]
+[df: /dev/dsk/dks57d8s0      xfs  4238520   524984  3713536  12  /FS113]
+[df: /dev/dsk/dks76d4s0      xfs  4238520   524448  3714072  12  /FS56]
+[df: /dev/dsk/dks95d4s0      xfs  4238520   523984  3714536  12  /FS57]
+[df: /dev/dsk/dks96d7s0      xfs  4238520   523728  3714792  12  /FS103]
+[df: /dev/dsk/dks97d4s0      xfs  4238520   523208  3715312  12  /FS59]
+[df: /dev/dsk/dks5d3s0       xfs  4238520   524584  3713936  12  /FS35]
+[df: /dev/dsk/dks76d7s0      xfs  4238520   524272  3714248  12  /FS101]
+[df: /dev/dsk/dks114d7s0     xfs  4238520   524208  3714312  12  /FS91]
+[df: /dev/dsk/dks57d1s0      xfs  4238520   525776  3712744  12  /FS8]
+[df: /dev/dsk/dks5d5s0       xfs  4238520   524296  3714224  12  /FS65]
+[df: /dev/dsk/dks7d4s0       xfs  4238520   525504  3713016  12  /FS55]
+[df: /dev/dsk/dks56d7s0      xfs  4238520   523912  3714608  12  /FS97]
+[df: /dev/dsk/dks96d6s0      xfs  4238520   522952  3715568  12  /FS88]
+[df: /dev/dsk/dks55d5s0      xfs  4238520   524120  3714400  12  /FS66]
+[df: /dev/dsk/dks76d5s0      xfs  4238520   524064  3714456  12  /FS71]
+[df: /dev/dsk/dks117d5s0     xfs  4238520   523912  3714608  12  /FS64]
+[df: /dev/dsk/dks115d8s0     xfs  4238520   523480  3715040  12  /FS107]
+[df: /dev/dsk/dks57d7s0      xfs  4238520   525216  3713304  12  /FS98]
+[df: /dev/dsk/dks95d7s0      xfs  4238520   525016  3713504  12  /FS102]
+[df: /dev/dsk/dks7d7s0       xfs  4238520   525232  3713288  12  /FS100]
+[df: /dev/dsk/dks6d7s0       xfs  4238520   524712  3713808  12  /FS99]
+[df: /dev/dsk/dks76d8s0      xfs  4238520   524168  3714352  12  /FS116]
+[df: /dev/dsk/dks115d6s0     xfs  4238520   525600  3712920  12  /FS77]
+[df: /dev/dsk/dks96d8s0      xfs  4238520   523008  3715512  12  /FS118]
+[df: /dev/dsk/dks115d5s0     xfs  4238520   524272  3714248  12  /FS62]
+[df: /dev/dsk/dks113d7s0     xfs  4238520   523888  3714632  12  /FS90]
+[df: /dev/dsk/dks56d8s0      xfs  4238520   524936  3713584  12  /FS112]
+[df: /dev/dsk/dks116d7s0     xfs  4238520   525384  3713136  12  /FS93]
+[df: /dev/dsk/dks55d7s0      xfs  4238520   524712  3713808  12  /FS96]
+[df: /dev/dsk/dks7d8s0       xfs  4238520   526000  3712520  12  /FS115]
+[df: /dev/dsk/dks97d7s0      xfs  4238520   523400  3715120  12  /FS104]
+[df: /dev/dsk/dks56d1s0      xfs  4238520   524216  3714304  12  /FS7]
+[df: /dev/dsk/dks117d7s0     xfs  4238520   524712  3713808  12  /FS94]
+[df: /dev/dsk/dks5d7s0       xfs  4238520   523968  3714552  12  /FS95]
+[df: /dev/dsk/dks117d8s0     xfs  4238520   523680  3714840  12  /FS109]
+[df: /dev/dsk/dks56d6s0      xfs  4238520   524128  3714392  12  /FS82]
+[df: /dev/dsk/dks5d4s0       xfs  4238520   524408  3714112  12  /FS50]
+[df: /dev/dsk/dks115d7s0     xfs  4238520   523480  3715040  12  /FS92]
+[df: /dev/dsk/dks113d4s0     xfs  4238520   523152  3715368  12  /FS45]
+[df: /dev/dsk/dks113d8s0     xfs  4238520   523128  3715392  12  /FS105]
+[df: /dev/dsk/dks56d2s0      xfs  4238520   525056  3713464  12  /FS22]
+[df: /dev/dsk/dks57d6s0      xfs  4238520   525472  3713048  12  /FS83]
+[df: /dev/dsk/dks97d8s0      xfs  4238520   523568  3714952  12  /FS119]
+[df: slovax:/u               nfs  1871660   900528   971132  48  /tmp_mnt/hosts/slovax/u]
+[df: slovax:/space           nfs    31342    22660     8682  72  /tmp_mnt/hosts/slovax/space]
+[df: slovax:/usr/X           nfs   318974   239440    79534  75  /tmp_mnt/hosts/slovax/usr/X]
+[df: slovax:/cdrom           nfs    31342    22660     8682  72  /tmp_mnt/hosts/slovax/cdrom]
+[df: slovax:/rootsd0         nfs    29966    18954    11012  63  /tmp_mnt/hosts/slovax/rootsd0]
+[df: slovax:/rootsd2         nfs    32430    18864    13566  58  /tmp_mnt/hosts/slovax/rootsd2]
+[df: slovax:/dev/sd0g        nfs    31342    22660     8682  72  /tmp_mnt/hosts/slovax/dev/sd0g]
+[df: slovax:/usr/local       nfs   318974   239440    79534  75  /tmp_mnt/hosts/slovax/usr/local]
+[df: slovax:/rootsd0/u       nfs   745786   632698   113088  85  /tmp_mnt/hosts/slovax/rootsd0/u]
+[df: slovax:/rootsd2/u       nfs  1406460   327404  1079056  23  /tmp_mnt/hosts/slovax/rootsd2/u]
+[df: slovax:/rootsd2/usr     nfs   337774   232470   105304  69  /tmp_mnt/hosts/slovax/rootsd2/usr]
+200 Mhz, 5 nanosec clock
+Null syscall: 24 microseconds
+Signal handler installation: 10 microseconds
+Signal handler overhead: 52 microseconds
+Pipe latency: 251 microseconds
+UDP latency using localhost: 678 microseconds
+TCP latency using localhost: 546 microseconds
+RPC/udp latency using localhost: 893 microseconds
+RPC/tcp latency using localhost: 900 microseconds
+TCP/IP connection cost to localhost: 716 microseconds
+Socket bandwidth using localhost: 30.76 MB/sec
+Process fork+exit: 3986 microseconds
+Process fork+execve: 14181 microseconds
+Process fork+/bin/sh -c: 24233 microseconds
+Pipe bandwidth: 16.71 MB/sec
+File /usr/tmp/XXX write bandwidth: 2138 KB/sec
+Pagefaults on /usr/tmp/XXX: 21492 usecs
+"mappings
+0.01 128
+0.25 128
+0.50 128
+1.00 126
+2.00 127
+3.00 130
+4.00 127
+8.00 128
+
+"read bandwidth
+0.02 7.28
+0.03 14.17
+0.06 28.88
+0.12 37.34
+0.19 41.23
+0.25 44.35
+0.38 45.36
+0.50 44.95
+0.75 42.96
+1.00 43.20
+1.50 43.84
+2.00 42.59
+2.50 45.23
+3.00 45.46
+3.50 45.79
+4.00 47.41
+5.00 41.92
+6.00 39.67
+7.00 37.95
+8.00 36.12
+
+"Mmap read bandwidth
+0.02 91.91
+0.03 71.18
+0.06 103.82
+0.12 107.30
+0.19 100.21
+0.25 107.30
+0.38 93.56
+0.50 99.19
+0.75 86.67
+1.00 85.98
+1.50 82.44
+2.00 83.82
+2.50 81.10
+3.00 85.82
+3.50 88.47
+4.00 88.95
+5.00 72.66
+6.00 64.82
+7.00 59.60
+8.00 55.88
+
+"libc bcopy aligned
+0.0625 91.64
+0.1250 85.38
+0.5000 91.31
+1.0000 88.78
+2.0000 87.60
+4.0000 35.00
+
+"libc bcopy unaligned
+0.0625 90.71
+0.1250 88.72
+0.5000 91.22
+1.0000 89.81
+2.0000 85.54
+4.0000 35.58
+
+"unrolled bcopy aligned
+0.0625 51.44
+0.1250 51.40
+0.5000 51.70
+1.0000 51.16
+2.0000 48.95
+4.0000 26.50
+
+"unrolled bcopy unaligned
+0.0625 89.67
+0.1250 90.12
+0.5000 89.21
+1.0000 88.49
+2.0000 85.81
+4.0000 34.84
+
+Memory read bandwidth
+1.0000 154.15
+2.0000 155.63
+4.0000 149.89
+8.0000 64.71
+
+Memory write bandwidth
+1.0000 175.46
+2.0000 174.96
+4.0000 171.48
+8.0000 66.99
+
+"File system latency
+0k	1000	285	249
+1k	1000	290	251
+4k	1000	285	239
+10k	1000	293	248
+
+
+"size=0 ovr=31
+2 63
+4 65
+8 69
+16 74
+20 74
+
+"size=4 ovr=46
+2 79
+4 79
+8 84
+16 85
+20 89
+
+"size=16 ovr=101
+2 116
+4 115
+8 118
+16 133
+20 132
+
+"size=32 ovr=246
+2 80
+4 80
+8 93
+16 97
+20 111
+
+"size=64 ovr=467
+2 77
+4 93
+8 91
+16 113
+20 124
+Memory load latency
+"stride=8
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 16
+0.01953 22
+0.02148 26
+0.02344 30
+0.02539 33
+0.02734 35
+0.02930 38
+0.03125 40
+0.03516 40
+0.03906 40
+0.04297 40
+0.04688 40
+0.05078 40
+0.05469 40
+0.05859 40
+0.06250 40
+0.07031 40
+0.07812 40
+0.08594 40
+0.09375 40
+0.10156 40
+0.10938 40
+0.11719 40
+0.12500 40
+0.14062 40
+0.15625 40
+0.17188 40
+0.18750 40
+0.20312 40
+0.21875 40
+0.23438 40
+0.25000 40
+0.28125 40
+0.31250 40
+0.34375 40
+0.37500 40
+0.40625 40
+0.43750 40
+0.46875 40
+0.50000 40
+1.00000 40
+1.50000 40
+2.00000 40
+2.50000 41
+3.00000 41
+3.50000 41
+4.00000 41
+4.50000 50
+5.00000 59
+5.50000 68
+6.00000 77
+6.50000 86
+7.00000 95
+7.50000 104
+8.00000 106
+
+"stride=16
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 43
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 71
+2.00000 71
+2.50000 72
+3.00000 72
+3.50000 73
+4.00000 72
+4.50000 101
+5.00000 128
+5.50000 133
+6.00000 147
+6.50000 166
+7.00000 185
+7.50000 203
+8.00000 207
+
+"stride=32
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 42
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 71
+2.00000 71
+2.50000 73
+3.00000 73
+3.50000 74
+4.00000 74
+4.50000 130
+5.00000 185
+5.50000 212
+6.00000 258
+6.50000 267
+7.00000 294
+7.50000 330
+8.00000 339
+
+"stride=64
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 42
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 71
+2.00000 72
+2.50000 73
+3.00000 74
+3.50000 75
+4.00000 76
+4.50000 196
+5.00000 294
+5.50000 375
+6.00000 437
+6.50000 483
+7.00000 528
+7.50000 581
+8.00000 600
+
+"stride=128
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 42
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 71
+2.00000 72
+2.50000 74
+3.00000 74
+3.50000 78
+4.00000 78
+4.50000 325
+5.00000 513
+5.50000 675
+6.00000 800
+6.50000 904
+7.00000 995
+7.50000 1082
+8.00000 1152
+
+"stride=512
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 42
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 73
+2.00000 74
+2.50000 75
+3.00000 75
+3.50000 78
+4.00000 78
+4.50000 328
+5.00000 527
+5.50000 689
+6.00000 831
+6.50000 946
+7.00000 1039
+7.50000 1129
+8.00000 1204
+
+"stride=1024
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 42
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 75
+2.00000 77
+2.50000 79
+3.00000 78
+3.50000 81
+4.00000 81
+4.50000 329
+5.00000 530
+5.50000 693
+6.00000 826
+6.50000 944
+7.00000 1040
+7.50000 1128
+8.00000 1202
+
+"stride=2048
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 23
+0.01953 34
+0.02148 42
+0.02344 50
+0.02539 56
+0.02734 61
+0.02930 66
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 80
+2.00000 83
+2.50000 85
+3.00000 84
+3.50000 87
+4.00000 86
+4.50000 333
+5.00000 532
+5.50000 693
+6.00000 829
+6.50000 943
+7.00000 1040
+7.50000 1125
+8.00000 1200
+
+"stride=4096
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 34
+0.01953 34
+0.02148 50
+0.02344 50
+0.02539 61
+0.02734 61
+0.02930 70
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 90
+2.00000 95
+2.50000 99
+3.00000 98
+3.50000 101
+4.00000 100
+4.50000 344
+5.00000 539
+5.50000 700
+6.00000 833
+6.50000 946
+7.00000 1042
+7.50000 1126
+8.00000 1199
+
+"stride=8192
+0.00049 10
+0.00098 10
+0.00195 10
+0.00293 10
+0.00391 10
+0.00586 10
+0.00781 10
+0.00977 10
+0.01172 10
+0.01367 10
+0.01562 10
+0.01758 50
+0.01953 50
+0.02148 50
+0.02344 50
+0.02539 70
+0.02734 70
+0.02930 70
+0.03125 70
+0.03516 70
+0.03906 70
+0.04297 70
+0.04688 70
+0.05078 70
+0.05469 70
+0.05859 70
+0.06250 70
+0.07031 70
+0.07812 70
+0.08594 70
+0.09375 70
+0.10156 70
+0.10938 70
+0.11719 70
+0.12500 70
+0.14062 70
+0.15625 70
+0.17188 70
+0.18750 70
+0.20312 70
+0.21875 70
+0.23438 70
+0.25000 70
+0.28125 70
+0.31250 70
+0.34375 70
+0.37500 70
+0.40625 70
+0.43750 70
+0.46875 70
+0.50000 70
+1.00000 70
+1.50000 110
+2.00000 120
+2.50000 129
+3.00000 126
+3.50000 129
+4.00000 127
+4.50000 366
+5.00000 556
+5.50000 713
+6.00000 844
+6.50000 954
+7.00000 1050
+7.50000 1130
+8.00000 1201
+

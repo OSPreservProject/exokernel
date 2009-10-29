@@ -1,0 +1,18 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+gcc -E
+gcc -E
+configure:735: minix/config.h: No such file or directory
+gcc -o conftest -g -O conftest.c
+gcc -E
+gcc -E
+gcc -E
+gcc -o conftest -g -O conftest.c
+gcc -E
+gcc -E
+gcc -E
+gcc -c -g -O conftest.c
+gcc -o conftest -g -O conftest.c
+gcc -o conftest -g -O conftest.c
+gcc -o conftest -g -O conftest.c

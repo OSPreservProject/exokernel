@@ -1,0 +1,29 @@
+This is a very basic FFS implementation.  It's missing a bunch
+of functionality, but should be sufficient for init to be able
+to get other programs (like file servers) running.
+
+ffs.c: basic interface routines (init, shutdown)
+
+ffs_file.c: file i/o and management routines
+ (open, close, fstat, lseek, read, write, unlink)
+
+ffs_dir.c: directory management (opendir, readdir, closedir, mkdir, rmdir)
+
+ffs_internal.c: some internal functions (lookup et al, read/write block/inode)
+
+ffs_bmap.c: bmap routine (from bsd)
+ffs_balloc.c: balloc routine (from bsd)
+ffs_alloc.c: allocation routines (from bsd)
+ffs_subr, ffs_tables: support for ffs_alloc (from bsd)
+
+What it doesn't do:
+
+- CACHING
+- creating hard links
+- creating/removing/following symlinks
+- removing very large files (ones which use double indirect blocks)
+- truncating files (even short ones)
+- renaming/moving files
+- security (it assumes you're "root")
+- if lseek extends a file, new space in a previously partial block
+  may not be 0 filled
