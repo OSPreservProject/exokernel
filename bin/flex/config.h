@@ -19,7 +19,7 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define if you have <alloca.h> and it should be used (not on Ultrix).  */
-#define HAVE_ALLOCA_H 1
+/* #undef HAVE_ALLOCA_H */
 
 /* Define if platform-specific command line handling is necessary.  */
 /* #undef NEED_ARGV_FIXUP */

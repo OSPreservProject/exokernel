@@ -66,7 +66,7 @@ void print_usage(void);
 int child_pid = 0;
 struct sockaddr_in cli_addr, serv_addr;
 struct sockaddr dummy_addr;
-int dummy_len;
+unsigned int dummy_len;
 int sockfd;
 
 
@@ -228,8 +228,7 @@ int main(int argc, char **argv)
 	  printf("sending shutdown commmand...\n");
 	  sent = sendto(sockfd, "\001", 1,
 			0, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-	  
-	} else if (off_flag) {
+        } else if (off_flag) {
 	  printf("sending off daemon commmand...\n");
 	  sent = sendto(sockfd, "\002", 1,
 			0,(struct sockaddr *)&serv_addr, sizeof(serv_addr));
@@ -245,6 +244,8 @@ int main(int argc, char **argv)
 	    sent = sendto(sockfd, user, length,
 			  0, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 	}
+	if(sent < 0)
+	  printf("send error\n");
 	select(32,(fd_set *)&mask,0,0,&block);
     } while(!mask);
     
@@ -304,7 +305,7 @@ int main(int argc, char **argv)
 	    if (log_flag) {write(logfile,line,length);}
 
 	    /* put back the NULL so that strncmp works safely */
-	    line[length - 1] = (char )NULL;
+	    line[length - 1] = 0;
 	    if (!strcmp(line,"logout")) break;
 	    if (!strcmp(line,"shutdown")) {sleep(1);break;}
 	}
@@ -334,15 +335,15 @@ int main(int argc, char **argv)
 
 void print_usage(void)
 {
-  printf("
-Usage: rconsole.ng [-help] [-shutdown|-off] [-log file] [host [port]]
-If no host is used, rconsole will use environment variable AEGIS_HOST
-as the host, it uses default port 5000, which can be overriden by the 
-enviromental variable (green) AEGIS_PORT or at the command line.
--help: prints this message
--off: turns off the rconsoled at the exohost so no more connections are allowed
--shutdown: shuts down the exomachine
--log file: logs onto a file your session (equivalent to using script)
--noseq: turns off sequence on packets for use with old xok\n");
+  printf(
+"Usage: rconsole.ng [-help] [-shutdown|-off] [-log file] [host [port]]"
+"If no host is used, rconsole will use environment variable AEGIS_HOST"
+"as the host, it uses default port 5000, which can be overriden by the"
+"enviromental variable (green) AEGIS_PORT or at the command line."
+"-help: prints this message"
+"-off: turns off the rconsoled at the exohost so no more connections are allowed"
+"-shutdown: shuts down the exomachine"
+"-log file: logs onto a file your session (equivalent to using script)"
+"-noseq: turns off sequence on packets for use with old xok\n");
     exit (1);
 }

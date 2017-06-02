@@ -43,6 +43,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #ifdef __linux__
@@ -165,6 +166,7 @@ int main (int argc, char *argv[]) {
 		&strtab[soff], &strtab[soff], s->n_value, &strtab[soff]);
       }
     skip:
+      ;
     }
   }
   munmap(strtab, strsize);

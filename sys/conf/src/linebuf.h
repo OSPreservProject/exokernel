@@ -127,7 +127,7 @@ Linebuf_lineno (Linebuf *lb)
 }
 
 static inline char *
-getline (Linebuf *lb)
+xgetline (Linebuf *lb)
 {
   int n = 0;
 

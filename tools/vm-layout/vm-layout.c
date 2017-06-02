@@ -39,6 +39,7 @@
 #include "../../sys/xok/mmu.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // #define WANT_OLD_FORMAT
 

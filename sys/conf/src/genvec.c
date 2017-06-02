@@ -124,7 +124,7 @@ buildvi (struct vector_info *vi)
   char *l;
 
   nerrs = 0;
-  while (l = getline (lb)) {
+  while (l = xgetline (lb)) {
     unsigned int vn;
     char *cp;
     if (cp = strchr (l, '#'))      /* get rid of comments */
@@ -242,6 +242,7 @@ buildvi (struct vector_info *vi)
       syntax ("trailing garbage after trap 0x%x\n", vn);
 
   nextline:
+    ;
   }
   return (nerrs);
 }

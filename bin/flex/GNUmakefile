@@ -13,8 +13,8 @@ install-flex: flex
 	install -c -m 644 FlexLexer.h $(EXODEST)/usr/include/FlexLexer.h
 
 do-real-make:
-	gmake -f Makefile TOP=$(TOP) all
+	make -f Makefile TOP=$(TOP) all
 
 clean:
-	gmake -f Makefile TOP=$(TOP) clean
+	make -f Makefile TOP=$(TOP) clean
 	rm -f *~

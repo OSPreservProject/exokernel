@@ -60,9 +60,9 @@ CC_VER = -V 2.8.1
 endif
 endif
 
-CC = $(CROSS)cc $(CC_VER) -pipe
-NCC = cc $(CC_VER) -pipe
-GCC_LIB = `$(CC) -print-libgcc-file-name`
+CC = $(CROSS)cc $(CC_VER) -pipe -m32 -march=i386
+NCC = cc $(CC_VER) -pipe -m32 -march=i386
+GCC_LIB = `$(CC) -m32 -print-libgcc-file-name`
 AS = $(CROSS)as
 AR = $(CROSS)ar
 RM = rm

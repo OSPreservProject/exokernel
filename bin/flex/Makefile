@@ -47,7 +47,7 @@ SHELL = /bin/sh
 srcdir = .
 
 LN_S = ln -s
-YACC = bison -y
+YACC = yacc
 CC = gcc
 AR = ar
 RANLIB = ranlib

@@ -295,7 +295,7 @@ char *pathname;
    wordlen = find_wordend (&pathname[1], '/');
    rem = &pathname[(wordlen+2)];
 
-   pathname[(wordlen+1)] = (char) NULL;
+   pathname[(wordlen+1)] = 0;
    if ((pw = getpwnam (&pathname[1])) == NULL) {
       fprintf (stderr, "Unknown user name: %s (%d)\n", &pathname[1], wordlen);
       exit(0);

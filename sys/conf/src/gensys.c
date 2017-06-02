@@ -99,7 +99,7 @@ parsein (void (*pf) (int, char *, int, char **))
   bzero (used_vec, sizeof (used_vec));
   nerrs = 0;
 
-  while (l = getline (lb)) {
+  while (l = xgetline (lb)) {
     char *cp, *ip;
     unsigned int sn;
     char *args[MAX_ARGS+1];
@@ -175,6 +175,7 @@ parsein (void (*pf) (int, char *, int, char **))
       nargs = 1;
     (*pf) (sn, cp, nargs, args);
   again:
+    ;
   }
 }
 
@@ -304,6 +305,7 @@ ustub (int sn, char *name, int nargs, char **args)
     printf ("                    \"d\" (a1),\n");
   case 1:
   case 0:
+    ;
   }
   printf ("                    \"i\" (SYS_%s), \"i\" (T_SYSCALL)\n", name);
   printf ("                    : \"eax\", \"edx\", \"ecx\", %s\"cc\","
