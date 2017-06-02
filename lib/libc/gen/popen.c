@@ -118,7 +118,7 @@ popen(program, type)
 				(void)close(pdes[0]);
 			}
 		}
-		execl(_PATH_BSHELL, "sh", "-c", program, NULL);
+		//execl(_PATH_BSHELL, "sh", "-c", program, 0);
 		_exit(127);
 		/* NOTREACHED */
 	    }

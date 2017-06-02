@@ -152,7 +152,7 @@ ENTRY(xue_fault)
 	
 	movl	8(%esp),%eax		# stick eflags on traptime stack
 	movl	%eax,16(%edx)
-	movl	%cs,12(%edx)		# stick cs on traptime stack
+	//movl	%cs,12(%edx)		# stick cs on traptime stack
 	movl	12(%esp),%eax		# stick ret address on traptime stack
 	movl	%eax,8(%edx)
 	movl	32(%esp),%eax		# stick %eax on traptime stack

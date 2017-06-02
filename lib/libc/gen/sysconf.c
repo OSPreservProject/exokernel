@@ -46,6 +46,7 @@ static char rcsid[] = "$OpenBSD: sysconf.c,v 1.4 1998/06/02 06:10:26 deraadt Exp
 
 #include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <../lib/libexos/fd/proc.h>
 #include <exos/kprintf.h>

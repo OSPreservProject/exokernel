@@ -99,8 +99,8 @@ extern __inline int sigismember(const sigset_t *set, int signo) {
 #endif
 
 /* List definitions after function declarations, or Reiser cpp gets upset. */
-#define	sigemptyset(set)	(*(set) = 0, 0)
-#define	sigfillset(set)		(*(set) = ~(sigset_t)0, 0)
+#define	sigemptyset(set)	(*(set) = 0)
+#define	sigfillset(set)		(*(set) = ~(sigset_t)0)
 
 #ifndef _POSIX_SOURCE
 int	killpg __P((pid_t, int));

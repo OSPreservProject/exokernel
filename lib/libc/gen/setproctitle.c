@@ -56,7 +56,7 @@ extern char *__progname;		/* Program name, from crt0. */
 
 void
 setproctitle0(char *buf) {
-  strncpy(UAREA.name, buf, U_NAMEMAX-1);
+  strncpy((char*)UAREA.name, buf, U_NAMEMAX-1);
   UAREA.name[U_NAMEMAX-1] = 0;
 }
 

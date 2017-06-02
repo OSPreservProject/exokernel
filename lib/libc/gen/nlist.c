@@ -82,7 +82,8 @@ __aout_fdnlist(fd, list)
 	symoff = N_SYMOFF(exec);
 	symsize = exec.a_syms;
 	stroff = symoff + symsize;
-
+	if(stroff < 0)
+	   printf("bad\n");
 	/* Read in the size of the string table. */
 	if (lseek(fd, N_STROFF(exec), SEEK_SET) == -1)
 		return (-1);

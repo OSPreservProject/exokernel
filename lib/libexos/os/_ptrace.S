@@ -53,11 +53,11 @@ ENTRY(ptrace_breakpoint_handler_s)
 	movl	%ebx, 36(%edi)		/* eflags */
 	movl	4(%esp), %ebx		/* cs */
 	movl	%ebx, 40(%edi)		/* cs */
-	movl	%ss, 44(%edi)
-	movl	%ds, 48(%edi)
-	movl	%es, 52(%edi)
-	movl	%fs, 56(%edi)
-	movl	%gs, 60(%edi)
+	//movl	%ss, 44(%edi)
+	//movl	%ds, 48(%edi)
+	//movl	%es, 52(%edi)
+	//movl	%fs, 56(%edi)
+	//movl	%gs, 60(%edi)
 
 	movl	$_ptrace_breakpoint_handler_c, %ebx
 	call	%ebx
@@ -75,11 +75,11 @@ ENTRY(ptrace_breakpoint_handler_s)
 	movl	%ebx, 8(%esp)		/* eflags */
 	movl	40(%edi), %ebx		/* cs */
 	movl	%ebx, 4(%esp)		/* cs */
-	movl	44(%edi), %ss
-	movl	48(%edi), %ds
-	movl	52(%edi), %es
-	movl	56(%edi), %fs
-	movl	60(%edi), %gs
+	//movl	44(%edi), %ss
+	//movl	48(%edi), %ds
+	//movl	52(%edi), %es
+	//movl	56(%edi), %fs
+	//movl	60(%edi), %gs
 	movl	12(%edi), %ebx
 	movl	_pt_r_s+28, %edi
 

@@ -39,7 +39,7 @@ include $(TOP)/ARCH
 ##  Commands:
 ##
 ifdef LINUX
-CROSS=/opt/openbsd-cross/bin/
+CROSS=
 else
 CROSS =
 endif 

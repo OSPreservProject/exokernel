@@ -251,7 +251,7 @@ exos_lock_get_nb (exos_lock_t *the_lock)
 				   ENV_OK, 0);
 	wk_sz = wk_mkop (wk_sz, t, WK_OR);
 	wk_sz += wk_mkcmp_neq_pred(&t[wk_sz],
-				   &__envs[envidx(lock_owner)].env_id,
+				   (int*)&__envs[envidx(lock_owner)].env_id,
 				   lock_owner, 0);
 
 #ifdef __LOCKS_DEBUG__

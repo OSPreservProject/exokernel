@@ -53,6 +53,7 @@ static inline void yield (int envid) {
        :: "g" (&&next));
   goto next; /* get around warning about unused label */
 next:
+  ;
 }
 
 void ProcessStartup ();
