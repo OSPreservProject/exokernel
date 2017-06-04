@@ -118,6 +118,7 @@ Control flow (source files are os/uwk.h and os/uwk.c)
 */
 /****************************************************************************/
 
+#pragma GCC diagnostic ignored "-Wpointer-sign"
 
 #include <xok/sys_ucall.h>
 #include <xok/wk.h>

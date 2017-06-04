@@ -40,6 +40,8 @@
 
 /* map files or devices into memory */
 
+#pragma GCC diagnostic ignored "-Wpointer-sign"
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>

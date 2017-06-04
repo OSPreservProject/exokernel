@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <unistd.h>
 #include <exos/osdecl.h>
 #include "procd.h"

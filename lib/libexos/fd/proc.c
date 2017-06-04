@@ -1,4 +1,7 @@
-
+#pragma GCC diagnostic ignored "-Wpointer-sign"
+#pragma GCC diagnostic ignored "-Waddress"
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -54,6 +57,8 @@
 #undef PRINTF_LEVEL
 #define PRINTF_LEVEL 1
 #endif
+
+#include <stdlib.h>
 
 #include "fd/proc.h"
 #include "fd/path.h"
@@ -728,6 +733,7 @@ ioctl (int fd, unsigned long request, void *argp) {
       return r;
     }
   default:
+    ;
   }
   error = CHECKOP(filp,ioctl);
   if (error == NULL) { 
@@ -2295,8 +2301,7 @@ scheck_write_permission(struct stat *statbuf) {
 
 static int 
 scheck_execute_permission(struct stat *statbuf) {
-  DPRINTF(CLUHELP_LEVEL,("checking execute perm: file mode: %o uid: %d gid: %d\n
-",
+  DPRINTF(CLUHELP_LEVEL,("checking execute perm: file mode: %o uid: %d gid: %d\n",
 	   statbuf->st_mode,statbuf->st_uid, statbuf->st_gid));
 
   if (statbuf->st_mode & S_IXOTH) return(1);

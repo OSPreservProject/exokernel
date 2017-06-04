@@ -34,6 +34,8 @@
  * holders listed in the AUTHORS file. The rest of this file is covered by
  * the copyright notices, if any, listed below.
  */
+ #pragma GCC diagnostic ignored "-Wuninitialized"
+#include <stdlib.h>
 
 #include <exos/critical.h>
 #include <exos/ipcdemux.h>

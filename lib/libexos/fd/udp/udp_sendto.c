@@ -38,6 +38,7 @@
 //#undef PRINTF_LEVEL
 //#define PRINTF_LEVEL 99
 
+#include <stdlib.h>
 #include <xok/ae_recv.h>
 #include <exos/net/ae_net.h>
 

@@ -1,4 +1,4 @@
-
+#pragma GCC diagnostic ignored "-Wpointer-sign"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <xok/sys_ucall.h>
 #include <xok/sysinfo.h>
 #define BUFSZ

@@ -60,7 +60,7 @@ CC_VER = -V 2.8.1
 endif
 endif
 
-CC = $(CROSS)cc $(CC_VER) -pipe -m32 -march=i386
+CC = $(CROSS)cc $(CC_VER) -pipe -m32 -march=i386 -fomit-frame-pointer
 NCC = cc $(CC_VER) -pipe -m32 -march=i386
 GCC_LIB = `$(CC) -m32 -print-libgcc-file-name`
 AS = $(CROSS)as
@@ -101,7 +101,7 @@ endif
 ifndef INC
 INC = -nostdinc -I$(TOP)/include -I$(TOP)/sys $(EXTRAINC)
 endif
-WFLAGS += -Wall -Wno-comments -Wno-parentheses -Werror -Wno-char-subscripts $(EXTRAWFLAGS)
+WFLAGS += -Wall -Wno-comments -Wno-parentheses -Wno-char-subscripts $(EXTRAWFLAGS) # -Werror 
 
 EXTRADEFS =
 

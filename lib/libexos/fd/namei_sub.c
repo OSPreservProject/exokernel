@@ -39,6 +39,7 @@
 #define PRINTF_LEVEL -1
 
 #ifdef EXOPC
+#include <stdlib.h>
 #include <fd/proc.h>
 #endif /* EXOPC */
 #include <string.h>
@@ -111,10 +112,10 @@ getNextComponent (const char *path, char *next) {
      }
      /* while(*path == '/') path++;*/
 
-     DPRINTF(CLU_LEVEL,("getNextComponent: 
-               path: \"%s\"
-               next: \"%s\"
-               left: \"%s\" c: %d\n",
+     DPRINTF(CLU_LEVEL,("getNextComponent:" 
+               "path: \"%s\""
+               "next: \"%s\""
+               "left: \"%s\" c: %d\n",
 			path0,next0,path,count_name));
      return (path);
 }

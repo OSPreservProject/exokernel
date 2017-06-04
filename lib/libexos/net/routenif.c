@@ -1,4 +1,4 @@
-
+#pragma GCC diagnostic ignored "-Wpointer-sign"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -321,6 +321,7 @@ get_dsteth(ipaddr_t dstaddr,ethaddr_t ethaddr,int *ifnum) {
     memset(ethaddr,0xff,6);
     return 0;
   case IFRET_NOTFOUND:
+    ;
     /* fall through */
   }
   if (find_route(dstaddr,gateway) == 0) {
@@ -337,6 +338,7 @@ get_dsteth(ipaddr_t dstaddr,ethaddr_t ethaddr,int *ifnum) {
       memset(ethaddr,0xff,6);
       return 0;
     case IFRET_NOTFOUND:
+      ;
       /* fall through */
     }
   }

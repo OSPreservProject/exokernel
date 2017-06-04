@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <exos/osdecl.h>

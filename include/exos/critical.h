@@ -77,6 +77,7 @@ static void inline ExitCritical () {
        : "=m" (UAREA.u_in_critical): "m" (UAREA.u_interrupted), "g" (&&next)
        : "cc", "memory");
 next:
+  ;
 }
 
 /* how many nesting levels */

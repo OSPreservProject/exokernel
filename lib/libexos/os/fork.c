@@ -39,6 +39,7 @@
 #include <exos/conf.h>
 #include <exos/kprintf.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <xok/defs.h>
 #include <xok/sys_ucall.h>
@@ -454,6 +455,7 @@ sys_cputs ("!\n");
     }
     signals_on();
   skip:
+    ;
   }
 #endif
   return (NewPid);

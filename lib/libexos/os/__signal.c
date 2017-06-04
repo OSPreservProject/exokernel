@@ -65,6 +65,9 @@
   - dont seem to be able to call exit from a signal handler in a restartable
     signal on a read.
  */
+# pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
+#include <stdlib.h>
 
 #include <exos/osdecl.h>
 #include <exos/ipcdemux.h>
@@ -432,7 +435,7 @@ again:
 
       /* Revert to default handler if requested */
       if (sa.sa_flags & SA_RESETHAND) {
-	(void*)signal_vec[sig].sa_sigaction = SIG_DFL;
+	signal_vec[sig].sa_sigaction = (void*)SIG_DFL;
 	/* HBXX should not reset mask signal_vec[sig].sa_mask = 0; */
 	/* HBXX should not reset flags signal_vec[sig].sa_flags = 0; */
       }

@@ -1248,6 +1248,8 @@ const time_t * const	timep;
 ** Simplified normalize logic courtesy Paul Eggert (eggert@twinsun.com).
 */
 
+#pragma GCC diagnostic ignored "-Wstrict-overflow"
+
 static int
 increment_overflow(number, delta)
 int *	number;

@@ -308,8 +308,9 @@ ustub (int sn, char *name, int nargs, char **args)
     ;
   }
   printf ("                    \"i\" (SYS_%s), \"i\" (T_SYSCALL)\n", name);
-  printf ("                    : \"eax\", \"edx\", \"ecx\", %s\"cc\","
-	  " \"memory\");\n", nargs > 3 ? "\"ebx\", " : "");
+  //printf ("                    : \"eax\", \"edx\", \"ecx\", %s\"cc\","
+	  //" \"memory\");\n", nargs > 3 ? "\"ebx\", " : "");
+  printf (");");
   if (has_ret)
     printf ("  return (ret);\n");
   printf ("}\n");

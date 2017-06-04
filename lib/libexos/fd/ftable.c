@@ -40,6 +40,7 @@
 #define PRINTF_LEVEL 1
 #endif
 
+#include <stdlib.h>
 #include "fd/proc.h"
 #include "fd/path.h"
 #include <string.h>
@@ -398,10 +399,10 @@ getnewdevicenum(void) {
 void 
 pr_current() {
   assert(__current);
-  printf("current
-pid: %d uid: %d gid: %d euid: %d egid: %d
-pgrp: %d session: %d leader: %d umask: %d
-root: %p cwd: %p\n",
+  printf("current"
+"pid: %d uid: %d gid: %d euid: %d egid: %d"
+"pgrp: %d session: %d leader: %d umask: %d"
+"root: %p cwd: %p\n",
 __current->pid,
 __current->uid,
 __current->gid,

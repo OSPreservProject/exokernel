@@ -1,4 +1,4 @@
-
+#pragma GCC diagnostic ignored "-Waddress"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include "fd/proc.h"
 #include "fd/path.h"
 #include <string.h>

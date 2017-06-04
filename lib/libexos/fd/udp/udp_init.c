@@ -1,4 +1,4 @@
-
+# pragma GCC diagnostic ignored "-Wstrict-aliasing"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <exos/debug.h>
 #include <sys/types.h>
 #include <netinet/in.h>

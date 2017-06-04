@@ -63,6 +63,8 @@ static recno_t	 rec_total __P((PAGE *));
 u_long	bt_rootsplit, bt_split, bt_sortsplit, bt_pfxsaved;
 #endif
 
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
 /*
  * __BT_SPLIT -- Split the tree.
  *

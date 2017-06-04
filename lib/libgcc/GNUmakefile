@@ -9,8 +9,9 @@ EXTRAINSTALLPREFIX=vos
 include $(TOP)/GNUmakefile.global
 
 CP=cp
-CROSS=/opt/openbsd-cross/bin
+CROSS=
 
 libgcc.a:
 	$(CP) -f libgcc.a-raw libgcc.a
-	$(CROSS)/ranlib libgcc.a
+	ranlib libgcc.a
+	#$(CROSS)/ranlib libgcc.a

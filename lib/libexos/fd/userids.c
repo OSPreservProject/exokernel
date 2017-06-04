@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/param.h>
 #include "fd/proc.h"

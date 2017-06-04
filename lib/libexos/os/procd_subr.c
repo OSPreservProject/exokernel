@@ -1,4 +1,7 @@
+#pragma GCC diagnostic ignored "-Wpointer-sign"
 #include "procd.h"
+
+#include <stdlib.h>
 
 #include "fd/proc.h"
 #include <sys/mman.h>

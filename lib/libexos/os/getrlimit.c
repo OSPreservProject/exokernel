@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+
 #include <exos/callcount.h>
 #include <sys/types.h>
 #include <sys/time.h>

@@ -1,4 +1,4 @@
-
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *

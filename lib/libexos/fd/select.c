@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+#include <stdio.h>
 #include "fd/proc.h"
 #include <exos/callcount.h>
 #include <sys/types.h>
@@ -326,13 +328,13 @@ __select_single_filp(struct file *filp, struct timeval *timeout)
        us to wake up */
     
     if (UAREA.u_pred_tag == DID_TIMEOUT) {
-#if 0
+//#if 0
       kprintf("timeout wt %d rate %d\n",
 	      (int)wait_ticks,(unsigned int)(RATE));
       kprintf("Timeout sec: %ld usec: %ld\n",timeout->tv_sec,timeout->tv_usec);
       kprintf("begin ticks: %d sleep until ticks: %d si_system_ticks: %d\n",
 	      begin_ticks,(int)wait_until,(int)__sysinfo.si_system_ticks);
-#endif
+//#endif
       return 0;
     }
 

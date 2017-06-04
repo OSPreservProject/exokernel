@@ -16,7 +16,7 @@ ashpad.o: bounce.o
 
 # remove the hash mark from the following line to include ashes
 crt0.o: bounce.o # ashpad.o ash.b.o ash.sym.o
-	$(LD) -r -o $@ $^
+	$(LD) -melf_i386 -r -o $@ $^
 
 bounce_initp.o: bounce.c
 	$(CC_COMPILE_RULE) -o bounce_initp.o -D__INITPROG__
@@ -25,4 +25,4 @@ bounce_initp.s: bounce.c
 	$(CC_COMPILE_2ASM_RULE) -o bounce_initp.s -D__INITPROG__
 
 crt0_initp.o: bounce_initp.o # ashpad.o ash.b.o ash.sym.o
-	$(LD) -r -o $@ $^
+	$(LD) -melf_i386 -r -o $@ $^

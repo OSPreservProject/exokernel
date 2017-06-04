@@ -114,11 +114,14 @@ static inline unsigned int
 prim_test_and_set (volatile unsigned int *dst, unsigned int val, unsigned int new)
 {
   unsigned int result;
+/*
   asm ("lock\n"
        "\t cmpxchgl   %2, %0\n"
        : "=m" (*dst), "=a" (result)
        : "r" (new), "m" (*dst), "a" (val)
        : "eax", "cc", "memory");
+*/
+  result = 0;
   return (result);
 }
 

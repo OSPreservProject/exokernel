@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+
 #include <exos/conf.h>
 #include <xok/sys_ucall.h>
 #include <exos/process.h>

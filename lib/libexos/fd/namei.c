@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include "namei.h"
 #include <exos/debug.h>
 //#define CACHEDLOOKUP /* if doing cheap/dirty cached lookup see namei_cache.c */

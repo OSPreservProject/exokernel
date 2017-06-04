@@ -59,6 +59,7 @@
     the pages (and assume that we have write access).
 
 */
+#include <stdlib.h>
 
 #include <exos/callcount.h>
 #include <exos/conf.h>

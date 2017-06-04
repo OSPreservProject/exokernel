@@ -1435,6 +1435,7 @@ int cffs_ioctl (struct file *filp, u_int request, char *argp)
       case CFFS_IOCTL_PRINTDIRINFO:
 		return (cffs_printdirinfo (filp));
       default:
+	;
    }
 
    errno = ENODEV;	/* Supposed to say op not supported */

@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+
 #include <unistd.h>
 #include "fd/proc.h"
 #include <exos/callcount.h>

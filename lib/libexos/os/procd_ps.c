@@ -1,4 +1,6 @@
-
+#pragma GCC diagnostic ignored "-Wpointer-sign"
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -36,6 +38,8 @@
  */
 
 #include "procd.h"
+
+#include <stdlib.h>
 
 #include <string.h>
 #include <bitstring.h>

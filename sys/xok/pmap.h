@@ -275,7 +275,7 @@ FIELD_ASSIGN_DECL(Ppage, pp_pinned, int)
 #ifndef KERNEL  /* libOS - __ppages */
 
 /* this is the array of all physical pages */
-extern struct Ppage __ppages[];
+//extern struct Ppage __ppages[];
 
 #else           /* KERNEL - ppages */
 

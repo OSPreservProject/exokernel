@@ -36,6 +36,8 @@
  */
 
 /* For multiplexing the ipc entry point(s) */
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
 #include <xok/env.h>
 #include <xok/ipc.h>
@@ -51,8 +53,10 @@ static struct {
 
 /* Calls the handler for code, returns the result of the call, or
    -1 if there was no handler. */
+/*
 static u_quad_t ipc1_demux(int, int, int, int, u_int)
      __attribute__ ((regparm (3)));
+*/
 static u_quad_t ipc1_demux(int code, int a, int b, int numextraargs,
 			   u_int caller) {
   u_quad_t r;

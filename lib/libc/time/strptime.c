@@ -46,7 +46,9 @@ static char rcsid[] = "$OpenBSD: strptime.c,v 1.5 1998/04/25 08:08:25 deraadt Ex
 #include <time.h>
 #include <tzfile.h>
 
-#define	_ctloc(x)		__CONCAT(_CurrentTimeLocale->,x)
+#define __CONCAT_INDR(a,b) a->b
+
+#define	_ctloc(x)		__CONCAT_INDR(_CurrentTimeLocale,x)
 
 /*
  * We do not implement alternate representations. However, we always

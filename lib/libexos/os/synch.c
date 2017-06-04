@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 #include <xok/sysinfo.h>

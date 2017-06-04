@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+
 #include <xok/defs.h>
 #include <xok/sys_ucall.h>
 

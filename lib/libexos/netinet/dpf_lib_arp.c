@@ -36,6 +36,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #ifdef EXOPC
 #include <exos/mallocs.h>
 #include <dpf/old-dpf.h>

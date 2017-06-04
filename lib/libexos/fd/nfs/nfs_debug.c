@@ -214,12 +214,12 @@ kpr_nfsc(nfsc_p p) {
 
 void 
 print_statbuf(char *f, struct stat *statbuf) {
-    printf("file: %s
-st_dev:   0x%-8x st_ino:    %-6d     st_mode: 0x%4x st_nlink: %d
-st_rdev:  0x%-8x st_uid:    %-6d     st_gid:      %-6d    
-st_atime: 0x%-8x st_mtime:  0x%-8x st_ctime:    0x%-8x
-st_size:  %-8qd   st_blocks: %-8qd   st_blksize: %5d\n
-",
+    printf("file: %s"
+"st_dev:   0x%-8x st_ino:    %-6d     st_mode: 0x%4x st_nlink: %d"
+"st_rdev:  0x%-8x st_uid:    %-6d     st_gid:      %-6d"    
+"st_atime: 0x%-8x st_mtime:  0x%-8x st_ctime:    0x%-8x"
+"st_size:  %-8qd   st_blocks: %-8qd   st_blksize: %5d\n"
+,
 f,
 statbuf->st_dev,
 statbuf->st_ino,

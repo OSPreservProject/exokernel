@@ -123,6 +123,7 @@ struct Ppage {
   struct kspinlock pp_klock; /* kernel lock for this Ppage struct */
 };
 
+extern struct Ppage __ppages[];
 #ifdef KERNEL
 
 static inline void 

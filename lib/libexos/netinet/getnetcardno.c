@@ -1,4 +1,4 @@
-
+#pragma GCC diagnostic ignored "-Wpointer-sign"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *

@@ -3,7 +3,7 @@ TOP=../..
 include $(TOP)/ARCH
 
 ifdef LINUX
-CROSS=/usr/local/openbsd-cross/bin/
+CROSS=
 else
 CROSS =
 endif 

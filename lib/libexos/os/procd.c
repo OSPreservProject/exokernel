@@ -1,4 +1,5 @@
 #include "procd.h"
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <sys/wait.h>
@@ -1098,6 +1099,7 @@ proc_table_ipc_controlt(int code, int controlt, int ttyp, int ttyvp,
     p->p_flag |= P_CONTROLT;
     break;
   default:
+    ;
   }
   if (ttyvp == -1 && ttyp == -1) {
     ret = 0; goto done;

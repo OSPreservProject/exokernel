@@ -34,7 +34,7 @@
  * holders listed in the AUTHORS file. The rest of this file is covered by
  * the copyright notices, if any, listed below.
  */
-
+#pragma GCC diagnostic ignored "-Warray-bounds"
 #include <exos/cap.h>
 #include <xok/env.h>
 #include <exos/osdecl.h>
@@ -42,6 +42,7 @@
 #include <xok/mmu.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 #include <fd/proc.h>
 #include <string.h>

@@ -40,6 +40,7 @@
 #define PRINTF_LEVEL 1
 #endif
 
+#include <stdlib.h>
 #include "fd/proc.h"
 #include "fd/path.h"
 #include <string.h>

@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #if defined(LIBC_SCCS) && !defined(lint)
 static char rcsid[] = "$OpenBSD: rec_put.c,v 1.4 1998/08/14 21:39:21 deraadt Exp $";
 #endif /* LIBC_SCCS and not lint */

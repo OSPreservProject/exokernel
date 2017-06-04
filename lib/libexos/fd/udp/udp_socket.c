@@ -794,6 +794,7 @@ fd_udp_setsockopt(struct file *sock, int level, int optname,
 	udp_set_nr_buffers(NRUDPBUFS);
       return 0;
     default:
+      ;
     }
   }
   errno = EINVAL;

@@ -73,6 +73,8 @@
  *	@(#)kern_sysctl.c	8.4 (Berkeley) 4/14/94
  */
 
+#include <stdlib.h>
+
 #include <assert.h>
 #include <errno.h>
 #include <exos/callcount.h>

@@ -35,8 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
-#include <fd/proc.h>
 #include <stdlib.h>
+#include <fd/proc.h>
 #include <string.h>
 
 #include <xok/sysinfo.h>

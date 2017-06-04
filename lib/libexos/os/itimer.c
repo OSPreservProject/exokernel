@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+
 #include <sys/errno.h>
 #include <sys/time.h>
 #include <xok/sysinfo.h>

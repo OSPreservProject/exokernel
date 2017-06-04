@@ -461,7 +461,8 @@ __do_simple_load (int fd, struct Env *e)
   {
     errornf("Error mmaping text segment\n");
   }
-
+  if(overlap_size < 0)
+    printf("bad\n");
   /* mmap the data segment read/write */
   if ((u_int)__mmap((void*)(start_text_pg + text_size), data_size,
 		    PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -1020,7 +1021,7 @@ fork_execve0(const char *path, char *const argv[], char * const envptr[],
 #endif /* PROCD */
 #endif /* PROCESS_TABLE */
 
-  strncpy (cu.name, path, U_NAMEMAX-1);
+  strncpy ((char*)cu.name, path, U_NAMEMAX-1);
   cu.name[U_NAMEMAX-1] = '\0';
   cu.u_fpu = 0;
   cu.u_in_critical = 0;

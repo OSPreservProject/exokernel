@@ -9,7 +9,7 @@
 #include <sys/types.h>
 
 #include <cast.h>
-
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 /* CAST S-Boxes */
 
 static const u_int32_t cast_sbox1[256] = {

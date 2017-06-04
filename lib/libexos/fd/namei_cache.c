@@ -35,9 +35,9 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include "namei.h"
 #include "fd/cffs/name_cache.h"
-#include <stdlib.h>
 #include <exos/mallocs.h>
 
 static inline int 

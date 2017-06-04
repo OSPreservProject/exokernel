@@ -1,5 +1,6 @@
 #include "procd.h"
 
+#include <stdlib.h>
 #include <string.h>
 #include <bitstring.h>
 

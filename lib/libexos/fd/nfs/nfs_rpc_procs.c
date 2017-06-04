@@ -642,11 +642,11 @@ void print_fattr (struct nfs_fattr *fattr)
   char *ftype;
   ftype = get_file_type(fattr->type);
 
-  printf("FILE ATTRIBUTES:
-type: %2d (%s) mode: %o (%d)
-nlink: %2d uid: %5d gid: %5d size: %d
-blocksize: %d rdev: %d blocks: %d fsid: %d fileid: %d
-atime: %d.%06d mtime %d.%06d ctime: %d.%06d\n",
+  printf("FILE ATTRIBUTES:"
+"type: %2d (%s) mode: %o (%d)"
+"nlink: %2d uid: %5d gid: %5d size: %d"
+"blocksize: %d rdev: %d blocks: %d fsid: %d fileid: %d"
+"atime: %d.%06d mtime %d.%06d ctime: %d.%06d\n",
 	 fattr->type,ftype,fattr->mode,fattr->mode,fattr->nlink,fattr->uid,
 	 fattr->gid,fattr->size,
 	 fattr->blocksize,fattr->rdev,fattr->blocks,fattr->fsid,fattr->fileid,

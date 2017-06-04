@@ -35,6 +35,8 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
+
 #include <xok/bc.h>
 #include <exos/ubc.h>
 #include <xok/sysinfo.h>

@@ -31,6 +31,7 @@
  * of this file is covered by the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <fd/proc.h>
 
 /*

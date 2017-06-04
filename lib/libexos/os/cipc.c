@@ -1,4 +1,5 @@
-
+#pragma GCC diagnostic ignored "-Wpointer-sign"
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
 /*
  * Copyright (C) 1998 Exotec, Inc.
  *
@@ -32,6 +33,7 @@
  * of this file is covered by the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <exos/ipc.h>
 #include <exos/uwk.h>
 #include <xok/ipc.h>
@@ -57,9 +59,10 @@ struct _ipc_outstanding {
 struct _ipc_outstanding _ipcs_outstanding[IPC_MAX_OUTSTANDING];
 int _ipc_next_outstanding = -1;
 int _ipc_num_outstanding = 0;
-
+/*
 static int ipc2_demux(int a, int b, int c, int d, int index, u_int caller)
      __attribute__ ((regparm (3)));
+*/
 static int ipc2_demux(int a, int b, int c, int d, int index,
 		      u_int caller) {
   UAREA.u_status--;

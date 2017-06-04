@@ -101,7 +101,8 @@
  */
 #define IPX_HOSTADDRLEN	6
 #define IPX_NETADDRLEN	4
-#define XXX	__attribute__((packed))
+//#define XXX	__attribute__((packed))
+#define XXX
 
 typedef
 union ipx_host {

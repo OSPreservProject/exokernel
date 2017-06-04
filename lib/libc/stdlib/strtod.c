@@ -1429,9 +1429,11 @@ strtod
 			if (e1 > DBL_MAX_10_EXP) {
  ovfl:
 				errno = ERANGE;
+/*
 #ifdef __STDC__
 				value(rv) = HUGE_VAL;
 #else
+*/
 				/* Can't trust HUGE_VAL */
 #ifdef IEEE_Arith
 				word0(rv) = Exp_mask;
@@ -1440,7 +1442,7 @@ strtod
 				word0(rv) = Big0;
 				word1(rv) = Big1;
 #endif
-#endif
+//#endif
 				if (bd0)
 					goto retfree;
 				goto ret;

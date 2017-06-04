@@ -40,6 +40,7 @@
    This is somewhat of a random collection of routines that fill
    in the missing pieces of the process abstraction mainly presented by
    the vm and file-descriptor code. */
+#include <stdlib.h>
 
 #include <xok/defs.h>
 #include <xok/sys_ucall.h>
@@ -229,6 +230,8 @@ void ProcessEnd (int ret, unsigned int epc) {
 #endif 
 
   pid = getpid();
+  if(pid < 0)
+    printf("bad\n");
 #ifndef NOFD
   kproprintf("FDEndProcess\n");
   ISTART(misc,step3);
@@ -265,6 +268,8 @@ void ProcessEnd (int ret, unsigned int epc) {
     int status;
     //kprintf("pid: %d envid: %d %s proc_exit(%d)",getpid(),__envid,__progname,ret);
     status = proc_exit(ret);
+    if(status < 0)
+	printf("bad\n");
     //kprintf(" -> %d\n", status );
   }
 #endif

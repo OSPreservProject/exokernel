@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #ifdef AEGIS
 #include <aegis/aegis.h>
 #endif /* AEGIS */

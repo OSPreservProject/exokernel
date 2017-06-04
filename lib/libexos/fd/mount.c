@@ -1,3 +1,4 @@
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -34,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <xok/sysinfo.h>
 
 #include "fd/proc.h"

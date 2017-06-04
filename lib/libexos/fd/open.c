@@ -1,4 +1,4 @@
-
+#pragma GCC diagnostic ignored "-Waddress"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -39,6 +39,7 @@
 #undef PRINTF_LEVEL
 #define PRINTF_LEVEL 99
 #endif
+#include <stdlib.h>
 #include "fd/proc.h"
 #include "fd/path.h"
 #include <string.h>

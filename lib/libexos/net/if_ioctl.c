@@ -1,4 +1,4 @@
-
+ #pragma GCC diagnostic ignored "-Wpointer-sign"
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology 
  *
@@ -72,7 +72,7 @@ int if_ioctl(int d, unsigned long request, char *argp) {
 	sa->sin_port = 0;
 	ifc_len -= ifrsize;
 	ifc_copied += ifrsize;
-	(char *)ifr += ifrsize;
+	ifr += ifrsize;
       }
       ifconf->ifc_len = ifc_copied;
       return 0;

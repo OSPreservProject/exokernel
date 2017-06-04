@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <stdlib.h>
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
@@ -79,6 +80,7 @@ void uidt_unregister(u_int vect)
  unregister_skeleton:
   asm("iret");
  unregister_skeleton_end:
+  ;
 }
 
 /*
@@ -155,6 +157,7 @@ void uidt_register_cfunc(u_int vect, u_int cfunc)
       "\tpopl	%eax\n"
       "\tiret\n");
  cfunc_skeleton_end:
+  ;
 }
 
 

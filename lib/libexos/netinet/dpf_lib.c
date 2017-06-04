@@ -35,6 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
+#include <string.h>
 #include <dpf/old-dpf.h>
 #include <exos/mallocs.h>
 
