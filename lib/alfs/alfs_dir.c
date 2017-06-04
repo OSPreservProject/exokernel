@@ -47,6 +47,7 @@
 /*       (3) no directory entry crosses a "sector" boundary, where the    */
 /*           "sector" size is defined by ALFS_DIR_SECTOR_SIZE             */
 
+#include <stdlib.h>
 #include "alfs/alfs_buffer.h"
 #include "alfs/alfs_dinode.h"
 #include "alfs/alfs_dir.h"
