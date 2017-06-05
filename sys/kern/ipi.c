@@ -21,7 +21,7 @@ plainipi()
 
 
 void
-ipitest_ipi() 
+ipitest_ipi()
 {
 }
 
@@ -39,9 +39,9 @@ ipi_send_message(u_short cpu, u_short ctrl, u_int payload)
   cxt = __cpucxts[cpu];
 
   MP_SPINLOCK_GET(&cxt->_ipi_spinlock);
- 
+
   assert(cxt->_ipi_pending <= IPIQ_SIZE);
-  
+
   if (cxt->_ipi_pending == IPIQ_SIZE)
   {
     printf("ipi_send_message: cpu %d has a full ipi queue\n", cpu);
@@ -54,7 +54,7 @@ ipi_send_message(u_short cpu, u_short ctrl, u_int payload)
   cxt->_ipi_pending++;
 
   MP_SPINLOCK_RELEASE(&__cpucxts[cpu]->_ipi_spinlock);
-  
+
   lapic_ipi_cpu(cpu, T_IPI);
   return 0;
 }
@@ -62,17 +62,17 @@ ipi_send_message(u_short cpu, u_short ctrl, u_int payload)
 #endif /* __SMP__ */
 
 
-/* 
+/*
  * the real IPI handler. this should be real fast. we may do this once per
  * scheduler loop so we won't miss any ipi's
  */
 void
-ipi_handler() 
+ipi_handler()
 {
 #ifdef __SMP__
-  if (ipi_pending == 0) 
+  if (ipi_pending == 0)
     return;
-  
+
   in_ipih = 1;
   MP_SPINLOCK_GET(&ipi_spinlock);
 
@@ -86,7 +86,7 @@ ipi_handler()
         localapic_disable();
 	asm volatile("hlt");
 	break;
-      
+
       case IPI_CTRL_TLBFLUSH:
 	{
 	  u_int va = *(u_int*)(ipiq[ipi_pending-1].payload);
@@ -102,6 +102,3 @@ ipi_handler()
   in_ipih = 0;
 #endif /* __SMP__ */
 }
-
-
-

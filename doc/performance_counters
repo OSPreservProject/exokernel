@@ -22,7 +22,7 @@ and include file for info on other flags.
 {
   u_int flags;
       
-  kprintf("settting pctrs\n");
+  kprintf("setting pctrs\n");
 
   flags = (P5CTR_U | 0x16 | P5CTR_C);
   if (sys_pctr(PCIOCS0, PCIOCS0, (void *)&flags) < 0)

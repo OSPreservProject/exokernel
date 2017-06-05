@@ -18,7 +18,7 @@ int main()
 
   printf("%d\n",test_sizeof());        // should be 40
   printf("%d\n",test_array_sizeof(a)); // should be 20
-  
+
   test_field_1_set(a,99);
   printf("%d\n",test_field_1_get(a));  // should be 99
 
@@ -80,5 +80,3 @@ int main()
 #ifdef __ENCAP__
 #include "testP.h"
 #endif
-
-

@@ -35,7 +35,7 @@
  * the copyright notices, if any, listed below.
  */
 
-/* 
+/*
    The kernel buffer cache is just a hash-queue of buffer-headers.
    Each buffer-header describes one page in memory and the block
    contained in that page. Each env gets a read-only view of the
@@ -83,7 +83,7 @@
 #include <xok/kerrno.h>
 #include <xok/printf.h>
 #include <xok/pxn.h>
-#include <xok/queue.h>
+#include <xok/queue.h
 #include <xok/scheduler.h>
 #include <xok/sys_proto.h>
 #include <xok/syscallno.h>
@@ -107,7 +107,7 @@ bc_init (void)
   /* init the hash queues */
   for (i = 0; i < BC_NUM_QS; i++)
     KLIST_INIT (&bc->bc_qs[i]);
-  
+
   /* Use rest of page allocate for bc as bc_entries */
   LIST_INIT (&bc_free_list);
   i = (sizeof(*bc) + sizeof(struct bc_entry) - 1) / sizeof(struct bc_entry);
@@ -131,7 +131,7 @@ bc_alloc_bufs ()
   struct Ppage *pp;
   int i;
   static u16 next_page = 1;	/* first page in pt holds bc */
-  
+ 
   /* buf_vp can't exceed the number of entries (1024) in one page directory */
   if (next_page >= 1024) return -E_VSPACE;
 
@@ -189,7 +189,7 @@ bc_insert64 (u32 d, u_quad_t b, u_int ppn, u8 state, int *error)
   /* remember that this page holds this buffer */
   /* XXX - what if there's already a buf on the ppage? */
   Ppage_pp_buf_set(ppages_get(ppn), buf);
-  
+ 
   /* this page can no longer be manipulated using
      the normal ppage routines... */
   ppage_acl_zero(ppages_get(ppn));
@@ -307,7 +307,7 @@ bc_set_clean (struct bc_entry *b)
   }
 }
 
-/* let a user mark a buffer as dirty. 
+/* let a user mark a buffer as dirty.
    XXX -- who should we let do this? */
 
 int
@@ -318,7 +318,7 @@ sys_bc_set_dirty64 (u_int sn, u32 dev, u32 blk_hi, u32 blk_low, int dirty)
 
   b = bc_lookup64 (dev, blk);
   if (!b)
-    return -E_NOT_FOUND; 
+    return -E_NOT_FOUND;
   if (dirty) {
     bc_set_dirty (b);
   } else {
@@ -334,13 +334,13 @@ sys_bc_set_dirty (u_int sn, u32 dev, u32 blk, int dirty)
   return (sys_bc_set_dirty64 (sn, dev, 0, blk, dirty));
 }
 
-/* this is pretty hackly. We want the user to be able to store some 
-   user-specific metadata along with each buffer so for now we just 
+/* this is pretty hackly. We want the user to be able to store some
+   user-specific metadata along with each buffer so for now we just
    let them write a couple words. */
 /* XXX -- who should we let do this? */
 
 int
-sys_bc_set_user64 (u_int sn, u32 dev, u32 blk_hi, u32 blk_low, u_int user1, 
+sys_bc_set_user64 (u_int sn, u32 dev, u32 blk_hi, u32 blk_low, u_int user1,
 		   u_int user2)
 {
   struct bc_entry *b;
@@ -379,11 +379,11 @@ sys_bc_set_state64 (u_int sn, u32 dev, u32 blk_hi, u32 blk_low, u32 state)
   default:
     return -E_INVAL;
   }
-    
+
   b = bc_lookup64 (dev, blk);
   if (!b)
     return -E_NOT_FOUND;
-  
+
   b->buf_state = state;
 
   return 0;
@@ -433,7 +433,7 @@ sys_bc_insert64 (u_int sn, struct Xn_name *xn_user, u32 b_hi, u32 b_low,
     Pp_state_free(pp_state_kernel);
     return -E_INVAL;
   }
-  
+
   pp = ppages_get(ppn);
   if (Ppage_pp_status_get(pp) != PP_USER)
   {
@@ -449,7 +449,7 @@ sys_bc_insert64 (u_int sn, struct Xn_name *xn_user, u32 b_hi, u32 b_low,
     return -E_SHARE;
   }
 
-  if ((r = ppage_acl_check (pp, &c, PP_ACL_LEN, ACL_W)) < 0) 
+  if ((r = ppage_acl_check (pp, &c, PP_ACL_LEN, ACL_W)) < 0)
   {
     Pp_state_free(pp_state_kernel);
     return r;
@@ -461,7 +461,7 @@ sys_bc_insert64 (u_int sn, struct Xn_name *xn_user, u32 b_hi, u32 b_low,
     Pp_state_free(pp_state_kernel);
     return -E_NOT_FOUND;
   }
-  
+
   /* set the block size automatically for disk devices. force all
      other pseudo-devices to use a block size of NBPG */
 
@@ -476,7 +476,7 @@ sys_bc_insert64 (u_int sn, struct Xn_name *xn_user, u32 b_hi, u32 b_low,
 
   /* treat as a write since they're adding to cache */
   /* XXX - Why is there an XXX here? */
-  if (!pxn_authorizes_xtnt (pxn, &c, &xtnt, ACL_W, &r)) 
+  if (!pxn_authorizes_xtnt (pxn, &c, &xtnt, ACL_W, &r))
   {
     Pp_state_free(pp_state_kernel);
     return r;
@@ -490,12 +490,12 @@ sys_bc_insert64 (u_int sn, struct Xn_name *xn_user, u32 b_hi, u32 b_low,
   }
 
   buf = bc_insert64 (pxn->pxn_name.xa_dev, b, ppn, buf_state, &r);
-  if (buf == NULL) 
+  if (buf == NULL)
   {
     Pp_state_free(pp_state_kernel);
     return r;
   }
- 
+
   Ppage_pp_state_copyin(pp, pp_state_kernel);
 
   Pp_state_free(pp_state_kernel);
@@ -510,7 +510,7 @@ sys_bc_insert (u_int sn, struct Xn_name *xn, u32 b, u8 buf_state, u_int k,
 }
 
 /* Read an extent from disk into the buffer cache, allocating the memory
-   pages for the blocks as needed. 
+   pages for the blocks as needed.
 
    XXX -- XN uses this to do it's reading. */
 
@@ -553,7 +553,7 @@ bc_read_extent64 (u32 dev, u_quad_t block, u32 num, int *resptr, int userreq)
        even if it hasn't completed yet */
     bc_set_clean (bc_entry);
   }
-  
+
   /* execute the disk requests */
   if (diskbuf != NULL) {
     if ((error = disk_bc_request (diskbuf)) < 0)
@@ -613,7 +613,7 @@ sys_bc_read_and_insert (u_int sn, u32 dev, u32 b_hi, u32 b_low,
 
   if (resptr) {
     /* XXX - use PFM instead of isava* */
-     if ((((unsigned int) resptr) % sizeof(int)) || 
+     if ((((unsigned int) resptr) % sizeof(int)) ||
 	 !(isvawriteable (resptr)))
        return -E_FAULT;
      resptr = (int *) pa2kva(va2pa(resptr));

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -129,7 +129,7 @@ int sys_fsupdate_dinode (u_int sn, int action, struct dinode *d, u_int param1, u
 				assert (dinode->length == param2);
 				break;
 
-	case CFFS_DINODE_SETTYPE: 
+	case CFFS_DINODE_SETTYPE:
 				if (dinode->type == param1) {
 				   return (0);
 				}
@@ -506,7 +506,7 @@ int sys_fsupdate_directory (u_int sn, int action, struct embdirent *dirent, u_in
          if ((u_int) tmp % CFFS_EMBDIR_SECTOR_SPACEFORNAMES) {
             tmp->preventryLen = dirent->entryLen;
          }
-         
+
       } else {
          tmp = (embdirent_t *) ((char *)dirent - dirent->preventryLen);
          extraspace = dirent->entryLen - embdirentsize(dirent);
@@ -668,7 +668,7 @@ int sys_fsupdate_directory (u_int sn, int action, struct embdirent *dirent, u_in
                printf ("sys_fsupdate_directory (%d): trying to set type incorrectly for desired inode (%x != %x)\n", action, dinode->type, type);
                return (-E_INVAL);
             }
-            
+
 	/* the big stickler here is that we need to be able to check whether */
 	/* the caller has the ability to look at newdinode.  In particular,  */
 	/* this requires execute permission on a directory that already      */

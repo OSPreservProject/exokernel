@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -52,7 +52,7 @@ u_int rtc_current_rega;
 
 int clock_init(time_t base) {
   /* 100 ticks per second */
-  SYSINFO_ASSIGN(si_rate,10000); // si->si_rate = 10000; 
+  SYSINFO_ASSIGN(si_rate,10000); // si->si_rate = 10000;
   startrtclock(); /* init the scheduler's clock (not actually part of
 		     the real time clock), and check the BIOS diagnostic
 		     byte that's part of the RTC's nvram */
@@ -67,7 +67,7 @@ mhz_init(void) {
   SYSINFO_ASSIGN(si_mhz, pentium_mhz);
 }
 
-void 
+void
 rtc_intr (int trapno)
   __XOK_SYNC(UAREA only modified when localized)
 {
@@ -77,7 +77,7 @@ rtc_intr (int trapno)
 
   /* MUST read to acknowledge the interrupt */
   stat = mc146818_read(NULL, MC_REGC);
-  if (stat & MC_REGC_PF) 
+  if (stat & MC_REGC_PF)
     {
       if ((!UAREA.u_pendrtc) && UAREA.u_entrtc)
 	{
@@ -99,7 +99,7 @@ rtc_intr (int trapno)
 	  page_fault_mode = old_pfm;
 
 	  tf->tf_eip = UAREA.u_entrtc;
-	  UAREA.u_pendrtc = 1; 
+	  UAREA.u_pendrtc = 1;
 
 	  env_upcall();
 	}

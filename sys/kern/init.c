@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -197,7 +197,7 @@ random_trap (int trap, int errcode)
 
   kill_env (curenv);
 }
-  
+
 
 static void
 check_cache_align()
@@ -339,7 +339,7 @@ void osid_init(void) {
     if ((*d++ = *s++) == 0) {
       return;
     }
-  } 
+  }
   if (n == 0) *d = (char)0;
 }
 
@@ -402,9 +402,9 @@ i386_init (void)
 
 #ifdef __SMP__
   /* first scan for smp mode */
-  /* KEY: this MUST be done before ppage_init() so that in 
-   * ppage_init() we can allocate a nice chunk of kernel 
-   * low memory to bootstrap the APs. 
+  /* KEY: this MUST be done before ppage_init() so that in
+   * ppage_init() we can allocate a nice chunk of kernel
+   * low memory to bootstrap the APs.
    * we also manually map the APIC regions */
   smp_scan ();
 #endif
@@ -416,11 +416,11 @@ i386_init (void)
   pic_init ();
 
   env_init ();
-  cpucxt_init (); 
+  cpucxt_init ();
 
 #ifdef __SMP__
   /* locks need cpucxt info, so before cpucxt_init is not helpful */
-  mp_locks_init (); 
+  mp_locks_init ();
 #endif
 
   pctr_init ();
@@ -460,7 +460,7 @@ i386_init (void)
 
   /* must be done after bc and init are setup, but before xn */
 
-  /* if we didn't find any partitions, don't give 
+  /* if we didn't find any partitions, don't give
      permission to access anything out (si_disks still
      refers to the physical disks) */
 
@@ -480,9 +480,9 @@ i386_init (void)
   /* switch to APIC LAST */
 
   if (smp_mode) {
-    /* make sure we have an IO APIC that we can use, and 
+    /* make sure we have an IO APIC that we can use, and
      * move interrupt control from 8259A to IOAPIC if we do.
-     * this should be done last to allow all useful IRQs to be 
+     * this should be done last to allow all useful IRQs to be
      * registered by the driver codes */
     ioapic_init ();
   }
@@ -501,7 +501,7 @@ i386_init (void)
   printf("SMP commenced\n");
 
   check_cache_align();
-  
+
   launch_init ();
   sched_runnext ();
 
@@ -509,18 +509,18 @@ i386_init (void)
 }
 
 #ifdef __SMP__
-  
+
 void
 i386_init_secondary (void)
 {
   extern void env_init_secondary ();
   extern void ppage_init_secondary ();
   extern void i386_start_cpu ();
-  
+
   smp_callin ();  /* tell BSP we are up, so it can do some stuff for us */
 
-  ppage_init_secondary (); 
-  env_init_secondary (); 
+  ppage_init_secondary ();
+  env_init_secondary ();
   cpucxt_init ();
 
   pctr_init();
@@ -575,7 +575,7 @@ fault_trampoline (int trap, int errcode)
     *(((u_int*)u_tf)-2) = trap;
     asm volatile ("mov %%cr2, %0":"=r" (u_tf->tf_oesp));
     page_fault_mode = m;
-    
+
     /* ...but modify the kernel's trap frame so we can return sanely
        to a user-level handler. */
     tf->tf_esp = tf->tf_ebp = ((u_int)u_tf) - 12; /* trapno, errcode, and ?? */
@@ -585,7 +585,7 @@ fault_trampoline (int trap, int errcode)
     tf->tf_es  = GD_UD|3;
     tf->tf_ss  = GD_UD|3;
     tf->tf_cs  = GD_UT|3;
-    
+
     env_pop_tf ((tfp)tf);
 }
 
@@ -626,4 +626,3 @@ general_protection_fault (int trap, int errcode)
 #include <xok/pmapP.h>
 #include <xok/sysinfoP.h>
 #endif
-

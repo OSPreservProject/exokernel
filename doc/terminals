@@ -6,7 +6,7 @@ Old terminals:
 
 Nterminals:
 /dev/[pt]typ[0-7] this were the first real pseudo terminals.  Allows us to run
-	telnetd, vi.  Supports most ioctl.  Does not support process groups.
+	telnetd, vi.  Supports most ioctls.  Does not support process groups.
 	select predicates based on polling every 50ms.
 
 New Terminals:

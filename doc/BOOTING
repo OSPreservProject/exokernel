@@ -173,7 +173,7 @@ BOOTING OVER THE NETWORK
 Two points:
 * Given a copy of the kernel, the program 'loadkern' can essentially
 reboot the computer using that image.
-* The default init programs will check the file /boot/xok.osid and it
+* The default init programs will check the file /boot/xok.osid and if
 the contents does not match the running kernels osid then a 'loadkern'
 will be performed on /boot/xok.  If the file .noboot exists then a
 'loadkern' will not be performed.  Be sure to perform a 'gmake

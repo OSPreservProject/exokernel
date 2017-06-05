@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -128,7 +128,7 @@ disk_giveaway (void)
 }
 
 struct buf *
-disk_buf_alloc ()                  
+disk_buf_alloc ()
 {
   return ((struct buf *) malloc (sizeof (struct buf)));
 }
@@ -548,7 +548,7 @@ sys_disk_request (u_int sn, struct Xn_name *xn_user, struct buf *reqbp,
     } else {
       access = ACL_W;
     }
-    
+
     xtnt.xtnt_block = segbp->b_blkno;
     xtnt.xtnt_size = segbp->b_bcount / di->d_bsize;
     bcount += segbp->b_bcount;
@@ -568,7 +568,7 @@ sys_disk_request (u_int sn, struct Xn_name *xn_user, struct buf *reqbp,
     if (! (segbp->b_flags & B_SCATGATH)) {
       if (segbp->b_resptr) {
 	resptr = segbp->b_resptr;
-	if ((((u_int) resptr) % sizeof(u_int)) || 
+	if ((((u_int) resptr) % sizeof(u_int)) ||
 	    !(isvawriteable (resptr))) {
 	  warn ("sys_disk_request: bad resptr (%p)", resptr);
 	  return (-E_FAULT);

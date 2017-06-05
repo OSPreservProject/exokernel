@@ -7,4 +7,3 @@ or exopc/tools/linux-cross/cross-tools-libc6.tgz if you are using libc6.
 2) edit exopc/ARCH to set LINUX = 1
 2.5) set LNPROGINSTALL and LNLIBINSTALL since install/strip don't work under linux
 3) make clean; make
-

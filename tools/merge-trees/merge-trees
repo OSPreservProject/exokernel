@@ -45,7 +45,7 @@ while ($queue[$#queue]) {
     close(TREE1ROOT);
     close(TREE2ROOT);
     close(TREE3ROOT);
-    
+
     foreach $fp (sort(keys(%all))) {
 	if (($fp eq ".") || ($fp eq "..") || ($fp eq "CVS") || ($fp eq "obj") || ($fp =~ /\.orig$/) || ($fp =~ /\.o$/) || ($fp =~ /\.d$/) || ($fp =~ /\.a$/)) { next;}
 
@@ -131,7 +131,7 @@ while ($queue[$#queue]) {
 	    if ($path eq "/") {
 		print "   ".$fp."\n";
 	    } else {
-		print "   ".$path.$fp."\n";		
+		print "   ".$path.$fp."\n";
 	    }
 	}
 	if ($dt1 && $dt2 && $dt3) {
@@ -144,6 +144,3 @@ while ($queue[$#queue]) {
 	}
     }
 }
-
-
-

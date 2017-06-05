@@ -86,6 +86,3 @@ donec:
 There is another blocking primitive, which is tsleep/wakeup.  One process does
 tsleep(address,...) and sleeps until another process does a
 wakeup(address);
-
-
-

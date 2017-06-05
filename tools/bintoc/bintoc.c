@@ -67,7 +67,7 @@ main (int argc, char **argv)
   int opt;
   FILE *fp;
 
-  setvbuf(stdout, NULL, _IOFBF,0); 
+  setvbuf(stdout, NULL, _IOFBF,0);
 
   while ((opt = getopt (argc, argv, "Ss:l:")) != -1) {
     switch (opt) {

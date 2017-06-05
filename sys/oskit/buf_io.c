@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 1997-1998 University of Utah and the Flux Group.
  * All rights reserved.
- * 
+ *
  * The following are the copyrights and redistribution conditions that apply
  * to this portion of the OSKit software.  To arrange for alternate terms,
  * contact the University at csl-dist@cs.utah.edu or +1-801-585-3271.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that:
  * 1. These copyright, permission, and disclaimer notices are retained
@@ -18,7 +18,7 @@
  *    either be included in the distribution or be available at no more than
  *    the cost of distribution plus a nominal fee, and must be freely
  *    redistributable under reasonable conditions.
- * 
+ *
  * THIS SOFWARE IS PROVIDED "AS IS" AND WITHOUT ANY WARRANTY, INCLUDING
  * WITHOUT LIMITATION THE WARRANTIES OF MERCHANTIBILITY, FITNESS FOR A
  * PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THE COPYRIGHT HOLDER DISCLAIMS

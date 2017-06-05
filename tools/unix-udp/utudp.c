@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -134,7 +134,7 @@ init(void)
 	exit(1);
     }
 
-    if (connect (s, (struct sockaddr *) &dstaddr, sizeof (dstaddr)) < 0) 
+    if (connect (s, (struct sockaddr *) &dstaddr, sizeof (dstaddr)) < 0)
     {
 	perror("connect");
 	exit(1);
@@ -200,7 +200,7 @@ main(int argc, char *argv[])
     if (argc != 7) {
 	usage();
     }
-    
+
     isserver = argv[1][0] == 's';
     host = argv[2];
     myport = atoi(argv[3]);

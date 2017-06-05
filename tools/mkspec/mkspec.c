@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -162,7 +162,7 @@ int main (int argc, char *argv[]) {
       if (strchr (&strtab[soff], '.') || strchr (&strtab[soff], '/'))
 	goto skip;
       if (s->n_type & N_EXT) {
-	printf ("\t.globl\t%s\n\t.set\t%s,0x%lx\n\t.weak\t%s\n\n", 
+	printf ("\t.globl\t%s\n\t.set\t%s,0x%lx\n\t.weak\t%s\n\n",
 		&strtab[soff], &strtab[soff], s->n_value, &strtab[soff]);
       }
     skip:

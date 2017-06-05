@@ -32,7 +32,7 @@ class GraphCollection:
 	titles = []
 	scales = []
 	width = 0
-	
+
 	# public function members
 	def __init__ (self, numPairs, titles, legends, maxRange, color1, color2, totalHeight,
 		      totalWidth, spacing1, spacing2):
@@ -67,7 +67,7 @@ from Tkinter import *
 class Display (Frame):
 	def createGraphs (self, numPairs, titles, legends):
 		self.graphs = GraphCollection (numPairs, titles, legends, self.maxRange,
-					       'red', 'blue', 
+					       'red', 'blue',
 					       self.height, self.width,
 					       0.5, 0.25)
 
@@ -163,7 +163,7 @@ class Display (Frame):
 					{'text': self.graphs.legend[0],
 					 'font': '*-times-medium-r-normal--*-240-*-*-*-*-*-*',
 					 'anchor': 'c'})
-			
+
 		self.tk.update ()
 
 	def createWidgets(self):

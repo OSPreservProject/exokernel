@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -45,7 +45,7 @@
 #include <xok_include/assert.h>
 
 inline int
-acl_access (cap *c, cap *acl, u_short acl_len, const u_char perm) 
+acl_access (cap *c, cap *acl, u_short acl_len, const u_char perm)
   __XOK_REQ_SYNC(on acllist)
 {
   if (!c->c_valid) return -E_CAP_INVALID;
@@ -224,7 +224,7 @@ sys_forge (u_int sn, u_int k, u_int kd, cap *new, u_int ke, int envid)
 
   /* Capability indices must be in range.  The capability at index 0
    * is the capability with access to the environment, and so can only
-   * be overwritten with a complete (perm == ACL_ALL) capability.  
+   * be overwritten with a complete (perm == ACL_ALL) capability.
    */
   if (kd >= e->env_clen)
     return (-E_INVAL);
@@ -242,12 +242,12 @@ sys_forge (u_int sn, u_int k, u_int kd, cap *new, u_int ke, int envid)
   /* If the new capability is invalid, treat this as a request to
    * destroy the destination capibility.
    */
-  if (! new || ! new->c_valid) 
+  if (! new || ! new->c_valid)
   {
     MP_RWLOCK_WRITE_GET(&e->cap_rwlock);
     bzero (&e->env_clist[kd], sizeof (cap));
     MP_RWLOCK_WRITE_RELEASE(&e->cap_rwlock);
-    
+
     page_fault_mode = m;
     return (0);
   }
@@ -279,14 +279,14 @@ sys_self_acquire (u_int sn, u_int k, u_int genvid)
   /* k must be a valid slot */
   if (k == 0 || k >= curenv->env_clen)
     return -E_INVAL;
-  
+
   /* there must be a valid granting environment with a resident Uenv */
   if (! (e = env_id2env (genvid, &error))) return error;
   if (! e->env_u) return -E_BAD_ENV;
 
   if (e->env_u->u_aenvid != curenv->env_id)
     return -E_BAD_ENV;
- 
+
   /* technically we should sync access to e->env_u, but since only one env can
    * get a granted cap, we assume there will be no collission between curenv
    * and the giver */
@@ -298,11 +298,11 @@ sys_self_acquire (u_int sn, u_int k, u_int genvid)
     return -E_CAP_INSUFF;
 
   e->env_u->u_aenvid = 0;
-  
+
   MP_RWLOCK_WRITE_GET(&curenv->cap_rwlock);
   curenv->env_clist[k] = e->env_u->u_gcap;
   MP_RWLOCK_WRITE_RELEASE(&curenv->cap_rwlock);
-  
+
   return (0);
 }
 

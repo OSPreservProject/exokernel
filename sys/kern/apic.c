@@ -35,8 +35,8 @@
  */
 
 
-/* NOTE: readers of this code should also read Intel MP Spec v1.4, 
- * and the Intel 82093 I/O APIC specification on IO APIC 
+/* NOTE: readers of this code should also read Intel MP Spec v1.4,
+ * and the Intel 82093 I/O APIC specification on IO APIC
  */
 
 
@@ -146,7 +146,7 @@ localapic_enable ()
   delay (10);
 
   apic_read(APIC_LVTT);
-  cfg = APIC_LVT_TIMER_PERIODIC | IRQ_OFFSET+0; 
+  cfg = APIC_LVT_TIMER_PERIODIC | IRQ_OFFSET+0;
   apic_write(APIC_LVTT, cfg);
 
   /* set up the apic timer to have frequency at 16th of bus clock */
@@ -162,7 +162,7 @@ localapic_enable ()
   zero_8254();
   apic_t1=apic_read(APIC_TMCCT);
   // each time 8254 zeros, that's 1 SI_HZ
-  for (i=0; i<num_bus_calib_loops; i++) zero_8254();  
+  for (i=0; i<num_bus_calib_loops; i++) zero_8254();
   apic_t2=apic_read(APIC_TMCCT);
 
   /* number of bus clock ticks per 8254 timer counter wraparound */
@@ -185,9 +185,9 @@ localapic_enable ()
 
   if (!smp_commenced) // BP
   {
-    // unmask the external timer - we don't need it anymore 
+    // unmask the external timer - we don't need it anymore
     irq_setmask_8259A (irq_mask_8259A | (1 << 0));
-    printf("  Timer interrupt transfered to APIC #%ld\n", 
+    printf("  Timer interrupt transfered to APIC #%ld\n",
 	   GET_APIC_ID(apic_read(APIC_ID)));
   }
 
@@ -229,7 +229,7 @@ ioapic_pin_2_irq (int pin, int type, int *idx)
   int i;
   for (i = 0; i < ioapic_irq_entries_count; i++) {
     struct mpc_config_intsrc m = ioapic_irq_entries[i];
-    if (m.dstirq == pin && m.irqtype == type) 
+    if (m.dstirq == pin && m.irqtype == type)
     {
       *idx = i;
       return m.srcbusirq;

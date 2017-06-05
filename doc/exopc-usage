@@ -179,7 +179,7 @@ The following will get you started quickly on the PDOS machines:
 	> cd exopc
 	> setenv EXODEST /development/exopc/tree
 
-	Make sure this directory is mountatble (exportable) to the
+	Make sure this directory is mountable (exportable) to the
 	exokernel machine that is going to use it (this is usually controlled
 	via file /etc/exports)
 
@@ -203,5 +203,3 @@ The following will get you started quickly on the PDOS machines:
 	passwd: exopc
  	
 	you're now logged into a machine running an exokernel!
-
-

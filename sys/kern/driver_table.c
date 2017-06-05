@@ -3,9 +3,9 @@
  * author: Michael Scheinholtz
  * email:  mseu@ece.cmu.edu
  *
- * description:  
+ * description:
  *    This file holds a table of device drivers that have been implemented
- * specifically for the Exokernel called the driver arbitration table.  
+ * specifically for the Exokernel called the driver arbitration table.
  *    A driver in this table overrides a driver
  * contained in the OS-kit- because drivers implemented specifically for
  * the Exokernel should be more suitable for use than the same driver from
@@ -35,7 +35,7 @@ typedef struct driver_struct
 /*
  * An array of driver structures terminated with a null
  * Driver structure. If a driver is present in the table,
- * that means the Exokernel has a native version of the 
+ * that means the Exokernel has a native version of the
  * driver and the OS-kit should not use its version.
  */
 
@@ -49,7 +49,7 @@ static driver_t exo_driver_table[] = {{"tulip"}, {"de4x5"}, {"smc-ultra"}, {""}}
 /* int is_driver_present:
  *
  * returns a 1 if the driver is in the exo_driver_table (and the
- * OS-kit should not probe that driver) 
+ * OS-kit should not probe that driver)
  *
  * returns a zero if the driver is not present.
  */
@@ -59,7 +59,7 @@ int driver_is_present
     char *driver_name /* the name of the driver. ie "tulip" */
    )
 {
-  int i; 
+  int i;
   int found_driver;   /* flag, 1 if driver found, 0 if not */
 
   /*
@@ -68,8 +68,8 @@ int driver_is_present
 
   assert(driver_name != NULL);
 
-  /* 
-   * search the table for a match to driver name, 
+  /*
+   * search the table for a match to driver name,
    * the end of the table must be marked by a null string.
    */
   found_driver = 0;
@@ -83,7 +83,7 @@ int driver_is_present
 		}
 	}
 
-  return found_driver;  
+  return found_driver;
 }
 
 void init_driver_table()

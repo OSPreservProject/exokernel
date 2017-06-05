@@ -1,5 +1,5 @@
 This is information taken from /usr/src/sys/kern/syscalls.c.  I have
-filter out all the system calls that are too random or not usefull
+filter out all the system calls that are too random or not useful
 like: all the compat_43 calls, obsolete ones, vtrace, nfssvc, getfh,
 ntp_*, lfs_*.
 

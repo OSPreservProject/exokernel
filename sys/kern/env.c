@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -102,7 +102,7 @@ mapash (int eid, u_int pde)
 #endif /* ASH_ENABLE */
 
 
-void 
+void
 load_idle_env(struct Env* e, int cpu)
 {
   int i, r;
@@ -120,7 +120,7 @@ load_idle_env(struct Env* e, int cpu)
   va = UTEXT;
   for (i = 0; i < env0_bin_size;)
     {
-      if ((r = ppage_alloc (PP_USER, &pp, 0)) < 0) 
+      if ((r = ppage_alloc (PP_USER, &pp, 0)) < 0)
 	panic ("env_init: could not alloc page for env 0. Errno %d: %s\n",
 	       r, kstrerror(r));
       if (i == 0)
@@ -133,7 +133,7 @@ load_idle_env(struct Env* e, int cpu)
 	  bcopy (&env0_bin[i], pp2va (pp), NBPG);
 	  i += NBPG;
 	}
-      if ((r = ppage_insert 
+      if ((r = ppage_insert
 	    (&envs[envidx(e->env_id)], pp, va, PG_P | PG_W | PG_U)) < 0)
 	{
 	  panic ("env_init: could not map page for env 0. Errno %d: %s\n",
@@ -181,7 +181,7 @@ load_idle_env(struct Env* e, int cpu)
 #ifdef __PAM__
   e->prot_abs_id = -1;
 #endif
-  
+
   __cpucxts[cpu]->_idle_env = e;
 }
 
@@ -195,7 +195,7 @@ env_init_secondary (void)
   /*
    * - setup new kernel stack
    * - load a real page table
-   * - initialize TSS for secondary processors 
+   * - initialize TSS for secondary processors
    */
 {
   int cpu = get_cpu_id ();
@@ -214,11 +214,11 @@ env_init_secondary (void)
       panic ("env_init_secondary: could not allocate env for idle proc. "
 	     "Errno %d: %s\n", r, kstrerror(r));
     }
-  
+
   /* ppage_init_secondary has already created a pt for kernel stack, but
    * that's at the bottom of the directory VA, we want to get kernel stack to
    * the top */
-  
+
   jj = j = PTENO(KSTACKTOP-KSTKSIZE);
   for (; j < NLPG; j++)
     kstack_pts[cpu][j] = kstack_pts[cpu][j - jj];
@@ -233,10 +233,10 @@ env_init_secondary (void)
   /* move over the new cr3 */
   asm volatile ("movl %0,%%cr3" :: "r" (e->env_pd->envpd_cr3[cpu]));
 
-  /* 
+  /*
    * Setup a TSS (primarily so that we get the right stack when we
-   * trap to the kernel). Also, the TR selector is how we determine 
-   * which CPU we are on later in kernel. 
+   * trap to the kernel). Also, the TR selector is how we determine
+   * which CPU we are on later in kernel.
    */
   p0ts[cpu].ts_esp0 = KSTACKTOP;
   p0ts[cpu].ts_ss0 = GD_KD;
@@ -245,9 +245,9 @@ env_init_secondary (void)
   gdt_selector = (GD_TSS >> 3) + cpu;
   settss (gdt[gdt_selector], &(p0ts[cpu]));
   asm volatile ("ltr %0"::"r" (gdt_selector << 3));
-  
+
   load_idle_env(e, cpu);
-  
+
   printf ("Processor %d: tss %d, ", cpu, gdt_selector);
   printf ("stack at 0x%x, ", e->env_pd->envpd_cr3[cpu]);
   printf ("idle env %d\n", e->env_id);
@@ -300,7 +300,7 @@ env_init (void)
     }
 
   /* save CPU 0's kernel stack PDE */
-  kstack_pts[0] = 
+  kstack_pts[0] =
     (Pte *)ptov(e->env_pd->envpd_pdir[0][PDENO(KSTACKTOP-1)]&~PGMASK);
 
   p0pdir = e->env_pd->envpd_pdir[0];
@@ -308,10 +308,10 @@ env_init (void)
   ppage_free (pa2pp (p0cr3));
   p0cr3 = e->env_pd->envpd_cr3[0];
 
-  /* 
+  /*
    * Setup a TSS (primarily so that we get the right stack when we
-   * trap to the kernel). Also, the TR selector is how we determine 
-   * which CPU we are on later in kernel. 
+   * trap to the kernel). Also, the TR selector is how we determine
+   * which CPU we are on later in kernel.
    */
   p0ts[0].ts_esp0 = KSTACKTOP;
   p0ts[0].ts_ss0 = GD_KD;
@@ -329,14 +329,14 @@ env_init (void)
     *ptep = pa;
 
   SYSINFO_ASSIGN(si_killed_envs,0);
-  
+
   /* allocate the init env (environment 1). */
   if ((r = env_alloc (&init_env, 1, 0)) < 0)
     {
       panic ("env_init: could not allocate env for idle proc. "
 	     "Errno %d: %s\n", r, kstrerror(r));
     }
-  
+
   printf ("Processor 0: tss %d, ", GD_TSS >> 3);
   printf ("stack at 0x%x, ", p0ts[0].ts_esp0);
   printf ("idle env %d\n", e->env_id);
@@ -351,9 +351,9 @@ env_dup_pdir_forcpu(struct Env *e)
   extern struct Ppage* pd_duplicate(Pde *const);
   struct Ppage *pp;
   int r;
-  
+
   assert(e->env_pd->envpd_cr3[cpu_id] == 0);
-  
+
   MP_SPINLOCK_GET(&e->env_pd->envpd_spinlock);
 
   pp = pd_duplicate(e->env_pd->envpd_pdir[e->env_pd->envpd_active]);
@@ -369,7 +369,7 @@ env_dup_pdir_forcpu(struct Env *e)
     ppage_free(pp);
     e->env_pd->envpd_cr3[cpu_id] = 0;
     e->env_pd->envpd_pdir[cpu_id] = 0L;
-    
+
     MP_SPINLOCK_RELEASE(&e->env_pd->envpd_spinlock);
     return -1;
   }
@@ -386,7 +386,7 @@ env_dup_pdir_forcpu(struct Env *e)
 
 
 
-int 
+int
 env_clone(struct Env **new)
 {
   struct Env *e;
@@ -395,7 +395,7 @@ env_clone(struct Env **new)
 
   assert(curenv != 0L);
 
-  if ((r = env_alloc(new, 0, 0)) < 0) 
+  if ((r = env_alloc(new, 0, 0)) < 0)
     return r;
 
   e = *new;
@@ -404,7 +404,7 @@ env_clone(struct Env **new)
 #endif
 
   e->env_pd = curenv->env_pd;
- 
+
   MP_SPINLOCK_GET(&e->env_pd->envpd_spinlock);
 
   e->env_pd->envpd_rc++;
@@ -417,7 +417,7 @@ env_clone(struct Env **new)
     return r;
   }
 
-  if ((r = ppage_insert 
+  if ((r = ppage_insert
 	(e, pp, UADDRS+envidx(e->env_id)*NBPG, PG_P | PG_W | PG_U)) < 0)
   {
     MP_SPINLOCK_RELEASE(&e->env_pd->envpd_spinlock);
@@ -430,7 +430,7 @@ env_clone(struct Env **new)
 
   MP_SPINLOCK_RELEASE(&e->env_pd->envpd_spinlock);
   e->env_status = ENV_OK;
- 
+
 #ifdef __SMP__
   env_release(e);
 #endif
@@ -440,7 +440,7 @@ env_clone(struct Env **new)
 
 
 int
-env_alloc(struct Env **new, int newpt, int cpu) 
+env_alloc(struct Env **new, int newpt, int cpu)
   __XOK_SYNC(locks ENV_LIST_LOCK;
              releases ENV_LIST_LOCK;
 	     calls ppage_alloc; calls ppage_free;
@@ -461,17 +461,17 @@ env_alloc(struct Env **new, int newpt, int cpu)
     MP_QUEUELOCK_RELEASE(GQLOCK(ENV_LIST_LOCK));
     return -E_NO_FREE_ENV;
   }
-  
+
   *new = e;
   LIST_REMOVE (e, env_link);
   bzero (e, sizeof (*e));
   LIST_INSERT_HEAD (&env_used_list, e, env_link);
-  
+
   MP_QUEUELOCK_RELEASE(GQLOCK(ENV_LIST_LOCK));
 
   MP_SPINLOCK_INIT(&(e->env_spinlock));
   MP_RWLOCK_INIT(&(e->cap_rwlock));
-    
+
   e->env_id = (next_env_id++ << (1 + LOG2NENV)) | (e - envs);
   e->env_clen = MAX_CAPNO;
   e->env_pred_pgs = NULL;
@@ -483,9 +483,9 @@ env_alloc(struct Env **new, int newpt, int cpu)
     bzero(e->env_pd, sizeof(struct EnvPD));
 
     /* Allocate a page for the page directory */
-    if ((r = ppage_alloc (PP_KERNEL, &pp, 0)) < 0) 
+    if ((r = ppage_alloc (PP_KERNEL, &pp, 0)) < 0)
       goto env_alloc_err;
-    
+
     for (i=0; i<NR_CPUS; i++)
     {
       e->env_pd->envpd_cr3[i] = 0;
@@ -497,7 +497,7 @@ env_alloc(struct Env **new, int newpt, int cpu)
     e->env_pd->envpd_active = cpu;
     e->env_pd->envpd_rc = 1;
     bzero (e->env_pd->envpd_pdir[cpu], NBPG);
-    
+
     e->env_pd->envpd_nptes = malloc (NLPG * sizeof (e->env_pd->envpd_nptes[0]));
     if (!e->env_pd->envpd_nptes)
     {
@@ -509,7 +509,7 @@ env_alloc(struct Env **new, int newpt, int cpu)
       goto env_alloc_err;
     }
     bzero (e->env_pd->envpd_nptes, NLPG * sizeof (e->env_pd->envpd_nptes[0]));
-  
+
     /* Map kernel stack and physical memory */
     for (i = PDENO (KSTACKTOP - 1); i < NLPG; i++)
       e->env_pd->envpd_pdir[cpu][i] = p0pdir[i];
@@ -517,13 +517,13 @@ env_alloc(struct Env **new, int newpt, int cpu)
     /* Map in default CPUContext structure */
     e->env_pd->envpd_pdir[cpu][PDENO(CPUCXT)]
       = kva2pa(cpucxt_pts[cpu]) | PG_W | PG_P;
-  
+
     /* Map vpt/vpd */
     e->env_pd->envpd_pdir[cpu][PDENO(VPT)]
       = e->env_pd->envpd_cr3[cpu] | PG_P | PG_W;
     e->env_pd->envpd_pdir[cpu][PDENO(UVPT)]
       = e->env_pd->envpd_cr3[cpu] | PG_P | PG_U;
-  
+
     /* Map the data structures */
     e->env_pd->envpd_pdir[cpu][PDENO(UPPAGES)]
       = kva2pa(ppage_upt) | PG_U | PG_P;
@@ -550,7 +550,7 @@ env_alloc(struct Env **new, int newpt, int cpu)
       LIST_REMOVE (e, env_link);
       LIST_INSERT_HEAD (&env_free_list, e, env_link);
       MP_QUEUELOCK_RELEASE(GQLOCK(ENV_LIST_LOCK));
-     
+
       printf ("could not alloc page for ash area");
       goto env_alloc_err;
     }
@@ -567,12 +567,12 @@ env_alloc(struct Env **new, int newpt, int cpu)
       free(e->env_pd->envpd_nptes);
       ppage_free(pp);
       free(e->env_pd);
-     
+
       MP_QUEUELOCK_GET(GQLOCK(ENV_LIST_LOCK));
       LIST_REMOVE (e, env_link);
       LIST_INSERT_HEAD (&env_free_list, e, env_link);
       MP_QUEUELOCK_RELEASE(GQLOCK(ENV_LIST_LOCK));
-     
+
       goto env_alloc_err;
     }
 
@@ -584,12 +584,12 @@ env_alloc(struct Env **new, int newpt, int cpu)
       ppage_free(pp);
       ppage_free(pp2);
       free(e->env_pd);
-      
+
       MP_QUEUELOCK_GET(GQLOCK(ENV_LIST_LOCK));
       LIST_REMOVE (e, env_link);
       LIST_INSERT_HEAD (&env_free_list, e, env_link);
       MP_QUEUELOCK_RELEASE(GQLOCK(ENV_LIST_LOCK));
-     
+
       goto env_alloc_err;
     }
 
@@ -633,7 +633,7 @@ env_alloc(struct Env **new, int newpt, int cpu)
   /* Don't allow ipc's */
   e->env_allowipc1 = XOK_IPC_BLOCKED;
   e->env_allowipc2 = XOK_IPC_BLOCKED;
-  
+
   e->msgring = 0L;
 
   /* Initially the process is not using any protected abstraction */
@@ -646,8 +646,8 @@ env_alloc(struct Env **new, int newpt, int cpu)
   e->env_cur_cpu = -1;
   e->env_last_cpu = -1;
 #endif
-  
-  if (newpt) 
+
+  if (newpt)
     e->env_status = ENV_OK;
 
   r = 0; /* should fall through */
@@ -657,7 +657,7 @@ env_alloc_err:
 
 
 void
-env_free (struct Env *e) 
+env_free (struct Env *e)
   __XOK_REQ_SYNC(e localized)
   __XOK_SYNC(locks e->env_spinlock;
              calls ppage_free;
@@ -672,12 +672,12 @@ env_free (struct Env *e)
 
   MP_SPINLOCK_GET(&e->env_spinlock);
   MP_SPINLOCK_GET(&e->env_pd->envpd_spinlock);
-  
+
   /* always remove our UAREA page */
   ppage_remove(e, UADDRS+envidx(e->env_id)*NBPG);
 
   e->env_pd->envpd_rc--;
-     
+
   /* only remove page directory if we are the last one using it */
   if (e->env_pd->envpd_rc == 0)
   {
@@ -690,24 +690,24 @@ env_free (struct Env *e)
       if (pdeno >= PDENO (UTOP) && pdeno < PDENO (UADDRS))
 	continue;
 
-      if (!(e->env_pd->envpd_pdir[e->env_pd->envpd_active][pdeno] & PG_P)) 
+      if (!(e->env_pd->envpd_pdir[e->env_pd->envpd_active][pdeno] & PG_P))
         continue;
 
       npte = e->env_pd->envpd_nptes[pdeno];
-      if (npte > NLPG) 
-      { 
-        warn ("env_npte corrupted in env_free....assuming NLPG"); 
-        npte = NLPG; 
+      if (npte > NLPG)
+      {
+        warn ("env_npte corrupted in env_free....assuming NLPG");
+        npte = NLPG;
       }
 
       pt = ptov(e->env_pd->envpd_pdir[e->env_pd->envpd_active][pdeno]&~PGMASK);
-      for (pteno = 0; npte; pteno++) 
-      { 
-        if (pt[pteno] & PG_P) 
-        { 
-	  ppage_remove (e, (pdeno << PDSHIFT) | (pteno << PGSHIFT)); 
-	  npte--; 
-        } 
+      for (pteno = 0; npte; pteno++)
+      {
+        if (pt[pteno] & PG_P)
+        {
+	  ppage_remove (e, (pdeno << PDSHIFT) | (pteno << PGSHIFT));
+	  npte--;
+        }
       }
 
       pp = kva2pp((u_long)pt);
@@ -717,7 +717,7 @@ env_free (struct Env *e)
     }
 
     free (e->env_pd->envpd_nptes);
-    
+
     for (i=0; i<NR_CPUS; i++)
     {
       if (e->env_pd->envpd_cr3[i] != 0)
@@ -747,7 +747,7 @@ env_free (struct Env *e)
 
   /* punt any scheduling predicate */
   wk_free (e);
-  
+
   /* punt references to any filters we have */
   dpf_del_env (e->env_id);
 
@@ -779,7 +779,7 @@ env_free (struct Env *e)
 
 
 struct Env *
-env_access (u_int k, u_int envid, u_char perm, int *error) 
+env_access (u_int k, u_int envid, u_char perm, int *error)
   __XOK_SYNC(calls env_getcap; locks e->env_spinlock; calls acl_access)
 {
   struct Env *e;
@@ -797,7 +797,7 @@ env_access (u_int k, u_int envid, u_char perm, int *error)
     return (NULL);
 
   MP_RWLOCK_READ_GET(&e->cap_rwlock);
-  
+
   if ((r = acl_access (&c, e->env_clist, 1, perm)) < 0)
   {
     *error = r;
@@ -811,7 +811,7 @@ env_access (u_int k, u_int envid, u_char perm, int *error)
 
 
 void
-kill_env (struct Env *e) 
+kill_env (struct Env *e)
   __XOK_REQ_SYNC(e localized)
   __XOK_SYNC(calls env_free)
 {
@@ -826,13 +826,13 @@ kill_env (struct Env *e)
 
 /* protect the env's u-area with the give cap */
 void
-set_cap_uarea (struct Env *e, cap * c) 
+set_cap_uarea (struct Env *e, cap * c)
   __XOK_REQ_SYNC(on e->env_pd->envpd_spinlock;  calls pp->pp_klock)
 {
   Pte *ptep;
   struct Ppage *pp;
 
-  ptep = pt_get_ptep (e->env_pd->envpd_pdir[e->env_pd->envpd_active], 
+  ptep = pt_get_ptep (e->env_pd->envpd_pdir[e->env_pd->envpd_active],
                       UADDRS+envidx(e->env_id)*NBPG);
   pp = ppages_get(*ptep >> PGSHIFT);
   ppage_setcap (pp, c);
@@ -859,7 +859,7 @@ backtrace (tfp tf)
     {
       repeats--;
 
-      /* this is kind of bogus, but it makes sure that pagefaults go to 
+      /* this is kind of bogus, but it makes sure that pagefaults go to
 	 the application and not to us */
       m = page_fault_mode;
       page_fault_mode = PFM_PROP;
@@ -902,7 +902,7 @@ backtrace (tfp tf)
 
 DEF_ALIAS_FN (sys_env_clone, sys_env_alloc);
 u_int
-sys_env_alloc (u_int sn, u_int k, int *error) 
+sys_env_alloc (u_int sn, u_int k, int *error)
   __XOK_SYNC(calls env_alloc; locks e->env_pd->envpd_spinlock)
 {
   struct Env *e;
@@ -915,7 +915,7 @@ sys_env_alloc (u_int sn, u_int k, int *error)
     return (0);
   }
 
-  
+
   /* An environment must be seeded with a full capability */
   if ((c.c_perm & CL_ALL) != CL_ALL)
   {
@@ -931,7 +931,7 @@ sys_env_alloc (u_int sn, u_int k, int *error)
       copyout(&r, error, sizeof(int));
       return (0);
     }
-  } 
+  }
   else /* sn == SYS_env_clone */
   {
     if ((r = env_clone(&e)) < 0)
@@ -950,7 +950,7 @@ sys_env_alloc (u_int sn, u_int k, int *error)
 
 
 int
-sys_env_free (u_int sn, u_int k, u_int envid) 
+sys_env_free (u_int sn, u_int k, u_int envid)
   __XOK_SYNC(calls env_access; calls kill_env)
 {
   struct Env *e;
@@ -958,10 +958,10 @@ sys_env_free (u_int sn, u_int k, u_int envid)
 
   if (! (e = env_access (k, envid, ACL_ALL, &r))) return r;
   if (!e->env_id) return -E_BAD_ENV; /* can't free process 0 */
-  
+
   /* can't free something running on another CPU, must revoke first */
 #ifdef __SMP__
-  if (env_localize(e) < 0) return -E_ENV_RUNNING; 
+  if (env_localize(e) < 0) return -E_ENV_RUNNING;
 #endif
 
   /* printf("environment %d is killed\n",envid); */
@@ -1003,7 +1003,7 @@ sys_env_ashuva (u_int sn, u_int k, u_int envid, u_int va)
   wk_free (e);
 
   /* Unmap any pages at the new ASH location */
-  for (va2 = va; e->env_pd->envpd_nptes[PDENO (va)] > 0 && 
+  for (va2 = va; e->env_pd->envpd_nptes[PDENO (va)] > 0 &&
       va2 < va + PDMASK; va2 += NBPG)
     {
       if (ppage_remove (e, va2) < 0)
@@ -1030,7 +1030,7 @@ sys_env_ashuva (u_int sn, u_int k, u_int envid, u_int va)
 	  if (pt[pteno] & PG_P)
 	    {
 	      /* For each vp pointed to by ppage entry... */
-	      for (vp = KLIST_KPTR 
+	      for (vp = KLIST_KPTR
 		          (&((Ppage_pp_vpl_get(ppages_get(pt[pteno]>>PGSHIFT)))
 			     ->lh_first));
 		   ;
@@ -1056,7 +1056,7 @@ sys_env_ashuva (u_int sn, u_int k, u_int envid, u_int va)
   /* Set the pdirs and npte's for the old and new locations */
   olduva = e->env_ashuva;
   e->env_pdir[PDENO (va)] = e->env_pdir[PDENO (e->env_ashuva)];
-  e->env_pd->envpd_nptes[PDENO (va)] = 
+  e->env_pd->envpd_nptes[PDENO (va)] =
     e->env_pd->envpd_nptes[PDENO (e->env_ashuva)];
   e->env_ashuva = va;
   e->env_pdir[PDENO (olduva)] = 0;
@@ -1076,7 +1076,7 @@ sys_geteid (u_int sn)
 
 
 int
-sys_rdu (u_int sn, int k, u_int envid, struct Uenv *ue) 
+sys_rdu (u_int sn, int k, u_int envid, struct Uenv *ue)
   __XOK_NOSYNC
 {
   struct Env *e;
@@ -1091,7 +1091,7 @@ sys_rdu (u_int sn, int k, u_int envid, struct Uenv *ue)
 
 
 int
-sys_wru (u_int sn, int k, u_int envid, struct Uenv *ue) 
+sys_wru (u_int sn, int k, u_int envid, struct Uenv *ue)
   __XOK_SYNC(calls env_access; attempts env_localize)
 {
   struct Env *e;
@@ -1125,9 +1125,9 @@ sys_wrenv (u_int sn, int k, u_int envid, struct Env *ue)
     return r;
 
 #ifdef __SMP__
-  if (env_localize(e) < 0) 
+  if (env_localize(e) < 0)
     return -E_ENV_RUNNING;
-  if (env_localize(ue) < 0) 
+  if (env_localize(ue) < 0)
   {
     env_release(e);
     return -E_ENV_RUNNING;
