@@ -34,3 +34,7 @@ lib/alfs/libalfsemb.a
 lib/alfs/libalfssep.a
 bin/flex/install
 bin/flex/INSTALL
+doc/tex/guide.aux
+*.log
+*.aux
+.#*
