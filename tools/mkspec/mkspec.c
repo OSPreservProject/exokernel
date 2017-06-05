@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 1997 Massachusetts Institute of Technology
  *
@@ -66,12 +65,12 @@ static int inline  my_min (const int a, const int b) {
 
 
 char *exclude[] = {"___gnu_compiled_c",
-		   "_main",
-		   "gcc2_compiled.",
-		   "_edata",
-		   "_etext",
-		   "_end",
-		   NULL};
+                   "_main",
+                   "gcc2_compiled.",
+                   "_edata",
+                   "_etext",
+                   "_end",
+                   NULL};
 
 int main (int argc, char *argv[]) {
   register struct nlist *s;
@@ -127,7 +126,7 @@ int main (int argc, char *argv[]) {
   strsize = st.st_size - stroff;
   pageOffset = stroff % 4096;
   stroff -= pageOffset;
-  strsize += pageOffset; 
+  strsize += pageOffset;
 
   strtab = mmap(NULL, (size_t)strsize, PROT_READ, MAP_SHARED, fd, stroff);
   if (strtab == (char *)-1) {
@@ -135,7 +134,7 @@ int main (int argc, char *argv[]) {
     return -1;
   }
   strtab += pageOffset;
-  strsize -= pageOffset; 
+  strsize -= pageOffset;
 
   if (lseek(fd, symoff, SEEK_SET) == -1) {
     fprintf (stderr, "could not lseek to symbol table\n");
@@ -152,18 +151,18 @@ int main (int argc, char *argv[]) {
       register int soff = s->n_un.n_strx;
 
       if (soff == 0 || (s->n_type & N_STAB) != 0)
-	continue;
+        continue;
       for (i = 0; exclude[i]; i++) {
-	if (!strcmp (&strtab[soff], exclude[i]))
-	  goto skip;
+        if (!strcmp (&strtab[soff], exclude[i]))
+          goto skip;
       }
       /* hack to avoid symbol with name equal to tmp filename used
-	 to build us */
+         to build us */
       if (strchr (&strtab[soff], '.') || strchr (&strtab[soff], '/'))
-	goto skip;
+        goto skip;
       if (s->n_type & N_EXT) {
-	printf ("\t.globl\t%s\n\t.set\t%s,0x%lx\n\t.weak\t%s\n\n",
-		&strtab[soff], &strtab[soff], s->n_value, &strtab[soff]);
+        printf ("\t.globl\t%s\n\t.set\t%s,0x%lx\n\t.weak\t%s\n\n",
+                &strtab[soff], &strtab[soff], s->n_value, &strtab[soff]);
       }
     skip:
       ;
