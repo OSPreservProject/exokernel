@@ -88,14 +88,14 @@ usage(void)
 }
 
 
-int 
+int
 main(int argc, char *argv[])
 {
 
     if (argc != 7) {
 	usage();
     }
-    
+
     isserver = argv[1][0] == 's';
     host = argv[2];
     myhost = argv[3];
@@ -115,4 +115,3 @@ main(int argc, char *argv[])
 
     return 0;
 }
-

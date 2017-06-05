@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 1997 Massachusetts Institute of Technology 
+ * Copyright (C) 1997 Massachusetts Institute of Technology
  *
  * This software is being provided by the copyright holders under the
  * following license. By obtaining, using and/or copying this software,
@@ -60,8 +60,8 @@
 #include <xok/queue.h>
 #include <xok/capability.h>
 #include <xok/trap.h>
-#include <xok/mmu.h> 
-#include <xok/kerrno.h> 
+#include <xok/mmu.h>
+#include <xok/kerrno.h>
 
 /* User-writeable portion of the Env structure */
 struct Uenv {
@@ -134,7 +134,7 @@ struct Uenv {
 
   u_int u_revoked_pages;	/* number of pages kernel is asking for back */
 
-  /* Saved entry points (while in a protected method) 
+  /* Saved entry points (while in a protected method)
      Don't change the order (sys_prot_call depends on it) */
   u_int prot_entepilogue;
   u_int prot_entprologue;
