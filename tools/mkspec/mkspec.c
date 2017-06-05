@@ -97,7 +97,7 @@ int main (int argc, char *argv[]) {
   }
 
   if (N_BADMAG (exec) || N_GETMID (exec) != MID_I386) {
-    fprintf (stderr, "invalid executable file\n");
+    fprintf (stderr, "invalid executable file N_BADMAG(exec) %x N_GETMID (exec) %x MID_I386 %x\n", N_BADMAG(exec), N_GETMID(exec), MID_I386);
     exit (1);
   }
   if (N_GETFLAG (exec) & EX_DYNAMIC) {
