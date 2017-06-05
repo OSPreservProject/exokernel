@@ -25,9 +25,12 @@ tools/rconsole/rconsole
 tools/senddocs/senddocs
 tools/setmagic/setmagic
 tools/vm-layout/vm-layout
+<<<<<<< HEAD
 bin/shlib/libexos.so
 bin/shlib/libexos.so_stub.s
 include/exos/site-conf.h
 lib/alfs/libalfs.a
 lib/alfs/libalfsemb.a
 lib/alfs/libalfssep.a
+bin/flex/install
+bin/flex/INSTALL
