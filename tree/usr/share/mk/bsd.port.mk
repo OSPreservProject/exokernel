@@ -397,7 +397,7 @@ BUILD_DEPENDS+=	${EXEC_DEPENDS}
 RUN_DEPENDS+=	${EXEC_DEPENDS}
 .endif
 .if defined(USE_GMAKE)
-BUILD_DEPENDS+=		gmake:${PORTSDIR}/devel/gmake
+BUILD_DEPENDS+=		make:${PORTSDIR}/devel/gmake
 .endif
 # OpenBSD has perl5 in-tree
 #.if defined(USE_PERL5)
@@ -424,7 +424,7 @@ PACKAGE_COOKIE?=	${WRKDIR}/.package_done
 DO_NADA?=		/usr/bin/true
 
 # Miscellaneous overridable commands:
-GMAKE?=			gmake
+GMAKE?=			make
 XMKMF?=			xmkmf -a
 .if exists(/sbin/md5)
 MD5?=			/sbin/md5

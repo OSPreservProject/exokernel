@@ -95,16 +95,14 @@ int main (int argc, char *argv[]) {
     fprintf (stderr, "Invalid binary file\n");
     return -1;
   }
-
   if (N_BADMAG (exec) || N_GETMID (exec) != MID_I386) {
-    fprintf (stderr, "invalid executable file N_BADMAG(exec) %x N_GETMID (exec) %x MID_I386 %x\n", N_BADMAG(exec), N_GETMID(exec), MID_I386);
+    fprintf (stderr, "invalid executable file N_BADMAG(exec) %d N_GETMID (exec) %d MID_I386 %d\n", N_BADMAG(exec), N_GETMID(exec), MID_I386);
     exit (1);
   }
   if (N_GETFLAG (exec) & EX_DYNAMIC) {
     fprintf (stderr, "are you giving me a dynamically linked executable??\n");
     return -1;
   }
-
   symoff = N_SYMOFF(exec);
   symsize = exec.a_syms;
   stroff = symoff + symsize;

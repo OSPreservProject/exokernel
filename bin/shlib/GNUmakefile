@@ -12,7 +12,7 @@ T = -Ttext
 
 $(PROG): main.c $(TOP)/lib/libc/obj/libc.a $(TOP)/lib/csu/crt0.o 
 	# this load address has to be in agreement with exos/vm-layout.h
-	$(CC) -m32 -march=i386 -shared -Wall -o $(PROG)  -nostdinc -DEXOPC -I../../include -I../../sys \
+	$(CC) -Wl,--unresolved-symbols=ignore-all -Wl,--oformat=a.out-i386-linux -m32 -march=i386  -shared -Wall -o $(PROG)  -nostdinc -DEXOPC -I../../include -I../../sys \
 	-I../../lib/libc -static $(T) 10000020 -N -g -O6 -nostdlib \
 	-e ___start $(TOP)/lib/csu/crt0.o  \
 	$(TOP)/lib/libc/obj/*.o main.c 

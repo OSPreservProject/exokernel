@@ -1,12 +1,12 @@
 all:
-	gmake -f GNUmakefile.chgrp
-	gmake -f GNUmakefile.chown
+	make -f GNUmakefile.chgrp
+	make -f GNUmakefile.chown
 
 clean:
-	gmake -f GNUmakefile.chgrp clean
-	gmake -f GNUmakefile.chown clean
+	make -f GNUmakefile.chgrp clean
+	make -f GNUmakefile.chown clean
 
 install:
-	gmake -f GNUmakefile.chgrp install
-	gmake -f GNUmakefile.chown install
+	make -f GNUmakefile.chgrp install
+	make -f GNUmakefile.chown install
 

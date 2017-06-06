@@ -42,12 +42,12 @@ xrt0_initp.o: xrt0.c $(LIB)
 	$(CC_COMPILE_RULE) -o xrt0_initp.o -D__INIT_PROG__
 
 crt0_initp.o: xrt0_initp.o
-	$(LD) -r -o $@ $^
+	$(LD) --oformat=a.out-i386-linux -r -o $@ $^
 
 crt0_cpp.o: xrt0_cpp.o
-	$(LD) -r -o $@ $^
+	$(LD) --oformat=a.out-i386-linux -r -o $@ $^
 
 crt0.o: xrt0.o
-	$(LD) -r -o $@ $^
+	$(LD) --oformat=a.out-i386-linux -r -o $@ $^
 
 
