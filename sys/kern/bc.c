@@ -83,7 +83,7 @@
 #include <xok/kerrno.h>
 #include <xok/printf.h>
 #include <xok/pxn.h>
-#include <xok/queue.h
+#include <xok/queue.h>
 #include <xok/scheduler.h>
 #include <xok/sys_proto.h>
 #include <xok/syscallno.h>
